@@ -1,12 +1,11 @@
 
-
+import React from "react"
+import UserRoute from "./routes/userRoute"
 function App() {
 
   return (
     <>
-     <div className="h-10 w-10 bg-black">
-          
-     </div>
+     <UserRoute/>
     </>
   )
 }
