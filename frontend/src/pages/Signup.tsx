@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import InputField from "@/components/userComponents/InputField";
 export default function Signup() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[url('/black-bg.jpg')] bg-cover bg-center bg-black/60">
@@ -13,72 +13,19 @@ export default function Signup() {
 
         <div className="grid grid-cols-2 gap-4">
           {/* Name Input */}
-          <div className="mt-6">
-            <label className="block text-black text-sm font-medium">
-              Name
-            </label>
-            <input
-              type="text"
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-gray-500 outline-none"
-              placeholder="Enter your Name"
-            />
-          </div>
+         
+          <InputField label="Name" type="text" placeholder="Enter Your Name" />
 
           {/* Email Input */}
-          <div className="mt-6">
-            <label className="block text-black text-sm font-medium">
-              Email
-            </label>
-            <input
-              type="email"
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-gray-500 outline-none"
-              placeholder="Enter your Email"
-            />
-          </div>
+          <InputField label="Email" type="email" placeholder="Enter Your Email"/>
           {/* Password Input */}
-          <div className="mt-6">
-            <label className="block text-black text-sm font-medium">
-              Password
-            </label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-gray-500 outline-none"
-              placeholder="Enter your Password"
-            />
-          </div>
+          <InputField label="Password" type="password" placeholder="Enter Your Password"/>
           {/* confirm Password Input */}
-          <div className="mt-6">
-            <label className="block text-black text-sm font-medium">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-gray-500 outline-none"
-              placeholder="Confirm your Password"
-            />
-          </div>
+          <InputField label="Confirm Password" type="password" placeholder="Confirm Your Password"/>
           {/* gender */}
-          <div className="mt-6">
-            <label className="block text-black text-sm font-medium">
-              Gender
-            </label>
-            <input
-              type="text"
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-gray-500 outline-none"
-              placeholder="Enter Your Gender"
-            />
-          </div>
+          <InputField label="Gender" type="text" placeholder="Enter Your Gender"/>
           {/* age */}
-          <div className="mt-6">
-            <label className="block text-black text-sm font-medium">
-              Age
-            </label>
-            <input
-              type="number"
-              className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-gray-500 outline-none"
-              placeholder="Enter Your Age"
-            />
-          </div>
+          <InputField label="Age" type="number" placeholder="Enter Your Age"/>
           {/* fitness goal */}
           <div className="mt-6">
             <label className="block text-black text-sm font-medium">

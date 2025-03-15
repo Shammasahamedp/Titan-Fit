@@ -1,8 +1,8 @@
 import React from "react"
 import { BrowserRouter as Router,Routes,Route } from "react-router-dom"
 import LandingPage from "@/pages/LandingPage"
-import Login from "@/components/userComponents/Login"
-import Signup from "@/components/userComponents/Signup"
+import Login from "@/pages/Login"
+import Signup from "@/pages/Signup"
 const UserRoute = ()=>{
     return (
       <Router>
