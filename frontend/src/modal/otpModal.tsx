@@ -1,26 +1,61 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-
-interface OtpModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (otp: string) => void;
-}
-
-const OtpModal: React.FC<OtpModalProps> = ({ isOpen, onClose, onSubmit }) => {
+import { useEffect } from "react";
+import { OtpModalProps } from "@/interfaces/Iotp-modalprops";
+import { showErrorToast } from "@/utils/toast";
+const OtpModal: React.FC<OtpModalProps> = ({ isOpen, onClose, onSubmit,onResend}) => {
   const [otp, setOtp] = useState("");
-
+  const [timer,setTimer] = useState(30)
+  const [canResend,setCanResend] = useState(false)
   if (!isOpen) return null;
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    if (isOpen) {
+      setOtp(""); // Reset OTP input when modal opens
+      setTimer(30); // Reset timer
+      setCanResend(false);
+      const countdown = setInterval(() => {
+        setTimer((prev) => {
+          if (prev === 1) {
+            clearInterval(countdown);
+            setCanResend(true);
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(countdown); // Cleanup on modal close
+    }
+  }, [isOpen]);
+
+  const handleSubmit = async() => {
     if (otp.length === 6) {
       onSubmit(otp);
-      setOtp(""); // Reset OTP input
-      onClose();
+      setOtp("");
+      // onClose();
     } else {
-      alert("Please enter a valid 6-digit OTP");
+      // alert("Please enter a valid 6-digit OTP");
+      showErrorToast('please enter a valid 6 digit OTP')
     }
   };
+
+  const handleResend = () => {
+    if (canResend) {
+      onResend();
+      setTimer(30); // Reset timer
+      setCanResend(false);
+      const countdown = setInterval(() => {
+        setTimer((prev) => {
+          if (prev === 1) {
+            clearInterval(countdown);
+            setCanResend(true);
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+  };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -53,6 +88,17 @@ const OtpModal: React.FC<OtpModalProps> = ({ isOpen, onClose, onSubmit }) => {
         >
           Submit OTP
         </button>
+        <div className="mt-4 text-center">
+          <button
+            onClick={handleResend}
+            disabled={!canResend}
+            className={`${
+              canResend ? "text-black hover:underline" : "text-gray-400 cursor-not-allowed"
+            }`}
+          >
+            {canResend ? "Resend OTP" : `Resend OTP in ${timer}s`}
+          </button>
+        </div>
       </motion.div>
     </div>
   );

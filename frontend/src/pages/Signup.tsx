@@ -9,6 +9,9 @@ import { signUp } from "@/api/auth";
 import OtpModal from "@/modal/otpModal";
 import { useState } from "react";
 import { sendOtp, verifyOtp } from "@/api/otp";
+import { showSuccessToast } from "@/utils/toast";
+import { showErrorToast } from "@/utils/toast";
+import { ToastContainer } from "react-toastify";
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
   email: yup
@@ -34,10 +37,9 @@ const schema = yup.object().shape({
 });
 
 export default function Signup() {
-
-  const [userData,setUserData] = useState<SignupFormatInputs|null>(null)
+  const [userData, setUserData] = useState<SignupFormatInputs | null>(null);
   // const [otp,setOtp] = useState('')
-  const [showOtpModal,setShowOtpModal] = useState(false)
+  const [showOtpModal, setShowOtpModal] = useState(false);
 
   const {
     register,
@@ -46,140 +48,176 @@ export default function Signup() {
   } = useForm<SignupFormatInputs>({ resolver: yupResolver(schema) });
   const onSubmit = async (data: SignupFormatInputs) => {
     try {
-      setUserData(data)
-      // const otpResponse = await sendOtp(data.email)
-      // if(otpResponse?.data.success){
-       
-      // }
-      setShowOtpModal(true)
-      // const response = await signUp(data);
-      // if (response?.data.success) {
-      //   alert(response?.data.message);
-      // }
-    } catch (error:any) {
-      if(error.response){
-        alert(error.response.data.message)
-        }
+      setUserData(data);
+      const otpResponse = await sendOtp(data.email);
+      if (otpResponse?.data.success) {
+        console.log("otp has sent successfully");
+        showSuccessToast(otpResponse.data.message)
+      }
+      setShowOtpModal(true);
+    } catch (error: any) {
+      if (error.response) {
+        alert(error.response.data.message);
+      }
     }
   };
-   const  handleOtpSubmit = async (otp:string)=>{
+  const resendOtp = async () => {
+    if (userData) {
+      try {
+        const otpResponse = await sendOtp(userData.email);
+        if (otpResponse?.data.success) {
+          console.log("otp has sent successfully");
+        }
+      } catch (error) {
+        console.log("error in resend otp", error);
+      }
+    }
+  };
+  const handleOtpSubmit = async (otp: string) => {
+   
+     try {
+      
+      const response = await verifyOtp(userData?.email as string, otp);
+      if (response?.data.success) {
+        console.log("this is response", response.data);
+        showSuccessToast(response.data.message)
+        if (userData) {
+          const res = await signUp(userData);
+          if (res?.data.success) {
+            showSuccessToast(res.data.message)
+            setShowOtpModal(false)
 
-   const response=await verifyOtp(userData?.email as string,otp)
-   if(response?.data.success){
-
-    alert('success')
-   }
-  }
+          }
+        }
+      }
+     } catch (error:any) {
+      console.log('error in ',error.response.data)
+        if(error.response.data.message === 'Your otp is invalid , check again or resend after 30 seconds'){
+          showErrorToast(error.response.data.message)
+          return 
+        }
+        showErrorToast(error.response.data.message)
+        setShowOtpModal(false)
+     }
+  };
 
   return (
     <>
-    <div className="flex items-center justify-center min-h-screen bg-[url('/black-bg.jpg')] bg-cover bg-center bg-black/60">
-      <img
-        src="/titan-fit.png"
-        alt="asdf"
-        className="absolute top-6 left-6 w-24 h-auto z-10"
-      />
-      <div className="absolute inset-0 bg-black/60"></div>
+      <div className="flex items-center justify-center min-h-screen bg-[url('/black-bg.jpg')] bg-cover bg-center bg-black/60">
+        <img
+          src="/titan-fit.png"
+          alt="asdf"
+          className="absolute top-6 left-6 w-24 h-auto z-10"
+        />
+        <div className="absolute inset-0 bg-black/60"></div>
 
-      <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
-        <h2 className="text-2xl font-bold text-center text-black">Sign Up</h2>
+        <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
+          <h2 className="text-2xl font-bold text-center text-black">Sign Up</h2>
 
-        <div className="grid grid-cols-2 gap-4">
-          {/* Name Input */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Name Input */}
 
-          <InputField
-            label="Name"
-            type="text"
-            placeholder="Enter Your Name"
-            register={register("name")}
-            error={errors.name?.message}
-          />
+            <InputField
+              label="Name"
+              type="text"
+              placeholder="Enter Your Name"
+              register={register("name")}
+              error={errors.name?.message}
+            />
 
-          {/* Email Input */}
-          <InputField
-            label="Email"
-            type="email"
-            placeholder="Enter Your Email"
-            register={register("email")}
-            error={errors.email?.message}
-          />
-          {/* Password Input */}
-          <InputField
-            label="Password"
-            type="password"
-            placeholder="Enter Your Password"
-            register={register("password")}
-            error={errors.password?.message}
-          />
-          {/* confirm Password Input */}
-          <InputField
-            label="Confirm Password"
-            type="password"
-            placeholder="Confirm Your Password"
-            register={register("confirmPassword")}
-            error={errors.confirmPassword?.message}
-          />
-          {/* gender */}
-          <InputField
-            label="Gender"
-            type="text"
-            placeholder="Enter Your Gender"
-            register={register("gender")}
-            error={errors.gender?.message}
-          />
-          {/* age */}
-          <InputField
-            label="Age"
-            type="number"
-            placeholder="Enter Your Age"
-            register={register("age")}
-            error={errors.age?.message}
-          />
-          {/* fitness level */}
+            {/* Email Input */}
+            <InputField
+              label="Email"
+              type="email"
+              placeholder="Enter Your Email"
+              register={register("email")}
+              error={errors.email?.message}
+            />
+            {/* Password Input */}
+            <InputField
+              label="Password"
+              type="password"
+              placeholder="Enter Your Password"
+              register={register("password")}
+              error={errors.password?.message}
+            />
+            {/* confirm Password Input */}
+            <InputField
+              label="Confirm Password"
+              type="password"
+              placeholder="Confirm Your Password"
+              register={register("confirmPassword")}
+              error={errors.confirmPassword?.message}
+            />
+            {/* gender */}
+            <InputField
+              label="Gender"
+              type="text"
+              placeholder="Enter Your Gender"
+              register={register("gender")}
+              error={errors.gender?.message}
+            />
+            {/* age */}
+            <InputField
+              label="Age"
+              type="number"
+              placeholder="Enter Your Age"
+              register={register("age")}
+              error={errors.age?.message}
+            />
+            {/* fitness level */}
 
-          <SelectField
-            label="Fitness Level"
-            options={[
-              { value: "beginner", label: "Beginner" },
-              { value: "intermediate", label: "Intermediate" },
-              { value: "advanced", label: "Advanced" },
-            ]}
-            register={register("fitnessLevel")}
-            error={errors.fitnessLevel?.message}
-          />
-          {/*  fitness goal */}
-          <SelectField
-            label="Fitness Goal"
-            options={[
-              { value: "fatloss", label: "Fatloss" },
-              { value: "buildmuscle", label: "Build Muscle" },
-              { value: "maintenance", label: "Maintenance" },
-            ]}
-            register={register("fitnessGoal")}
-            error={errors.fitnessGoal?.message}
-          />
+            <SelectField
+              label="Fitness Level"
+              options={[
+                { value: "beginner", label: "Beginner" },
+                { value: "intermediate", label: "Intermediate" },
+                { value: "advanced", label: "Advanced" },
+              ]}
+              register={register("fitnessLevel")}
+              error={errors.fitnessLevel?.message}
+            />
+            {/*  fitness goal */}
+            <SelectField
+              label="Fitness Goal"
+              options={[
+                { value: "fatloss", label: "Fatloss" },
+                { value: "buildmuscle", label: "Build Muscle" },
+                { value: "maintenance", label: "Maintenance" },
+              ]}
+              register={register("fitnessGoal")}
+              error={errors.fitnessGoal?.message}
+            />
+          </div>
+
+          {/* Sign In Button */}
+          <div className="flex justify-center">
+            <button
+              onClick={handleSubmit(onSubmit)}
+              className="w-1/3  bg-black text-white py-2 mt-6 rounded-lg hover:bg-gray-700 transition"
+            >
+              Sign Up
+            </button>
+          </div>
+
+          {/* Sign Up Link */}
+          <p className="text-center text-sm text-black mt-4">
+            already have an account?{" "}
+            <Link to="/login" className="text-black hover:underline">
+              Login
+            </Link>
+          </p>
         </div>
-
-        {/* Sign In Button */}
-        <div className="flex justify-center">
-          <button
-            onClick={handleSubmit(onSubmit)}
-            className="w-1/3  bg-black text-white py-2 mt-6 rounded-lg hover:bg-gray-700 transition"
-          >
-            Sign Up
-          </button>
-        </div>
-
-        {/* Sign Up Link */}
-        <p className="text-center text-sm text-black mt-4">
-          already have an account?{" "}
-          <Link to="/login" className="text-black hover:underline">
-            Login
-          </Link>
-        </p>
       </div>
-    </div>
-    {showOtpModal&&<OtpModal isOpen={showOtpModal} onClose={()=>setShowOtpModal(false)} onSubmit={handleOtpSubmit}/>}
+      {showOtpModal && (
+        <OtpModal
+          isOpen={showOtpModal}
+          onClose={() => setShowOtpModal(false)}
+          onSubmit={handleOtpSubmit}
+          onResend={resendOtp}
+        />
+      )}
+      <ToastContainer/>
     </>
   );
 }

@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer"
-
+import { otpMessages } from "../messages/otp-related"
 const transporter = nodemailer.createTransport({
     service:"gmail",
     auth:{
@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
 })
 
 
-export const sendMail = async (to:string,subject:string,text:string) =>{
+export const sendMail = async (to:string,subject:string=otpMessages.OTP_SUBJECT,text:string) =>{
     try {
         await transporter.sendMail({
             from:process.env.EMAIL_USER,
@@ -17,7 +17,8 @@ export const sendMail = async (to:string,subject:string,text:string) =>{
             subject,
             text
         })
-        console.log('Email sent successfully')
+
+        console.log('Email sent successfully to',to)
     } catch (error) {
         console.error('error in sending mail',error)
     }
