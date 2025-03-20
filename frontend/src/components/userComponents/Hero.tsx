@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '../ui/button';
 
 const Hero = () => {
@@ -10,7 +9,8 @@ const Hero = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center transition-all duration-300" 
         style={{ 
-          backgroundImage: "url('/landing-bg-desktop.jpg')"
+          backgroundImage: "url('/landing-bg-desktop.jpg') "
+          
         }}
       ></div>
       

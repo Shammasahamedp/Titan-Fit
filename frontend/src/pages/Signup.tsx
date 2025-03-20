@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputField from "@/components/userComponents/InputField";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { signupSchema } from "@/validations/signup-schema";
 import { SignupFormatInputs } from "@/interfaces/IsignUpFomatInput";
 import SelectField from "@/components/userComponents/SelectField";
 import { signUp } from "@/api/auth";
@@ -12,40 +12,18 @@ import { sendOtp, verifyOtp } from "@/api/otp";
 import { showSuccessToast } from "@/utils/toast";
 import { showErrorToast } from "@/utils/toast";
 import { ToastContainer } from "react-toastify";
-const schema = yup.object().shape({
-  name: yup.string().required("Name is required"),
-  email: yup
-    .string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  password: yup
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref("password")], "Password must match")
-    .required("Confirm password is required"),
-  gender: yup.string().required("Gender is required"),
-  age: yup
-    .number()
-    .positive("Age must be a positive number")
-    .integer("Age must be a whole number")
-    .required("Age is required"),
-  fitnessGoal: yup.string().required("Please select your fitness goal"),
-  fitnessLevel: yup.string().required("Please select your finess level"),
-});
+import { motion } from "framer-motion";
 
 export default function Signup() {
   const [userData, setUserData] = useState<SignupFormatInputs | null>(null);
   // const [otp,setOtp] = useState('')
   const [showOtpModal, setShowOtpModal] = useState(false);
-
+  const navigate =  useNavigate()
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupFormatInputs>({ resolver: yupResolver(schema) });
+  } = useForm<SignupFormatInputs>({ resolver: yupResolver(signupSchema) });
   const onSubmit = async (data: SignupFormatInputs) => {
     try {
       setUserData(data);
@@ -57,7 +35,7 @@ export default function Signup() {
       setShowOtpModal(true);
     } catch (error: any) {
       if (error.response) {
-        alert(error.response.data.message);
+        showErrorToast(error.response.data.message)
       }
     }
   };
@@ -86,7 +64,9 @@ export default function Signup() {
           if (res?.data.success) {
             showSuccessToast(res.data.message)
             setShowOtpModal(false)
-
+            setTimeout(() => {
+              navigate('/login')
+            }, 2000);
           }
         }
       }
@@ -102,11 +82,16 @@ export default function Signup() {
   };
 
   return (
-    <>
-      <div className="flex items-center justify-center min-h-screen bg-[url('/black-bg.jpg')] bg-cover bg-center bg-black/60">
+    <motion.div
+    initial={{opacity:1,scale:1}}
+    animate={{opacity:1,scale:1}}
+    transition={{duration:.7}}
+    >
+      <div className="flex items-center justify-center min-h-screen bg-[url('/black-bg.jpg')] bg-cover bg-center bg-black/60 ">
         <img
           src="/titan-fit.png"
           alt="asdf"
+          loading="lazy"
           className="absolute top-6 left-6 w-24 h-auto z-10"
         />
         <div className="absolute inset-0 bg-black/60"></div>
@@ -218,6 +203,6 @@ export default function Signup() {
         />
       )}
       <ToastContainer/>
-    </>
+    </motion.div>
   );
 }

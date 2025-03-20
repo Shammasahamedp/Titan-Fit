@@ -1,11 +1,34 @@
 import { Link } from "react-router-dom";
 import InputField from "@/components/userComponents/InputField";
 import { GoogleLogin } from "@react-oauth/google";
+import { useState } from "react";
+import { LoginFormInput } from "@/interfaces/IloginFormInput";
+import { loginSchema } from "@/validations/login-schema";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { login } from "@/api/auth";
+import { ToastContainer } from "react-toastify";
+import { showSuccessToast,showErrorToast } from "@/utils/toast";
 export default function Login() {
-  const something = async(response:any)=>{
-    console.log('this is google')
-    const id = response.credential
-    console.log('this is id',id)
+ 
+  const [userData,setUserData] = useState<LoginFormInput|null>(null)
+  const {
+    register,
+    handleSubmit,
+    formState:{errors}
+  } = useForm<LoginFormInput>({resolver:yupResolver(loginSchema)})
+  const onSubmit = async(data:LoginFormInput)=>{
+    try {
+        console.log('clicked')
+        setUserData(data)
+        const response=await login(data)
+        console.log(response)
+        if(response?.data.success){
+          showSuccessToast(response.data.message)
+        }
+    } catch (error:any) {
+        showErrorToast(error?.response.data.message)
+    }
   }
     return (
       <div className="relative flex items-center justify-center min-h-screen bg-[url('/black-bg.jpg')] bg-cover bg-center bg-black/60" >
@@ -17,15 +40,16 @@ export default function Login() {
   
           {/* Email Input */}
           
-          <InputField  label="Email" type="email" placeholder="Enter Your Email"/>
+          <InputField  label="Email" type="email" placeholder="Enter Your Email" register={register("email")} error={errors.email?.message}/>
   
           {/* Password Input */}
-          <InputField label="Password" type="password" placeholder="Enter Your Password" />
+          <InputField label="Password" type="password" placeholder="Enter Your Password" register={register("password")} error={errors.password?.message} />
   
           {/* Forgot Password */}
           <div className="flex justify-center items-center mt-4 text-sm">
             
-            <a href="#" className="text-black hover:underline">Forgot password?</a>
+            
+            <Link to="/forgotpassword" className="text-black hover:underline">Forgot password?</Link>
           </div>
           {/* for trainer part */}
           <div className="flex justify-center items-center mt-4 text-sm">
@@ -33,7 +57,7 @@ export default function Login() {
             <Link to="/trainer/login" className="text-black hover:underline">I am a trainer</Link>
           </div>
           {/* Sign In Button */}
-          <button className="w-full bg-black text-white py-2 mt-6 rounded-lg hover:bg-gray-700 transition">
+          <button onClick={handleSubmit(onSubmit)} className="w-full bg-black text-white py-2 mt-6 rounded-lg hover:bg-gray-700 transition">
             Sign In
           </button>
   
@@ -46,13 +70,14 @@ export default function Login() {
   
           {/* Google Login */}
           
-          <GoogleLogin  onSuccess={something} onError={something}/>
+          <GoogleLogin  onSuccess={()=>console.log('') }/>
   
           {/* Sign Up Link */}
           <p className="text-center text-sm text-gray-600 mt-4">
             Don't have an account? <Link to="/signup" className="text-black hover:underline">Sign up</Link>
           </p>
         </div>
+        <ToastContainer/>
       </div>
     );
   }

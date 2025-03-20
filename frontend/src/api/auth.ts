@@ -1,16 +1,17 @@
 import { setToken,getRefreshToken,clearToken } from "./localStorage";
 import { axiosInstance } from "./axiosInstance";
 import { SignupFormatInputs } from "@/interfaces/IsignUpFomatInput";
+import { LoginFormInput } from "@/interfaces/IloginFormInput";
 
 export const signUp = async(data:SignupFormatInputs)=>{
     const response = await axiosInstance.post('http://localhost:3000/auth/signup',data)
     if(response.data)
     return response
 }
-export const login = async(email:string,password:string)=>{
-    const response = await axiosInstance.post('/auth/login',{email,password})
+export const login = async(data:LoginFormInput)=>{
+    const response = await axiosInstance.post('http://localhost:3000/auth/login',data)
     setToken(response.data.accessToken,response.data.refreshToken)
-    return response.data
+    return response
 }
 
 export const googleLogin = async(token:string)=>{
@@ -35,7 +36,7 @@ export const refreshToken = async()=>{
     }
 
     try {
-        const {data} = await axiosInstance.post('/auth/refresh',{refreshToken})
+        const {data} = await axiosInstance.post('/token/refresh',{refreshToken})
         setToken(data.accessToken,data.refreshToken)
         return data.accessToken
     } catch (error) {

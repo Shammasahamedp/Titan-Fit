@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '../ui/button';
 const Services = () => {
   return (
@@ -19,6 +18,7 @@ const Services = () => {
           <img 
             src="/personal-trainer-bg.webp" 
             alt="Personal Trainer" 
+            loading='lazy'
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-75"
           />
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition duration-300"></div>
@@ -35,6 +35,7 @@ const Services = () => {
           <img 
             src="/mealplan-bg.jpg" 
             alt="Meal Plan" 
+            loading='lazy'
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-75"
           />
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition duration-300"></div>

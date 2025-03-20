@@ -11,8 +11,20 @@ export interface IUserSignUp{
     fitnessLevel:string;
 }
 
+export interface IUserLogin{
+    email:string;
+    password:string
+}
+
 export interface IUserDocument extends IUserSignUp,Document{
     _id:Types.ObjectId;
     createdAt:Date;
     updatedAt:Date;
 }
+
+export interface ILoginResponse  {
+    user:IUserDocument
+    accessToken:string;
+    refreshToken:string
+}
+

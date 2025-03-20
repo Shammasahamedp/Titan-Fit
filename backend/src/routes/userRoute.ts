@@ -3,6 +3,8 @@ import { Request,Response } from "express"
 import { UserController } from "../controllers/userController"
 import { UserService } from "../services/user/userSevice"
 import { UserRepository } from "../repositories/user/userRepository"
+import { validate } from "../middlewares/validation-middleware"
+import { loginSchema, signUpSchema } from "../schema/validation-schema"
 
 const userRouter = express.Router()
 
@@ -11,6 +13,7 @@ const userService = new UserService(userRepository)
 const userController = new UserController(userService)
 
 
-userRouter.post('/auth/signup',(req:Request,res:Response)=> userController.registerUser(req,res))
+userRouter.post('/auth/signup',validate(signUpSchema),(req:Request,res:Response)=> userController.registerUser(req,res))
+userRouter.post('/auth/login',validate(loginSchema),(req:Request,res:Response)=> userController.loginUser(req,res))
 
 export default userRouter
