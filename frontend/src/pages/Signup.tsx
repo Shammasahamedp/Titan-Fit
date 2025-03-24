@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import InputField from "@/components/userComponents/InputField";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { signupSchema } from "@/validations/signup-schema";
+import { signupSchema } from "@/schemas/signup-schema";
 import { SignupFormatInputs } from "@/interfaces/IsignUpFomatInput";
 import SelectField from "@/components/userComponents/SelectField";
 import { signUp } from "@/api/auth";
@@ -45,6 +45,7 @@ export default function Signup() {
         const otpResponse = await sendOtp(userData.email);
         if (otpResponse?.data.success) {
           console.log("otp has sent successfully");
+          showSuccessToast('otp has send successfully')
         }
       } catch (error) {
         console.log("error in resend otp", error);
@@ -60,13 +61,14 @@ export default function Signup() {
         console.log("this is response", response.data);
         showSuccessToast(response.data.message)
         if (userData) {
+  
           const res = await signUp(userData);
           if (res?.data.success) {
             showSuccessToast(res.data.message)
             setShowOtpModal(false)
             setTimeout(() => {
               navigate('/login')
-            }, 2000);
+            }, 1500);
           }
         }
       }
@@ -98,7 +100,11 @@ export default function Signup() {
 
         <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
           <h2 className="text-2xl font-bold text-center text-black">Sign Up</h2>
-
+          <p className="text-center text-sm text-black mt-4">
+            <Link to="/trainer/signup" className="text-black hover:underline">
+              I am a trainer
+            </Link>
+          </p>
           <div className="grid grid-cols-2 gap-4">
             {/* Name Input */}
 
@@ -174,6 +180,7 @@ export default function Signup() {
               error={errors.fitnessGoal?.message}
             />
           </div>
+          
 
           {/* Sign In Button */}
           <div className="flex justify-center">

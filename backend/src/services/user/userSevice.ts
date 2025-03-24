@@ -3,17 +3,20 @@ import { IUserRepository } from "../../repositories/user/IuserRepository";
 import { IUserService } from "./IuserService";
 import { hashPassword,comparePassword } from "../../utils/password";
 import { generateAccessToken,generateRefreshToken } from "../../utils/jwt";
+import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
 
 export class UserService implements IUserService{
     private userRepository:IUserRepository;
-
-    constructor(userRepository:IUserRepository){
+    private trainerRepository:ITrainerRepository;
+    constructor(userRepository:IUserRepository,trainerRepository:ITrainerRepository){
         this.userRepository = userRepository
+        this.trainerRepository = trainerRepository
     }
 
   async registerUser(data: IUserSignUp): Promise<IUserDocument> {
         const existingUser = await this.userRepository.findUserByEmail(data.email)
-        if(existingUser){
+        const existingTrainer = await this.trainerRepository.findTrainerByEmail(data.email)
+        if(existingUser || existingTrainer){
             throw new Error("User already exist")
         }
         data.password = await hashPassword(data.password)

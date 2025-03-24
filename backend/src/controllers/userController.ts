@@ -1,4 +1,3 @@
-import { ILoginResponse } from "../interfaces/userInterfaces";
 import { userMessages } from "../messages/userRelated";
 import { IUserService } from "../services/user/IuserService";
 import { Request,Response } from "express";

@@ -4,7 +4,6 @@ export interface IUserSignUp{
     name:string;
     email:string;
     password:string;
-    
     gender:string;
     age:number;
     fitnessGoal:string;

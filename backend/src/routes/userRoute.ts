@@ -5,11 +5,13 @@ import { UserService } from "../services/user/userSevice"
 import { UserRepository } from "../repositories/user/userRepository"
 import { validate } from "../middlewares/validation-middleware"
 import { loginSchema, signUpSchema } from "../schema/validation-schema"
+import { TrainerRepository } from "../repositories/trainer/trainerRepository"
 
 const userRouter = express.Router()
 
 const userRepository = new UserRepository()
-const userService = new UserService(userRepository)
+const trainerRepository = new TrainerRepository()
+const userService = new UserService(userRepository,trainerRepository)
 const userController = new UserController(userService)
 
 

@@ -2,16 +2,25 @@ import { setToken,getRefreshToken,clearToken } from "./localStorage";
 import { axiosInstance } from "./axiosInstance";
 import { SignupFormatInputs } from "@/interfaces/IsignUpFomatInput";
 import { LoginFormInput } from "@/interfaces/IloginFormInput";
+import { TrainerSignupData } from "@/interfaces/ItrainerSignupInputs";
+
+export const login = async(data:LoginFormInput)=>{
+    const response = await axiosInstance.post(`http://localhost:3000/${data.role}/auth/login`,{email:data.email,password:data.password})
+    setToken(response.data.accessToken,response.data.refreshToken)
+    return response
+}
 
 export const signUp = async(data:SignupFormatInputs)=>{
-    const response = await axiosInstance.post('http://localhost:3000/auth/signup',data)
+    const response = await axiosInstance.post('http://localhost:3000/user/auth/signup',data)
     if(response.data)
     return response
 }
-export const login = async(data:LoginFormInput)=>{
-    const response = await axiosInstance.post('http://localhost:3000/auth/login',data)
-    setToken(response.data.accessToken,response.data.refreshToken)
-    return response
+
+export const trainerSignup = async(data:TrainerSignupData)=>{
+    const response = await axiosInstance.post('http://localhost:3000/trainer/auth/signup',data)
+    if(response.data){
+        return response
+    }
 }
 
 export const googleLogin = async(token:string)=>{
