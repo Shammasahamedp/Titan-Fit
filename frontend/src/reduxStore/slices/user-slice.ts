@@ -6,7 +6,7 @@ const initialState:UserState = {
     user:null,
     token:null,
     error:null,
-    loading:false
+    userLoading:false
 }
 
 const userSlice = createSlice({
@@ -15,20 +15,21 @@ const userSlice = createSlice({
     reducers:{
         logingStart:(state)=>{
             state.error = null,
-            state.loading = true
+            state.userLoading = true
         },
         loginSuccess:(state,action:PayloadAction<{user:any;token:string}>)=>{
             state.user = action.payload.user;
             state.token = action.payload.token;
-            state.loading = false
+            state.userLoading = false
         },
         loginFailure:(state,action:PayloadAction<string>)=>{
-            state.loading = false
+            state.userLoading = false
             state.error = action.payload
+           
         },
         logout:(state)=>{
             state.error=null;
-            state.loading=false;
+            state.userLoading=false;
             state.token=null;
             state.user=null
         }

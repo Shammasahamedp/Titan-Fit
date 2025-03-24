@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./slices/user-slice"
-
+import trainerReducer from "./slices/trainer-slice"
 export const store = configureStore({
     reducer:{
-        user:userReducer
+        user:userReducer,
+        trainer:trainerReducer
     }
 })
 

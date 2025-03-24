@@ -5,16 +5,19 @@ import { LoginFormInput } from "@/interfaces/IloginFormInput";
 import { loginSchema } from "@/schemas/login-schema";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { login } from "@/api/auth";
+import { login, logout } from "@/api/auth";
 import { ToastContainer } from "react-toastify";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import SelectField from "@/components/userComponents/SelectField";
 import { useDispatch, useSelector } from "react-redux";
-import { logingStart, loginSuccess } from "@/reduxStore/slices/user-slice";
+import { logingStart, loginSuccess,loginFailure } from "@/reduxStore/slices/user-slice";
+import { trainerLoginFailure, trainerLoginStart,trainerLoginSuccess } from "@/reduxStore/slices/trainer-slice";
 import { RootState } from "@/reduxStore/store";
 export default function Login() {
+  
   const dispatch = useDispatch();
-  const { loading } = useSelector((state: RootState) => state.user);
+  const { userLoading } = useSelector((state: RootState) => state.user);
+  const { trainerLoading } = useSelector((state: RootState) => state.trainer);
   const {
     register,
     handleSubmit,
@@ -23,22 +26,48 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormInput) => {
     try {
-      dispatch(logingStart());
-      console.log("clicked", loading);
-      const response = await login(data);
-      console.log("clicked", loading);
-      console.log(response);
-      if (response?.data.success) {
-        dispatch(
-          loginSuccess({
-            user: response.data.data.user,
-            token: response.data.data.accessToken,
-          })
-        );
-
-        showSuccessToast(response.data.message);
+      if(data.role === 'user'){
+       
+        dispatch(logingStart());
+        console.log("clicked", userLoading);
+        const response = await login(data);
+        console.log("clicked", userLoading);
+        console.log(response);
+        if (response?.data.success) {
+          dispatch(
+            loginSuccess({
+              user: response.data.data.user,
+              token: response.data.data.accessToken,
+            })
+          );
+  
+          showSuccessToast(response.data.message);
+        }
+      }else if(data.role === 'trainer'){
+        
+        dispatch(trainerLoginStart());
+        console.log("clicked", trainerLoading);
+        const response = await login(data);
+        console.log("clicked", trainerLoading);
+        console.log(response);
+        if (response?.data.success) {
+          dispatch(
+            trainerLoginSuccess({
+              trainer: response.data.data.trainer,
+              token: response.data.data.accessToken,
+            })
+          );
+  
+          showSuccessToast(response.data.message);
+        }
       }
+     
     } catch (error: any) {
+      if(data.role === 'user'){
+        dispatch(loginFailure(error?.response.data.message))
+      }else if(data.role === 'trainer'){
+        dispatch(trainerLoginFailure(error?.response.data.message))
+      }
       showErrorToast(error?.response.data.message);
     }
   };
@@ -92,11 +121,11 @@ export default function Login() {
         </div>
        
         <button
-          disabled={loading}
+          disabled={userLoading}
           onClick={handleSubmit(onSubmit)}
           className="w-full bg-black text-white py-2 mt-6 rounded-lg hover:bg-gray-700 transition"
         >
-          {loading ? "Logging in..." : "Sign In"}
+          {userLoading||trainerLoading? "Logging in..." : "Sign In"}
         </button>
 
         {/* Divider */}

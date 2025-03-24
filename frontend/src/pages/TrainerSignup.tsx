@@ -1,6 +1,6 @@
 import {  Link, useNavigate } from "react-router-dom";
 import InputField from "@/components/userComponents/InputField";
-
+import { ClipLoader } from "react-spinners";
 import OtpModal from "@/modal/otpModal";
 import FileInputField from "@/components/userComponents/FileInputField";
 import { ToastContainer } from "react-toastify";
@@ -19,6 +19,8 @@ export default function TrainerSignup() {
   const [trainerData, setTrainerData] = useState<TrainerSignupSchemaInput | null>(
     null
   );
+
+  const [isLoading,setIsLoading] = useState(false)
   const [showOtpModal, setShowOtpModal] = useState(false);
   const navigate = useNavigate()
   const {
@@ -59,6 +61,7 @@ export default function TrainerSignup() {
 
   const handleOtpSubmit = async (otp:string) =>{
     try {
+      setIsLoading(true)
       const response = await verifyOtp(trainerData?.email as string,otp)
       if(response?.data.success){
         showSuccessToast(response.data.message)
@@ -91,6 +94,8 @@ console.log('this is finaltrainerdata',finalTrainerData)
       }
       showErrorToast(error.response.data.message)
       setShowOtpModal(false)
+    }finally{
+      setIsLoading(false)
     }
   }
   return (
@@ -222,6 +227,12 @@ console.log('this is finaltrainerdata',finalTrainerData)
           onSubmit={handleOtpSubmit}
           onResend={resendOtp}
         />
+
+      )}
+      {isLoading&&(
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <ClipLoader color="#ffffff" size={50} />
+      </div>
       )}
 
       <ToastContainer />
