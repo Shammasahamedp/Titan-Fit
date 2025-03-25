@@ -64,6 +64,7 @@ export default function Login() {
      
     } catch (error: any) {
       if(data.role === 'user'){
+        console.log('this is error',error)
         dispatch(loginFailure(error?.response.data.message))
       }else if(data.role === 'trainer'){
         dispatch(trainerLoginFailure(error?.response.data.message))
@@ -121,7 +122,7 @@ export default function Login() {
         </div>
        
         <button
-          disabled={userLoading}
+          disabled={userLoading||trainerLoading}
           onClick={handleSubmit(onSubmit)}
           className="w-full bg-black text-white py-2 mt-6 rounded-lg hover:bg-gray-700 transition"
         >

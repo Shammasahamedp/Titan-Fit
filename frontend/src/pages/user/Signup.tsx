@@ -3,7 +3,7 @@ import InputField from "@/components/userComponents/InputField";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signupSchema } from "@/schemas/signup-schema";
-import { SignupFormatInputs } from "@/interfaces/IsignUpFomatInput";
+import { SignupFormatInputs } from "@/interfaces/user/IsignUpFomatInput";
 import SelectField from "@/components/userComponents/SelectField";
 import { signUp } from "@/api/auth";
 import OtpModal from "@/modal/otpModal";

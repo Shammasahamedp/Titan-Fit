@@ -1,15 +1,13 @@
 
 export const getAccessToken = ()=> localStorage.getItem("accessToken")
-export const getRefreshToken = () => localStorage.getItem("refreshToken")
 
 
-export const setToken = (accessToken:string,refreshToken:string)=>{
+export const setToken = (accessToken:string)=>{
     localStorage.setItem("accessToken",accessToken)
-    localStorage.setItem("refreshToken",refreshToken)
 
 }
 
 export const clearToken = ()=>{
     localStorage.removeItem("accessToken")
-    localStorage.removeItem("refreshToken")
+    
 }

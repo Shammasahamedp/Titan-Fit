@@ -30,6 +30,10 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     async(error) =>{
         const originalRequest = error.config
+        const authEndPoints = ['/user/auth/login','/trainer/auth/login','/admin/auth/login']
+        if(authEndPoints.some((endPoint)=>originalRequest.url.includes(endPoint))){
+            return Promise.reject(error)
+        }
         if(error.response?.status === 401 && !originalRequest._retry){
             if(isRefreshing){
                 return new Promise((resolve,reject)=>{
@@ -37,7 +41,7 @@ axiosInstance.interceptors.response.use(
                 })
 
                 .then((token)=>{
-                    originalRequest.headers["Autherization"] = `Bearer ${token}`
+                    originalRequest.headers["Authorization"] = `Bearer ${token}`
                     return axiosInstance(originalRequest)
                 })
                 .catch((err)=>Promise.reject(err))

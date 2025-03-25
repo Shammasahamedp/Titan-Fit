@@ -20,7 +20,7 @@ export const verifyAccessToken = (token:string) =>{
 
 export const verifyRefreshToken = (token:string) =>{
     try {
-        return jwt.verify(token,REFRESH_SECRET)
+        return jwt.verify(token,REFRESH_SECRET) as jwt.JwtPayload
     } catch (error) {
         return null
     }

@@ -6,7 +6,7 @@ import FileInputField from "@/components/userComponents/FileInputField";
 import { ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { TrainerSignupSchemaInput } from "@/interfaces/ItrainerSignupInputs";
+import { TrainerSignupSchemaInput } from "@/interfaces/trainer/ItrainerSignupInputs";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { trainerSignupSchema } from "@/schemas/trainer-signup.schema";
