@@ -1,5 +1,5 @@
 import { Document,Types } from "mongoose";
-
+import { ITrainerModel } from "../models/trainer/ItrainerModel";
 export interface ITrainerSignUp{
     name:string;
     email:string;
@@ -15,10 +15,8 @@ export interface ITrainerLogin{
     password:string
 }
 
-export interface ITrainerDocument extends ITrainerSignUp,Document{
-    _id:Types.ObjectId;
-    createdAt:Date;
-    updatedAt:Date
+export interface ITrainerDocument extends ITrainerModel,Document{
+    _id:Types.ObjectId
 }
 
 export interface ITrainerLoginResponse{

@@ -1,5 +1,5 @@
 import { Document,Types } from "mongoose";
-
+import { IuserModel } from "../models/user/IuserModel";
 export interface IUserSignUp{
     name:string;
     email:string;
@@ -15,14 +15,12 @@ export interface IUserLogin{
     password:string
 }
 
-export interface IUserDocument extends IUserSignUp,Document{
-    _id:Types.ObjectId;
-    createdAt:Date;
-    updatedAt:Date;
+export interface IUserDocument extends IuserModel,Document{
+    _id:Types.ObjectId
 }
 
 export interface ILoginResponse  {
-    user:IUserDocument
+    user:IUserDocument;
     accessToken:string;
     refreshToken:string
 }

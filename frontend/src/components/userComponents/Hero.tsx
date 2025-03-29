@@ -1,6 +1,9 @@
+import { useSelector } from 'react-redux';
 import { Button } from '../ui/button';
+import { RootState } from '@/reduxStore/store';
 
 const Hero = () => {
+  const user = useSelector((state:RootState)=>state.user.user)
   return (
     <section
       className="relative w-full h-screen bg-cover bg-center flex items-center justify-center px-4 md:px-8"
@@ -32,9 +35,13 @@ const Hero = () => {
         <p className="mt-4 text-base md:text-lg">
           Your fitness journey starts here.
         </p>
-        <Button className="mt-6 bg-[#FFC436] text-black px-6 py-3 rounded-lg  hover:bg-black hover:text-[#FFC436]">
+        {
+          !user&&(
+            <Button className="mt-6 bg-[#FFC436] text-black px-6 py-3 rounded-lg  hover:bg-black hover:text-[#FFC436]">
           Join Community
         </Button>
+          )
+        }
       </div>
     </section>
   );

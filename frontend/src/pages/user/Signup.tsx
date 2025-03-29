@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
-import InputField from "@/components/userComponents/InputField";
+import InputField from "@/components/common/InputField";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signupSchema } from "@/schemas/signup-schema";
 import { SignupFormatInputs } from "@/interfaces/user/IsignUpFomatInput";
-import SelectField from "@/components/userComponents/SelectField";
-import { signUp } from "@/api/auth";
+import SelectField from "@/components/common/SelectField";
+import { findByEmail, signUp } from "@/api/auth";
 import OtpModal from "@/modal/otpModal";
 import { useState } from "react";
 import { sendOtp, verifyOtp } from "@/api/otp";
@@ -16,7 +16,6 @@ import { motion } from "framer-motion";
 
 export default function Signup() {
   const [userData, setUserData] = useState<SignupFormatInputs | null>(null);
-  // const [otp,setOtp] = useState('')
   const [showOtpModal, setShowOtpModal] = useState(false);
   const navigate =  useNavigate()
   const {
@@ -27,6 +26,12 @@ export default function Signup() {
   const onSubmit = async (data: SignupFormatInputs) => {
     try {
       setUserData(data);
+      console.log(data)
+      const isEmailExistResponse=await findByEmail(data.email)
+      if(!isEmailExistResponse.data.success){
+        showErrorToast(isEmailExistResponse.data.message)
+        return 
+      }
       const otpResponse = await sendOtp(data.email);
       if (otpResponse?.data.success) {
         console.log("otp has sent successfully");
@@ -78,7 +83,7 @@ export default function Signup() {
           showErrorToast(error.response.data.message)
           return 
         }
-        showErrorToast(error.response.data.message)
+        showErrorToast(error.response.data.errors)
         setShowOtpModal(false)
      }
   };

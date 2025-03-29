@@ -1,20 +1,31 @@
-import { setToken,clearToken } from "./localStorage";
+import { setToken } from "./localStorage";
 import { axiosInstance } from "./axiosInstance";
 import { SignupFormatInputs } from "@/interfaces/user/IsignUpFomatInput";
 import { LoginFormInput } from "@/interfaces/IloginFormInput";
 import { TrainerSignupData } from "@/interfaces/trainer/ItrainerSignupInputs";
 import { AdminLoginFormInput } from "@/interfaces/admin/ILoginFormInput";
+import { logout } from "@/reduxStore/slices/user-slice";
 
-export const login = async(data:LoginFormInput)=>{
+
+
+
+export const login = async(loginData:LoginFormInput)=>{
     try {
-        const response = await axiosInstance.post(`http://localhost:3000/${data.role}/auth/login`,{email:data.email,password:data.password})
+        const response = await axiosInstance.post(`http://localhost:3000/${loginData.role}/auth/login`,{email:loginData.email,password:loginData.password})
+        console.log(response)
     setToken(response.data.accessToken)
     return response
     } catch (error) {
         throw error
     }
 }
-
+export const findByEmail = async(email:string)=>{
+    try {
+        return await axiosInstance.get(`http://localhost:3000/auth/check-email?email=${email}`)
+    } catch (error) {
+        throw error
+    }
+}
 export const adminLogin = async(data:AdminLoginFormInput)=>{
    try {
     const response = await axiosInstance.post('http://localhost:3000/admin/auth/login',data,{withCredentials:true})
@@ -47,18 +58,24 @@ export const trainerSignup = async(data:TrainerSignupData)=>{
     }
 }
 
-export const googleLogin = async(token:string)=>{
+export const googleLogin = async(token:string,role:string)=>{
     try {
-        
+        const response = await axiosInstance.post(
+            'http://localhost:3000/auth/google/gettoken',
+            {token,role}
+        )
+        if(response.data){
+            return response
+        }
+
     } catch (error) {
+        
         console.log('error in googlesign',error)
+        throw error
     }
 }
 
-export const logout = ()=>{
-    clearToken()
 
-}
 
 export const refreshToken = async()=>{
     

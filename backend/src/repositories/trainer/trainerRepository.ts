@@ -1,6 +1,7 @@
 import { ITrainerDocument, ITrainerSignUp } from "../../interfaces/trainerInterfaces";
 import { ITrainerRepository } from "./ItrainerRepository";
 import { trainerModel } from "../../models/trainer/trainerModel";
+import { IUserDocument } from "../../interfaces/userInterfaces";
 
 export class TrainerRepository implements ITrainerRepository{
    async findTrainerByEmail(email: string): Promise<ITrainerDocument | null> {
@@ -8,5 +9,15 @@ export class TrainerRepository implements ITrainerRepository{
     }
   async  createTrainer(data: ITrainerSignUp): Promise<ITrainerDocument> {
         return (await trainerModel.create(data)) as ITrainerDocument
+    }
+   async findOne(googleId: string): Promise<ITrainerDocument | null> {
+        return await trainerModel.findOne({googleId})
+    }
+    async saveGoogleId(email: string, googleId: string): Promise<IUserDocument | null> {
+        return await trainerModel.findOneAndUpdate(
+            {email:email},
+            {$set:{googleId:googleId}},
+            {new:true}
+        )
     }
 }

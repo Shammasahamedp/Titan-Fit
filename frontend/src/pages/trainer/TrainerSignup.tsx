@@ -1,8 +1,8 @@
 import {  Link, useNavigate } from "react-router-dom";
-import InputField from "@/components/userComponents/InputField";
+import InputField from "@/components/common/InputField";
 import { ClipLoader } from "react-spinners";
 import OtpModal from "@/modal/otpModal";
-import FileInputField from "@/components/userComponents/FileInputField";
+import FileInputField from "@/components/common/FileInputField";
 import { ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -12,7 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { trainerSignupSchema } from "@/schemas/trainer-signup.schema";
 import { sendOtp, verifyOtp } from "@/api/otp";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
-import { trainerSignup } from "@/api/auth";
+import { findByEmail, trainerSignup } from "@/api/auth";
 import { uploadFile } from "@/api/file-upload";
 
 export default function TrainerSignup() {
@@ -34,6 +34,11 @@ export default function TrainerSignup() {
   const onSubmit = async (data: TrainerSignupSchemaInput) => {
     try {
       setTrainerData(data);
+      const isEmailExistResponse = await findByEmail(data.email)
+      if(isEmailExistResponse){
+        showErrorToast(isEmailExistResponse.data.message)
+        return 
+      }
       const otpResponse = await sendOtp(data.email);
       if (otpResponse?.data.success) {
         showSuccessToast(otpResponse.data.message);

@@ -8,3 +8,16 @@ export interface SignupFormatInputs{
     fitnessGoal:string;
     fitnessLevel:string
 }
+
+export interface IUserProfile{
+    name:string;
+    email:string;
+    phone:string;
+    profilePicture:string;
+    age:number;
+    weight:number;
+    height:number;
+    gender:string;
+    fitnessGoal:string;
+    fitnessLevel:string;
+}

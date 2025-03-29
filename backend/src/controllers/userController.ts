@@ -36,4 +36,5 @@ export class UserController {
             res.status(401).json({success:false,message:userMessages.LOGIN_FAILED})
         }
     }
+    
 }

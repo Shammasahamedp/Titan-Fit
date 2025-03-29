@@ -1,6 +1,6 @@
 import express,{Request,Response} from "express"
-import { commonErrors } from "../messages/common-errors"
-import { generateAccessToken, verifyRefreshToken } from "../utils/jwt"
+import { commonErrors } from "../../messages/common-errors"
+import { generateAccessToken, verifyRefreshToken } from "../../utils/jwt"
 
 const tokenRoute = express.Router()
 

@@ -1,5 +1,5 @@
 // import { Link } from "react-router-dom";
-import InputField from "@/components/userComponents/InputField";
+import InputField from "@/components/common/InputField";
 import { AdminLoginFormInput } from "@/interfaces/admin/ILoginFormInput";
 import { useForm } from "react-hook-form";
 import { ToastContainer } from "react-toastify";

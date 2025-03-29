@@ -1,11 +1,14 @@
 import React from "react";
-
-const Dashboard: React.FC = () => {
+import Navbar from "@/components/userComponents/Navbar";
+const AdminDashboard: React.FC = () => {
   return (
     <div className="flex h-screen bg-black text-white">
       {/* Sidebar */}
+      <Navbar/>
       <div className="w-64 bg-black border-r border-yellow-500 p-4">
-        <h1 className="text-3xl font-bold text-yellow-500 mb-6">Titan Fit</h1>
+        {/* <h1 className="text-3xl font-bold text-yellow-500 mb-6">Titan Fit</h1>
+         */}
+
         <nav className="space-y-4">
           {[
             "Overview",
@@ -71,4 +74,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

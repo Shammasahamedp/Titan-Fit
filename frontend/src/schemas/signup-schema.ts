@@ -16,10 +16,12 @@ export const signupSchema = yup.object().shape({
     .required("Confirm password is required"),
   gender: yup.string().required("Gender is required"),
   age: yup
+
     .number()
+    .min(10,'You must be at least 10 year old to proceed ')
     .positive("Age must be a positive number")
     .integer("Age must be a whole number")
     .required("Age is required"),
   fitnessGoal: yup.string().required("Please select your fitness goal"),
-  fitnessLevel: yup.string().required("Please select your finess level"),
+  fitnessLevel: yup.string().required("Please select your fitness level"),
 });

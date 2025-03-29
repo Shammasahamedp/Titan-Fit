@@ -1,7 +1,6 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { IuserModel } from "./IuserModel";
 
-interface IuserDocument extends IuserModel, Document {}
 
 const UserSchema: Schema = new Schema(
   {
@@ -13,16 +12,16 @@ const UserSchema: Schema = new Schema(
     age: { type: Number },
     weight: { type: Number },
     height: { type: Number },
-    gender: { type: String },
-    fitnessGoal: { type: String },
-    fitnessLevel: { tyep: String },
+    gender: { type: String ,default:false },
+    fitnessGoal: { type: String ,required:true},
+    fitnessLevel: { type: String ,required:true},
     subscriptionId: { type: Types.ObjectId },
     mealPlanId: { type: Types.ObjectId },
     testimonialId: { type: Types.ObjectId },
-    createdAt: { type: Date },
-    updatedAt: { type: Date },
+    googleId:{type:String},
+   
   },
   { timestamps: true }
 );
 
-export const userModel = mongoose.model<IuserDocument>("User", UserSchema);
+export const userModel = mongoose.model<IuserModel>("User", UserSchema);

@@ -12,7 +12,7 @@ export const signUpSchema = z.object({
     password:z.string().min(8,{message:validationMessage.INVALID_PASSWORD}),
     confirmPassword:z.string(),
     gender:z.string(),
-    age:z.number().min(15,{message:validationMessage.INVALID_AGE}),
+    age:z.number().min(10,{message:validationMessage.INVALID_AGE}),
     fitnessGoal:z.enum(['fatloss','buildmuscle','maintenance'],{
         errorMap:()=>({message:validationMessage.INVALID_FITNESSGOAL})
     }),

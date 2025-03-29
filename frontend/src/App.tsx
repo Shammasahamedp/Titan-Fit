@@ -7,6 +7,8 @@ import TrainerProtectedRoute from "./routes/TrainerProtectedRoute"
 import Login from "./pages/Login"
 import Signup from "./pages/user/Signup"
 import TrainerSignup from "./pages/trainer/TrainerSignup"
+import UserDashboard from "./pages/user/UserDashboard"
+import PublicRoute from "./routes/PublicRoute"
 
 function App() {
 
@@ -14,16 +16,19 @@ function App() {
     <Router>
       <Routes>
            {/* Public routes */}
+          <Route element={<PublicRoute/>}>
           <Route path='/' element={<LandingPage/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/signup' element={<Signup/>}/>
           <Route path='/trainer/signup' element={<TrainerSignup/>}/>
           <Route path='/admin/login' element={<AdminLogin/>}/>
+          </Route>
 
 
           {/* protected routes */}
           <Route element={<ProtectedRoute/>}>
-            {/* <Route path='/user/home' element={}/> */}
+            <Route path='/user/home' element={<LandingPage/>}/>
+            <Route path="/user/profile" element={<UserDashboard/>}/>
           </Route>
 
           <Route element={<AdminProtectedRoute/>}>

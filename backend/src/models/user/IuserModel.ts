@@ -1,6 +1,5 @@
-import { Types } from "mongoose";
-export interface IuserModel {
-    
+import { Types ,Document } from "mongoose";
+export interface IuserModel extends Document {
     name:string;
     email:string;
     password:string;
@@ -8,14 +7,14 @@ export interface IuserModel {
     age:number;
     fitnessGoal:string;
     fitnessLevel:string;
-    subscriptionId:Types.ObjectId;
-    phone:number;
-    profilePicture:string;
-    weight:number;
-    height:number;
-    mealPlanId:Types.ObjectId;
+    subscriptionId?:Types.ObjectId;
+    phone?:number;
+    profilePicture?:string;
+    weight?:number;
+    height?:number;
+    mealPlanId?:Types.ObjectId;
     blocked:boolean;
-    testimonialId:Types.ObjectId
-    createdAt:Date;
-    updatedAt:Date;
+    testimonialId?:Types.ObjectId,
+    googleId:string
+    
 }

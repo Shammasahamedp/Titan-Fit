@@ -1,8 +1,8 @@
 import express from"express"
-import { uploadMiddleware } from "../middlewares/file-upload.middleware"
-import upload from "../utils/upload-file"
+import { uploadMiddleware } from "../../middlewares/file-upload.middleware"
+import upload from "../../utils/upload-file"
 import {Request,Response,NextFunction} from "express"
-import { commonErrors } from "../messages/common-errors"
+import { commonErrors } from "../../messages/common-errors"
 
 const uploadRoute = express.Router()
 

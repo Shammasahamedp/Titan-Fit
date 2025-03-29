@@ -1,7 +1,7 @@
 import express from "express"
-import { OtpController } from "../controllers/otp-controller"
-import { OtpService } from "../services/otp/OtpService"
-import { OtpRepository } from "../repositories/otp/otp-repository"
+import { OtpController } from "../../controllers/otp-controller"
+import { OtpService } from "../../services/otp/OtpService"
+import { OtpRepository } from "../../repositories/otp/otp-repository"
 import { Request,Response } from "express"
 
 const otpRoute = express.Router()

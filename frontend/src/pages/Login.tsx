@@ -1,29 +1,32 @@
-import { Link } from "react-router-dom";
-import InputField from "@/components/userComponents/InputField";
-import { GoogleLogin } from "@react-oauth/google";
+import { Link, useNavigate } from "react-router-dom";
+import InputField from "@/components/common/InputField";
+import { CredentialResponse,GoogleLogin } from "@react-oauth/google";
 import { LoginFormInput } from "@/interfaces/IloginFormInput";
 import { loginSchema } from "@/schemas/login-schema";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { login, logout } from "@/api/auth";
+import { googleLogin, login } from "@/api/auth";
 import { ToastContainer } from "react-toastify";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
-import SelectField from "@/components/userComponents/SelectField";
+import SelectField from "@/components/common/SelectField";
 import { useDispatch, useSelector } from "react-redux";
 import { logingStart, loginSuccess,loginFailure } from "@/reduxStore/slices/user-slice";
 import { trainerLoginFailure, trainerLoginStart,trainerLoginSuccess } from "@/reduxStore/slices/trainer-slice";
 import { RootState } from "@/reduxStore/store";
+import { commonErrors } from "@/messages/common-error";
 export default function Login() {
   
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const { userLoading } = useSelector((state: RootState) => state.user);
   const { trainerLoading } = useSelector((state: RootState) => state.trainer);
   const {
     register,
     handleSubmit,
+    setError,
+    watch,
     formState: { errors },
   } = useForm<LoginFormInput>({ resolver: yupResolver(loginSchema) });
-
   const onSubmit = async (data: LoginFormInput) => {
     try {
       if(data.role === 'user'){
@@ -34,14 +37,16 @@ export default function Login() {
         console.log("clicked", userLoading);
         console.log(response);
         if (response?.data.success) {
+          const {_id,name,email} = response.data.data.user
           dispatch(
             loginSuccess({
-              user: response.data.data.user,
+              user: {_id,name,email,role:'user'},
               token: response.data.data.accessToken,
             })
           );
   
           showSuccessToast(response.data.message);
+          navigate('/user/home')
         }
       }else if(data.role === 'trainer'){
         
@@ -51,9 +56,10 @@ export default function Login() {
         console.log("clicked", trainerLoading);
         console.log(response);
         if (response?.data.success) {
+          const {_id,name,email} = response.data.data.trainer
           dispatch(
             trainerLoginSuccess({
-              trainer: response.data.data.trainer,
+              trainer: {_id,name,email,role:'trainer'},
               token: response.data.data.accessToken,
             })
           );
@@ -63,17 +69,89 @@ export default function Login() {
       }
      
     } catch (error: any) {
+     
       if(data.role === 'user'){
+        if(!error.response){
+          dispatch(loginFailure(commonErrors.NETWORK_ISSUE))
+          showErrorToast(commonErrors.NETWORK_ISSUE)
+        }
         console.log('this is error',error)
         dispatch(loginFailure(error?.response.data.message))
       }else if(data.role === 'trainer'){
+        if(!error.response){
+          dispatch(trainerLoginFailure(commonErrors.NETWORK_ISSUE))
+          showErrorToast(commonErrors.NETWORK_ISSUE)
+        }
         dispatch(trainerLoginFailure(error?.response.data.message))
       }
       showErrorToast(error?.response.data.message);
     }
   };
+  const handleGoogleSignin = async (response:CredentialResponse)=>{
+    const role=watch('role')
+    try {
+
+      const idToken = response.credential
+      console.log('this is token',idToken)
+      
+      if(!role){
+        setError('role',{type:'manual',message:'you should select the role to proceed'})
+        return 
+      }
+      console.log(role)
+   if(idToken){
+    const tokenResponse= await googleLogin(idToken,role)
+    console.log(tokenResponse)
+    if(role === 'user'){
+      dispatch(logingStart())
+      if(tokenResponse?.data.success){
+        const {_id,name,email} = tokenResponse.data.data.user
+        dispatch(loginSuccess({
+            user:{_id,name,email,role:'user'},
+            token:tokenResponse.data.data.accessToken
+        }))
+        showSuccessToast(tokenResponse.data.data.message)
+        navigate('/user/home')
+        
+     }
+    }else if(role === 'trainer'){
+      dispatch(trainerLoginStart())
+      if(tokenResponse?.data.success){
+        const {_id,name,email} = tokenResponse.data.data.trainer
+        dispatch(trainerLoginSuccess({
+          trainer:{_id,name,email,role:'trainer'},
+          token:tokenResponse.data.data.accessToken
+        }))
+
+        showSuccessToast(tokenResponse.data.data.message)
+        navigate('/trainer/dashboard')
+      }
+    }
+    
+   }
+    
+
+    } catch (error:any) {
+       if(role==='user'){
+        if(!error.response){
+          dispatch(loginFailure(commonErrors.NETWORK_ISSUE))
+          showErrorToast(commonErrors.NETWORK_ISSUE)
+         }
+         dispatch(loginFailure(error?.response.data.message))
+       }else if(role === 'trainer'){
+        if(!error.response){
+          dispatch(trainerLoginFailure(commonErrors.NETWORK_ISSUE))
+          showErrorToast(commonErrors.NETWORK_ISSUE)
+         }
+         dispatch(trainerLoginFailure(error?.response.data.data.message))
+       }
+       showErrorToast(error?.response.data.data.message)
+    }
+  }
   return (
+    
     <div className="relative flex items-center justify-center min-h-screen bg-[url('/black-bg.jpg')] bg-cover bg-center bg-black/60">
+      
       <img
         src="/titan-fit.png"
         alt="asdf"
@@ -138,7 +216,7 @@ export default function Login() {
 
         {/* Google Login */}
 
-        <GoogleLogin onSuccess={() => console.log("")} />
+        <GoogleLogin  onSuccess={handleGoogleSignin} onError={()=>console.log('error ocuured')} />
 
         {/* Sign Up Link */}
         <p className="text-center text-sm text-gray-600 mt-4">

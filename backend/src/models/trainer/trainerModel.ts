@@ -1,7 +1,6 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { ITrainerModel } from "./ItrainerModel";
 
-interface ItrainerDocument extends ITrainerModel, Document {}
 
 const TrainerSchema: Schema = new Schema(
   {
@@ -18,11 +17,12 @@ const TrainerSchema: Schema = new Schema(
     approved: { type: Boolean, default: false },
     availableSlots: { type: Types.ObjectId },
     priceForSession: { type: Number },
+    googleId:{type:String}
   },
   { timestamps: true }
 );
 
-export const trainerModel = mongoose.model<ItrainerDocument>(
+export const trainerModel = mongoose.model<ITrainerModel>(
   "Trainer",
   TrainerSchema
 );

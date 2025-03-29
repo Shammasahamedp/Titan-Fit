@@ -17,5 +17,4 @@ const userController = new UserController(userService)
 
 userRouter.post('/auth/signup',validate(signUpSchema),(req:Request,res:Response)=> userController.registerUser(req,res))
 userRouter.post('/auth/login',validate(loginSchema),(req:Request,res:Response)=> userController.loginUser(req,res))
-
 export default userRouter
