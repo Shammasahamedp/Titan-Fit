@@ -21,4 +21,8 @@ export class UserRepository implements IUserRepository{
           {new:true}
         )
     }
+    async findUserById(userId: string): Promise<IUserDocument | null> {
+      console.log('this is in repository',userId)
+        return await userModel.findById(userId)
+    }
 }

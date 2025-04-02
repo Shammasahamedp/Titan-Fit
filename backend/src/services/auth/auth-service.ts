@@ -34,7 +34,7 @@ export class AuthService implements IAuthService{
                 
                 const accessToken = generateAccessToken(user?._id.toString() as string)
             const refreshToken = generateRefreshToken(user?._id.toString() as string)
-
+            console.log('this is tokens',accessToken,'llllllllllllllllllllllllllllllllllllllllllllllllllllllll',refreshToken)
             return {user,accessToken,refreshToken}
             }
             if(!user){

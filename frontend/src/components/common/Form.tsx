@@ -1,5 +1,19 @@
+import { useForm } from "react-hook-form"
 import InputField from "./InputField"
-const Form = () => {
+import React, { useState } from "react"
+import { IFormProps } from "@/interfaces/IFormProps"
+
+const Form:React.FC<IFormProps> = ({fieldConfig,initialData}) => {
+  if(!initialData){
+    return <h1>No data available</h1>
+  }
+  const [data,setData] = useState(initialData)
+  console.log('data',data)
+  const {
+   register,
+   handleSubmit,
+   formState:{errors}
+  } = useForm()
   return (
     <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
           <h2 className="text-2xl font-bold text-center text-black">Your Profile</h2>
@@ -7,27 +21,14 @@ const Form = () => {
            
           </p>
           <div className="grid grid-cols-2 gap-4">
-            {/* Name Input */}
-            {
-                
-            }
-            
-
-            {/* Email Input */}
-            
-            {/* Password Input */}
            
-            {/* confirm Password Input */}
-           
-            {/* gender */}
-            
-            {/* age */}
-            
-            {/* fitness level */}
-
-            
-            {/*  fitness goal */}
-            
+              {
+                fieldConfig.map((field,index)=>{
+                  console.log('this is field.value',field.value)
+                  return (
+                  <InputField key={index} type={field.type} label={field.label} value={field.value} register={register} name={field.name} />
+                )})
+              }
           </div>
           
 

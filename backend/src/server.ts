@@ -2,7 +2,7 @@ import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 dotenv.config()
-import session from "express-session"
+// import session from "express-session"
 import cookieParser from "cookie-parser"
 console.log('id',process.env.GOOGLE_CLIENT_ID)
 import { connectDB } from "./config/db"
@@ -28,12 +28,12 @@ app.use(cors({
     credentials:true
 }))
 connectDB()
-app.use(session({
-    secret:'adfarqwtgvbaa',
-    resave:false,
-    saveUninitialized:false
-}))
 app.use(cookieParser())
+// app.use(session({
+//     secret:'adfarqwtgvbaa',
+//     resave:false,
+//     saveUninitialized:false
+// }))
 app.use(express.json())
 app.use('/user',userRouter)
 app.use('/trainer',trainerRoute)

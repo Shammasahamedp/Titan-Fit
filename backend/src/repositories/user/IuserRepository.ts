@@ -5,4 +5,5 @@ export interface IUserRepository{
     createUser(data:IUserSignUp):Promise<IUserDocument>
     findOne(googleId:string):Promise<IUserDocument|null>
     saveGoogleId(email:string,googleId:string):Promise<IUserDocument|null>
+    findUserById(userId:string):Promise<IUserDocument|null>
 }

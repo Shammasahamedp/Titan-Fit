@@ -5,16 +5,21 @@ import { Menu, X } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/reduxStore/store";
 import { clearToken } from "@/api/localStorage";
+import { authLogout } from "@/api/auth";
 import { logout } from "@/reduxStore/slices/user-slice";
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
 
-  const userLogout = () => {
+  const userLogout = async() => {
+   try {
+   await authLogout()
     clearToken();
     dispatch(logout());
+   } catch (error) {
+    
+   }
   };
 
   return (
@@ -22,7 +27,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         {/* Logo */}
         <div className="flex-1">
-        <Link to="/" className=" items-center hidden sm:block ">
+        <Link to="/" className=" items-center  ">
           <img src="/titan-fit.png" alt="Logo" className="h-10" />
         </Link>
         </div>

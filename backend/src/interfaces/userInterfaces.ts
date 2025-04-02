@@ -25,3 +25,16 @@ export interface ILoginResponse  {
     refreshToken:string
 }
 
+export interface IUserProfile {
+    name:string;
+    email:string;
+    gender:string;
+    age:number;
+    fitnessGoal:string;
+    fitnessLevel:string;
+    phone?:number;
+    profilePicture?:string;
+    weight?:number;
+    height?:number;
+}
+

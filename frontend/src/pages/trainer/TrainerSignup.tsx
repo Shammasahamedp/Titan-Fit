@@ -34,11 +34,16 @@ export default function TrainerSignup() {
   const onSubmit = async (data: TrainerSignupSchemaInput) => {
     try {
       setTrainerData(data);
+      console.log(data.email)
+      console.log('hasdf')
       const isEmailExistResponse = await findByEmail(data.email)
-      if(isEmailExistResponse){
+      console.log(!isEmailExistResponse.data.success)
+      if(!isEmailExistResponse.data.success){
+        console.log('sfas')
         showErrorToast(isEmailExistResponse.data.message)
         return 
       }
+     console.log('before sendotp')
       const otpResponse = await sendOtp(data.email);
       if (otpResponse?.data.success) {
         showSuccessToast(otpResponse.data.message);

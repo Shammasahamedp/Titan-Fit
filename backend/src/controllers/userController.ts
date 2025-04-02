@@ -25,7 +25,7 @@ export class UserController {
                 httpOnly:true,
                 secure:false,
                 maxAge:7*24*60*60*1000,
-                sameSite:"strict"
+                sameSite:"lax"
             })
             const data = {
                 user:loginResults?.user,
@@ -36,5 +36,14 @@ export class UserController {
             res.status(401).json({success:false,message:userMessages.LOGIN_FAILED})
         }
     }
-    
+    async getProfile(req:Request,res:Response):Promise<void>{
+        try {
+            const userProfile = await this.userService.getUserProfile(res.locals.user?.userId)
+            res.status(200).json({success:true,userProfile,message:userMessages.GET_PROFILE_SUCCESS})
+
+        } catch (error:any) {
+            console.log(error)
+            res.status(400).json({success:false,message:error.message})
+        }
+    }
 }

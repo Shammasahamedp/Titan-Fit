@@ -32,9 +32,7 @@ export default function Login() {
       if(data.role === 'user'){
        
         dispatch(logingStart());
-        console.log("clicked", userLoading);
         const response = await login(data);
-        console.log("clicked", userLoading);
         console.log(response);
         if (response?.data.success) {
           const {_id,name,email} = response.data.data.user
@@ -51,9 +49,7 @@ export default function Login() {
       }else if(data.role === 'trainer'){
         
         dispatch(trainerLoginStart());
-        console.log("clicked", trainerLoading);
         const response = await login(data);
-        console.log("clicked", trainerLoading);
         console.log(response);
         if (response?.data.success) {
           const {_id,name,email} = response.data.data.trainer
@@ -143,9 +139,9 @@ export default function Login() {
           dispatch(trainerLoginFailure(commonErrors.NETWORK_ISSUE))
           showErrorToast(commonErrors.NETWORK_ISSUE)
          }
-         dispatch(trainerLoginFailure(error?.response.data.data.message))
+         dispatch(trainerLoginFailure(error?.response.data.message))
        }
-       showErrorToast(error?.response.data.data.message)
+       showErrorToast(error?.response.data.message)
     }
   }
   return (
@@ -168,28 +164,31 @@ export default function Login() {
 
         <InputField
           label="Email"
+          name="email"
           type="email"
           placeholder="Enter Your Email"
-          register={register("email")}
+          register={register}
           error={errors.email?.message}
         />
 
         {/* Password Input */}
         <InputField
           label="Password"
+          name="password"
           type="password"
           placeholder="Enter Your Password"
-          register={register("password")}
+          register={register}
           error={errors.password?.message}
         />
         {/* Role input */}
         <SelectField
           label="Role"
+          name="role"
           options={[
             { value: "user", label: "I am a user" },
             { value: "trainer", label: "I am a trainer" },
           ]}
-          register={register("role")}
+          register={register}
           error={errors.role?.message}
         />
         {/* Forgot Password */}

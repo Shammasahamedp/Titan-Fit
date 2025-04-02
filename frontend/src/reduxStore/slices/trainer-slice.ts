@@ -27,6 +27,7 @@ const trainerSlice = createSlice({
             
         },
         trainerLogout:(state)=>{
+            console.log('hello')
             state.error = null
             state.trainerLoading = false
             state.token = null

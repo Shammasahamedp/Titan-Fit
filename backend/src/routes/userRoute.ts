@@ -6,6 +6,7 @@ import { UserRepository } from "../repositories/user/userRepository"
 import { validate } from "../middlewares/validation-middleware"
 import { loginSchema, signUpSchema } from "../schema/validation-schema"
 import { TrainerRepository } from "../repositories/trainer/trainerRepository"
+import { jwtTokenVerify } from "../middlewares/jwt-token-validation"
 
 const userRouter = express.Router()
 
@@ -17,4 +18,5 @@ const userController = new UserController(userService)
 
 userRouter.post('/auth/signup',validate(signUpSchema),(req:Request,res:Response)=> userController.registerUser(req,res))
 userRouter.post('/auth/login',validate(loginSchema),(req:Request,res:Response)=> userController.loginUser(req,res))
+userRouter.get('/profile',jwtTokenVerify,(req:Request,res:Response)=>userController.getProfile(req,res))
 export default userRouter

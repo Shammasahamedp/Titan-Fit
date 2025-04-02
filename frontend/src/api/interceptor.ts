@@ -1,9 +1,13 @@
-import { getAccessToken } from "./localStorage";
-import {refreshToken} from './auth'
+import { clearToken, getAccessToken } from "./localStorage";
+import {authLogout, refreshToken} from './auth'
 import { axiosInstance } from "./axiosInstance";
-
+import { logout } from "@/reduxStore/slices/user-slice";
+import { store } from "@/reduxStore/store";
+import {jwtDecode} from 'jwt-decode'
 let isRefreshing =false
 let failedQueue:any[] = []
+
+
 
 const processQueue = (error:any,token:string|null=null)=>{
     failedQueue.forEach((prom)=>{
@@ -18,6 +22,8 @@ axiosInstance.interceptors.request.use(
     (config)=>{
         const accessToken = getAccessToken()
         if(accessToken){
+            console.log('this isintrceproiiojfadcc',accessToken)
+            console.log('',jwtDecode(accessToken))
             config.headers["Authorization"] = `Bearer ${accessToken}`
         }
         return config
@@ -30,7 +36,7 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     async(error) =>{
         const originalRequest = error.config
-        const authEndPoints = ['/user/auth/login','/trainer/auth/login','/admin/auth/login']
+        const authEndPoints = ['/user/auth/login','/trainer/auth/login','/admin/auth/login','/auth/google/gettoken']
         if(authEndPoints.some((endPoint)=>originalRequest.url.includes(endPoint))){
             return Promise.reject(error)
         }
@@ -52,6 +58,7 @@ axiosInstance.interceptors.response.use(
 
             try{
                 const newAccessToken = await refreshToken()
+                console.log('new accesstoken',newAccessToken)
                 axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`
                 processQueue(null,newAccessToken)
                 return axiosInstance(originalRequest)
@@ -62,6 +69,11 @@ axiosInstance.interceptors.response.use(
             }finally{
                 isRefreshing = false
             }
+        }
+        if(error.response?.status===403){
+            authLogout()
+           clearToken()
+           store.dispatch(logout())
         }
         return Promise.reject(error)
     }

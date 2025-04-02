@@ -33,13 +33,5 @@ export const trainerSignupSchema = z.object({
     gender:z.string(),
     age:z.number().min(15,{message:validationMessage.INVALID_AGE}),
     yearsOfExperience:z.number().positive({message:validationMessage.NEGETIVE_YEARSOF_EXP}),
-    trainerCertificate:z.custom<FileList>((val)=>val instanceof FileList,{
-        message:validationMessage.INVALID_FILE_TYPE
-    }).refine((files)=>files.length === 1,{
-        message:validationMessage.REQUIRE_SINGLE_FILE
-    }).refine((files)=>files[0].type === 'application/pdf',{
-        message:validationMessage.PDF_REQUIRED
-    }).refine((files)=>files[0].size<= 5*1024*1024,{
-        message:validationMessage.EXCESS_FILE_SIZE
-    })
+    trainerCertificate:z.string({message:validationMessage.REQUIRE_SINGLE_FILE})
 })

@@ -1,6 +1,10 @@
 import React from "react";
 import Navbar from "@/components/userComponents/Navbar";
+import { useDispatch } from "react-redux";
+import { adminLogout } from "@/reduxStore/slices/admin-slice";
 const AdminDashboard: React.FC = () => {
+ const dispatch = useDispatch()
+ dispatch(adminLogout())
   return (
     <div className="flex h-screen bg-black text-white">
       {/* Sidebar */}

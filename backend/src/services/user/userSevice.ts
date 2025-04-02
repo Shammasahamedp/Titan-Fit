@@ -1,41 +1,92 @@
-import { IUserSignUp, IUserDocument, IUserLogin, ILoginResponse } from "../../interfaces/userInterfaces";
+import {
+  IUserSignUp,
+  IUserDocument,
+  IUserLogin,
+  ILoginResponse,
+  IUserProfile,
+} from "../../interfaces/userInterfaces";
 import { IUserRepository } from "../../repositories/user/IuserRepository";
 import { IUserService } from "./IuserService";
-import { hashPassword,comparePassword } from "../../utils/password";
-import { generateAccessToken,generateRefreshToken } from "../../utils/jwt";
+import { hashPassword, comparePassword } from "../../utils/password";
+import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
+import { userMessages } from "../../messages/userRelated";
 
-export class UserService implements IUserService{
-    private userRepository:IUserRepository;
-    private trainerRepository:ITrainerRepository;
-    constructor(userRepository:IUserRepository,trainerRepository:ITrainerRepository){
-        this.userRepository = userRepository
-        this.trainerRepository = trainerRepository
-    }
+export class UserService implements IUserService {
+  private userRepository: IUserRepository;
+  private trainerRepository: ITrainerRepository;
+  constructor(
+    userRepository: IUserRepository,
+    trainerRepository: ITrainerRepository
+  ) {
+    this.userRepository = userRepository;
+    this.trainerRepository = trainerRepository;
+  }
 
   async registerUser(data: IUserSignUp): Promise<IUserDocument> {
-        const existingUser = await this.userRepository.findUserByEmail(data.email)
-        const existingTrainer = await this.trainerRepository.findTrainerByEmail(data.email)
-        if(existingUser || existingTrainer){
-            throw new Error("User already exist")
-        }
-        data.password = await hashPassword(data.password)
-        return await this.userRepository.createUser(data)
+    const existingUser = await this.userRepository.findUserByEmail(data.email);
+    const existingTrainer = await this.trainerRepository.findTrainerByEmail(
+      data.email
+    );
+    if (existingUser || existingTrainer) {
+      throw new Error("User already exist");
     }
-    
-    async loginUser(data:IUserLogin):Promise<ILoginResponse>{
-        const user = await this.userRepository.findUserByEmail(data.email)
-        if(!user){
-            throw new Error("User not found")
-        }
-       const isValid= comparePassword(data.password,user.password)
-       if(!isValid){
-          throw new Error('Invalid credentials')
-       }
-        const accessToken = generateAccessToken(user._id.toString()) 
-        const refreshToken = generateRefreshToken(user._id.toString())
-       
+    data.password = await hashPassword(data.password);
+    return await this.userRepository.createUser(data);
+  }
 
-        return  {user,accessToken,refreshToken}
+  async loginUser(data: IUserLogin): Promise<ILoginResponse> {
+    const user = await this.userRepository.findUserByEmail(data.email);
+    if (!user) {
+      throw new Error("User not found");
     }
+    const isValid = comparePassword(data.password, user.password);
+    if (!isValid) {
+      throw new Error("Invalid credentials");
+    }
+    const accessToken = generateAccessToken(user._id.toString());
+    const refreshToken = generateRefreshToken(user._id.toString());
+
+    return { user, accessToken, refreshToken };
+  }
+  async getUserProfile(userId: string): Promise<IUserProfile | null> {
+    try {
+      console.log('thsi is userId',userId)
+      const user = await this.userRepository.findUserById(userId);
+      console.log('user in dffds',user)
+      if (!user) {
+        throw new Error(userMessages.USER_NOT_FOUND);
+        
+      }
+      const {
+        name,
+        email,
+        gender,
+        age,
+        fitnessGoal,
+        fitnessLevel,
+        phone,
+        profilePicture,
+        weight,
+        height,
+      } = user;
+
+      const userProfile = {
+        name,
+        email,
+        gender,
+        age,
+        fitnessGoal,
+        fitnessLevel,
+        phone,
+        profilePicture,
+        weight,
+        height,
+      };
+      return userProfile
+    } catch (error) {
+      console.log('error in service',error)
+         throw new Error(userMessages.ERROR_GET_PROFILE)
+    }
+  }
 }

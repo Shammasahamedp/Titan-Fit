@@ -9,6 +9,8 @@ import Signup from "./pages/user/Signup"
 import TrainerSignup from "./pages/trainer/TrainerSignup"
 import UserDashboard from "./pages/user/UserDashboard"
 import PublicRoute from "./routes/PublicRoute"
+import AdminDashboard from "./pages/admin/AdminDashboard"
+import TrainerDashboard from "./pages/trainer/TrainerDashboard"
 
 function App() {
 
@@ -32,11 +34,11 @@ function App() {
           </Route>
 
           <Route element={<AdminProtectedRoute/>}>
-            {/* <Route path='/admin/dashboard' element={}/> */}
+            <Route path='/admin/dashboard' element={<AdminDashboard/>}/>
           </Route>
 
           <Route element={<TrainerProtectedRoute/>}>
-            {/* <Route path='/trainer/dashboard' element={}/> */}
+            <Route path='/trainer/dashboard' element={<TrainerDashboard/>}/>
           </Route>
       </Routes>
     </Router>

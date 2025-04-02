@@ -15,4 +15,5 @@ const authRoute = express.Router()
 
 authRoute.get('/check-email',(req:Request,res:Response)=>authController.findUserOrTrainerByEmail(req,res))
 authRoute.post('/google/gettoken',googleTokenVerify,(req:Request,res:Response)=>authController.googleLogin(req,res))
+authRoute.post('/logout',(req:Request,res:Response)=>authController.logout(req,res))
 export default authRoute

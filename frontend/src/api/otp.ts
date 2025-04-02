@@ -5,6 +5,7 @@ export const sendOtp = async(email:string)=>{
 }
 
 export const verifyOtp = async(email:string,otp:string)=>{
+    console.log('this is verifyotp')
     return axiosInstance.post('http://localhost:3000/otp/verify',{email,otp})
 }
 

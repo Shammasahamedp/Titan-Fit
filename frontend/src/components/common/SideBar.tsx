@@ -24,9 +24,9 @@ const SideBar: React.FC<ISidebarProps> = ({ items }) => {
 
       {/* Sidebar */}
       <div
-  className={`fixed top-0 left-0 pt-16 h-full w-64 bg-black border-r border-[#FFC436] p-4 transition-transform z-50 ${
+  className={`fixed top-0 left-0 pt-16 h-full  w-64 bg-black border-r border-[#FFC436] p-4 transition-transform z-50 ${
     isOpen ? "translate-x-0" : "-translate-x-full"
-  } md:relative md:translate-x-0`}
+  }   md:translate-x-0`}
 >
         {/* Close Button for Mobile */}
         <button
@@ -35,7 +35,7 @@ const SideBar: React.FC<ISidebarProps> = ({ items }) => {
         >
           <X size={24} />
         </button>
-  <h2 className="text-3xl text-center font-bold mb-4">My Panel</h2>
+  <h2 className="text-3xl text-center font-bold mb-4 ">My Panel</h2>
         <nav className="space-y-4 mt-8">
         
           {items.map((item, index) => (

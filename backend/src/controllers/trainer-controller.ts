@@ -27,7 +27,7 @@ export class TrainerController {
                 httpOnly:true,
                 secure:false,
                 maxAge:7*24*60*60*1000,
-                sameSite:"strict"
+                sameSite:"lax"
             })
             const data ={
                 trainer:response?.trainer,

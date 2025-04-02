@@ -4,21 +4,30 @@ import { SignupFormatInputs } from "@/interfaces/user/IsignUpFomatInput";
 import { LoginFormInput } from "@/interfaces/IloginFormInput";
 import { TrainerSignupData } from "@/interfaces/trainer/ItrainerSignupInputs";
 import { AdminLoginFormInput } from "@/interfaces/admin/ILoginFormInput";
-import { logout } from "@/reduxStore/slices/user-slice";
 
 
 
 
 export const login = async(loginData:LoginFormInput)=>{
     try {
-        const response = await axiosInstance.post(`http://localhost:3000/${loginData.role}/auth/login`,{email:loginData.email,password:loginData.password})
+        const response = await axiosInstance.post(`http://localhost:3000/${loginData.role}/auth/login`,{email:loginData.email,password:loginData.password},{withCredentials:true})
         console.log(response)
-    setToken(response.data.accessToken)
+    setToken(response.data.data.accessToken)
     return response
     } catch (error) {
         throw error
     }
 }
+
+export const authLogout = async()=>{
+    try {
+        const response = await axiosInstance.post('http://localhost:3000/auth/logout',{},{withCredentials:true})
+        return(response.data.success)
+    } catch (error) {
+        throw error
+    }
+}
+
 export const findByEmail = async(email:string)=>{
     try {
         return await axiosInstance.get(`http://localhost:3000/auth/check-email?email=${email}`)
@@ -49,7 +58,7 @@ export const signUp = async(data:SignupFormatInputs)=>{
 
 export const trainerSignup = async(data:TrainerSignupData)=>{
     try {
-        const response = await axiosInstance.post('http://localhost:3000/trainer/auth/signup',data)
+        const response = await axiosInstance.post('http://localhost:3000/trainer/auth/signup',data,{withCredentials:true})
     if(response.data){
         return response
     }
@@ -62,9 +71,11 @@ export const googleLogin = async(token:string,role:string)=>{
     try {
         const response = await axiosInstance.post(
             'http://localhost:3000/auth/google/gettoken',
-            {token,role}
+            {token,role},{withCredentials:true}
         )
         if(response.data){
+            console.log('this is response.data',response.data)
+            setToken(response.data.data.accessToken)
             return response
         }
 
@@ -80,11 +91,12 @@ export const googleLogin = async(token:string,role:string)=>{
 export const refreshToken = async()=>{
     
     try {
+        console.log('thisi si refershtmethod ')
         const {data} = await axiosInstance.post('http://localhost:3000/token/refresh',{},{withCredentials:true})
         setToken(data.accessToken)
         return data.accessToken
     } catch (error) {
-        logout()
+       
         throw error
     }
 }

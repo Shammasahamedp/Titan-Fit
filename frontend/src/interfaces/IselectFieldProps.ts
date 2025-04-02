@@ -1,8 +1,9 @@
-import { UseFormRegisterReturn } from "react-hook-form";
+import { UseFormRegister } from "react-hook-form";
 
 export interface IselectFieldProps{
     label :string;
-    register ?: UseFormRegisterReturn;
+    name:string
+    register : UseFormRegister<any>;
     error?:string;
     options:{value:string,label:string}[]
 }
