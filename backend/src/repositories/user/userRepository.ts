@@ -1,11 +1,10 @@
-import { IUserSignUp, IUserDocument } from "../../interfaces/userInterfaces";
+import { IUserSignUp, IUserDocument, IUserProfile } from "../../interfaces/userInterfaces";
 import { userModel } from "../../models/user/userModel";
 import { IUserRepository } from "./IuserRepository";
 
 
 export class UserRepository implements IUserRepository{
   async  createUser(data: IUserSignUp): Promise<IUserDocument> {
-    console.log('this is data',data)
         return (await userModel.create(data)) as IUserDocument
     }
   async  findUserByEmail(email: string): Promise<IUserDocument | null> {
@@ -22,7 +21,9 @@ export class UserRepository implements IUserRepository{
         )
     }
     async findUserById(userId: string): Promise<IUserDocument | null> {
-      console.log('this is in repository',userId)
         return await userModel.findById(userId)
+    }
+   async editUserProfile(userId: string, profileData: IUserProfile): Promise<IUserDocument | null> {
+        return await userModel.findByIdAndUpdate(userId,profileData)
     }
 }

@@ -39,11 +39,25 @@ export class UserController {
     async getProfile(req:Request,res:Response):Promise<void>{
         try {
             const userProfile = await this.userService.getUserProfile(res.locals.user?.userId)
-            res.status(200).json({success:true,userProfile,message:userMessages.GET_PROFILE_SUCCESS})
+            if(userProfile){
+                res.status(200).json({success:true,userProfile,message:userMessages.GET_PROFILE_SUCCESS})
+            }
 
         } catch (error:any) {
             console.log(error)
             res.status(400).json({success:false,message:error.message})
+        }
+    }
+    async editProfile(req:Request,res:Response):Promise<void>{
+        try {
+            console.log(req.body)
+            const returnUserData = await this.userService.editUserProfile(res.locals.user?.userId,req.body)
+            if(returnUserData){
+                console.log('this is userData',returnUserData)
+                res.status(200).json({success:true,message:userMessages.EDIT_PROFILE_SUCCESS,returnUserData})
+            }
+        } catch (error:any) {
+            res.status(400).json({success:false,message:userMessages.EDIT_PROFILE_FAILURE})
         }
     }
 }

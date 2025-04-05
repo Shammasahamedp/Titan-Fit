@@ -15,7 +15,6 @@ import { trainerLoginFailure, trainerLoginStart,trainerLoginSuccess } from "@/re
 import { RootState } from "@/reduxStore/store";
 import { commonErrors } from "@/messages/common-error";
 export default function Login() {
-  
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const { userLoading } = useSelector((state: RootState) => state.user);
@@ -27,6 +26,8 @@ export default function Login() {
     watch,
     formState: { errors },
   } = useForm<LoginFormInput>({ resolver: yupResolver(loginSchema) });
+
+
   const onSubmit = async (data: LoginFormInput) => {
     try {
       if(data.role === 'user'){
@@ -164,31 +165,28 @@ export default function Login() {
 
         <InputField
           label="Email"
-          name="email"
           type="email"
           placeholder="Enter Your Email"
-          register={register}
+          register={register('email')}
           error={errors.email?.message}
         />
 
         {/* Password Input */}
         <InputField
           label="Password"
-          name="password"
           type="password"
           placeholder="Enter Your Password"
-          register={register}
+          register={register('password')}
           error={errors.password?.message}
         />
         {/* Role input */}
         <SelectField
           label="Role"
-          name="role"
           options={[
             { value: "user", label: "I am a user" },
             { value: "trainer", label: "I am a trainer" },
           ]}
-          register={register}
+          register={register('role')}
           error={errors.role?.message}
         />
         {/* Forgot Password */}

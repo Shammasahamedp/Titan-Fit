@@ -3,7 +3,6 @@ import {authLogout, refreshToken} from './auth'
 import { axiosInstance } from "./axiosInstance";
 import { logout } from "@/reduxStore/slices/user-slice";
 import { store } from "@/reduxStore/store";
-import {jwtDecode} from 'jwt-decode'
 let isRefreshing =false
 let failedQueue:any[] = []
 
@@ -22,8 +21,6 @@ axiosInstance.interceptors.request.use(
     (config)=>{
         const accessToken = getAccessToken()
         if(accessToken){
-            console.log('this isintrceproiiojfadcc',accessToken)
-            console.log('',jwtDecode(accessToken))
             config.headers["Authorization"] = `Bearer ${accessToken}`
         }
         return config
@@ -58,7 +55,6 @@ axiosInstance.interceptors.response.use(
 
             try{
                 const newAccessToken = await refreshToken()
-                console.log('new accesstoken',newAccessToken)
                 axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`
                 processQueue(null,newAccessToken)
                 return axiosInstance(originalRequest)

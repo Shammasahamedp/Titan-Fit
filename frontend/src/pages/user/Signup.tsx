@@ -115,81 +115,73 @@ export default function Signup() {
 
             <InputField
               label="Name"
-              name="name"
               type="text"
               placeholder="Enter Your Name"
-              register={register}
+              register={register('name')}
               error={errors.name?.message}
             />
 
             {/* Email Input */}
             <InputField
               label="Email"
-              name="email"
               type="email"
               placeholder="Enter Your Email"
-              register={register}
+              register={register('email')}
               error={errors.email?.message}
             />
             {/* Password Input */}
             <InputField
               label="Password"
-              name="password"
               type="password"
               placeholder="Enter Your Password"
-              register={register}
+              register={register('password')}
               error={errors.password?.message}
             />
             {/* confirm Password Input */}
             <InputField
               label="Confirm Password"
-              name="confirmPassword"
               type="password"
               placeholder="Confirm Your Password"
-              register={register}
+              register={register('confirmPassword')}
               error={errors.confirmPassword?.message}
             />
             {/* gender */}
             <InputField
               label="Gender"
-              name="gender"
               type="text"
               placeholder="Enter Your Gender"
-              register={register}
+              register={register('gender')}
               error={errors.gender?.message}
             />
             {/* age */}
             <InputField
               label="Age"
-              name="age"
               type="number"
               placeholder="Enter Your Age"
-              register={register}
+              register={register('age',{valueAsNumber:true})}
               error={errors.age?.message}
             />
             {/* fitness level */}
 
             <SelectField
               label="Fitness Level"
-              name="fitnessLevel"
               options={[
                 { value: "beginner", label: "Beginner" },
                 { value: "intermediate", label: "Intermediate" },
                 { value: "advanced", label: "Advanced" },
               ]}
-              register={register}
+              register={register('fitnessGoal')}
               error={errors.fitnessLevel?.message}
             />
             {/*  fitness goal */}
             <SelectField
               label="Fitness Goal"
-              name="fitnessGoal"
               options={[
                 { value: "fatloss", label: "Fatloss" },
                 { value: "buildmuscle", label: "Build Muscle" },
                 { value: "maintenance", label: "Maintenance" },
               ]}
-              register={register}
+              register={register('fitnessLevel')}
               error={errors.fitnessGoal?.message}
             />
           </div>

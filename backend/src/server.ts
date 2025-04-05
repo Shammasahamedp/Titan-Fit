@@ -25,7 +25,8 @@ import authRoute from "./routes/common-routes/auth-route"
 const app = express()
 app.use(cors({
     origin:'http://localhost:5173',
-    credentials:true
+    credentials:true,
+    methods:['GET','POST','PUT','PATCH','DELETE']
 }))
 connectDB()
 app.use(cookieParser())

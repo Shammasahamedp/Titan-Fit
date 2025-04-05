@@ -1,4 +1,5 @@
 
+
 export interface SignupFormatInputs{
     name:string;
     email:string;
@@ -14,7 +15,7 @@ export interface IUserProfile{
     name:string;
     email:string;
     phone:string;
-    profilePicture:string;
+    profilePicture?:string;
     age:number;
     weight:number;
     height:number;
@@ -23,6 +24,17 @@ export interface IUserProfile{
     fitnessLevel:string;
 }
 
+export interface IUserEditProfile{
+    name:string;
+    email:string;
+    phone:string;
+    age:number;
+    weight:number;
+    height:number;
+    gender:string;
+    fitnessGoal:string;
+    fitnessLevel:string;
+}
 
 
 

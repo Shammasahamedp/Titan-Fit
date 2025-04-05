@@ -1,18 +1,17 @@
-import React, { useState } from "react";
+import React, {  } from "react";
 import { IinputFieldProps } from "@/interfaces/IinputFieldProps";
 const InputField: React.FC<IinputFieldProps> = ({
   label,
-  type = "text",
-  name,
+  type ,
   placeholder,
   className,
   register,
   error,
-  value,
+  disabled=false,
   
 }) => {
- 
-  const [val,setValue] = useState(value)
+ console.log('this is error',error)
+  // const [val,setValue] = useState(value)
   return (
     <div className="mt-6">
       <label className="block text-black text-sm font-medium">{label}</label>
@@ -23,21 +22,23 @@ const InputField: React.FC<IinputFieldProps> = ({
             : "border-gray-300 focus:ring-gray-500"
         } `} rows={4}
         placeholder={placeholder}
-        {...register(name as string)}
-        
+        {...register}
+        name={register.name}
+        disabled={disabled}
         />
        ):(
         <input
         type={type}
-        {...register(name as string)}
-        className={`w-full px-4 py-2 mt-1 border rounded-lg focus:ring-2 outline-none ${
+         disabled = {disabled}
+        {...register}
+        name={register.name}
+        className={`text-black w-full px-4 py-2 mt-1 border rounded-lg focus:ring-2 outline-none ${
           error
             ? "border-red-500 focus:ring-red-500"
             : "border-gray-300 focus:ring-gray-500"
         } `}
         placeholder={placeholder}
-        value={val}
-        onChange={(e)=>setValue(e.target.value)}
+       
       />
        )}
      

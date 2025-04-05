@@ -2,8 +2,10 @@ import React from "react";
 import Navbar from "@/components/userComponents/Navbar";
 import { useDispatch } from "react-redux";
 import { adminLogout } from "@/reduxStore/slices/admin-slice";
+import { useNavigate } from "react-router-dom";
 const AdminDashboard: React.FC = () => {
  const dispatch = useDispatch()
+ const navigate = useNavigate()
  dispatch(adminLogout())
   return (
     <div className="flex h-screen bg-black text-white">
@@ -15,17 +17,18 @@ const AdminDashboard: React.FC = () => {
 
         <nav className="space-y-4">
           {[
-            "Overview",
-            "User management",
-            "Trainer management",
-            "Subscription management",
-            "Booking management",
-            "Meal plan management",
-            "Challenges and competitions",
-            "Ratings and review management",
+            
+            ["User management",'usermanagement'],
+            ["Trainer management",'trainermanagement'],
+            ["Subscription management",'subscriptionmanagement'],
+            ["Booking management",'bookingmanagement'],
+            ["Meal plan management",'mealplanmangement'],
+            ["Challenges and competitions",'challenges'],
+            ["Ratings and review management",'ratings'],
           ].map((item, index) => (
             <button
               key={index}
+              onClick={()=>navigate('/admin/')}
               className="block w-full text-left p-2 hover:bg-yellow-500 hover:text-black transition rounded"
             >
               {item}

@@ -89,4 +89,17 @@ export class UserService implements IUserService {
          throw new Error(userMessages.ERROR_GET_PROFILE)
     }
   }
+
+ async editUserProfile(userId:string,userProfileData: IUserProfile): Promise<IUserProfile | null> {
+      try {
+        console.log('this is userProfiledata')
+          const editedProfileData = await this.userRepository.editUserProfile(userId,userProfileData)
+          if(!editedProfileData){
+            throw new Error(userMessages.EDIT_PROFILE_FAILURE)
+          }
+          return editedProfileData
+      } catch (error) {
+          throw new Error(userMessages.EDIT_PROFILE_FAILURE)
+      }
+  }
 }
