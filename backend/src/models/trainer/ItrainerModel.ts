@@ -6,7 +6,7 @@ export interface ITrainerModel extends Document{
     password:string;
     gender:string;
     age:number;
-    phone?:number;
+    phone?:string;
     bio:string;
     profilePicture?:string;
     trainerCertificate:string;

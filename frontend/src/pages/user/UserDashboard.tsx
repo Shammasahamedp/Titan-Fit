@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Navbar from "@/components/userComponents/Navbar";
 import SideBar from "@/components/common/SideBar";
 import { useState } from "react";
-import { editUserProfile, getProfile } from "@/api/user-apicalls";
+import { editUserProfile, getProfile, uploadUserProfileImage } from "@/api/user-apicalls";
 import { IUserEditProfile, IUserProfile } from "@/interfaces/user-interfaces";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { userErrors } from "@/messages/userside-error";
@@ -70,6 +70,9 @@ const UserDashboard: React.FC = () => {
         reset(rest) 
       }
   }, [isEditing, reset]);
+
+
+  
   return (
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
       <Navbar />
@@ -77,6 +80,9 @@ const UserDashboard: React.FC = () => {
         {/* Sidebar */}
 
         <SideBar
+        profilePicture={userProfile?.profilePicture}
+        uploadProfilePicApi={uploadUserProfileImage}
+        role="user"
           items={[
             "my bookings",
             "my meal plan",

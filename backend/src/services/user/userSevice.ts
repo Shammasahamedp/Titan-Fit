@@ -92,7 +92,6 @@ export class UserService implements IUserService {
 
  async editUserProfile(userId:string,userProfileData: IUserProfile): Promise<IUserProfile | null> {
       try {
-        console.log('this is userProfiledata')
           const editedProfileData = await this.userRepository.editUserProfile(userId,userProfileData)
           if(!editedProfileData){
             throw new Error(userMessages.EDIT_PROFILE_FAILURE)
@@ -100,6 +99,18 @@ export class UserService implements IUserService {
           return editedProfileData
       } catch (error) {
           throw new Error(userMessages.EDIT_PROFILE_FAILURE)
+      }
+  }
+  async addProfilePic(userId: string, userProfilePic: string): Promise<string | null> {
+      try {
+        const userData = await this.userRepository.addProfilePic(userId,userProfilePic)
+         if(!userData){
+            throw new Error()
+         }
+         return userData?.profilePicture as string
+      } catch (error) {
+        console.log(error)
+        throw new Error(userMessages.ADD_PROFILE_IMAGE_FAILURE)
       }
   }
 }

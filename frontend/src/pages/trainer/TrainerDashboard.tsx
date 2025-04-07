@@ -1,8 +1,6 @@
-import { trainerLogout } from "@/reduxStore/slices/trainer-slice"
-import { useDispatch } from "react-redux";
+
 const TrainerDashboard = () => {
-    // const dispatch = useDispatch()
-    // dispatch(trainerLogout())
+  
   return (
    
     <div className="flex flex-col min-h-screen">

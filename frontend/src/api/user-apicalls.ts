@@ -1,4 +1,4 @@
-import { IUserProfile } from "@/interfaces/user-interfaces"
+import { IUserProfile,IUserEditProfile } from "@/interfaces/user-interfaces"
 import { axiosInstance } from "./axiosInstance"
 
 export const getProfile = async()=>{
@@ -14,11 +14,24 @@ export const getProfile = async()=>{
   }
 }
 
-export const editUserProfile = async(userProfileData:IUserProfile)=>{
+export const editUserProfile = async(userProfileData:IUserEditProfile)=>{
   try {
     const response = await axiosInstance.put('http://localhost:3000/user/editprofile',userProfileData)
     if(response.data){
       return response.data
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
+export const uploadUserProfileImage = async(userProfileImage:string) =>{
+  try {
+
+    const response = await axiosInstance.post('http://localhost:3000/user/addprofilepic',{userProfileImage:userProfileImage})
+    if(response.data){
+      return response
     }
   } catch (error) {
     console.log(error)

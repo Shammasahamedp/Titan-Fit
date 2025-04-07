@@ -24,6 +24,9 @@ export class UserRepository implements IUserRepository{
         return await userModel.findById(userId)
     }
    async editUserProfile(userId: string, profileData: IUserProfile): Promise<IUserDocument | null> {
-        return await userModel.findByIdAndUpdate(userId,profileData)
+        return await userModel.findByIdAndUpdate(userId,profileData,{new:true})
+    }
+   async addProfilePic(userId: string, profilePic: string): Promise<IUserDocument | null> {
+        return await userModel.findByIdAndUpdate(userId,{profilePicture:profilePic},{new:true})
     }
 }

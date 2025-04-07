@@ -50,14 +50,22 @@ export class UserController {
     }
     async editProfile(req:Request,res:Response):Promise<void>{
         try {
-            console.log(req.body)
             const returnUserData = await this.userService.editUserProfile(res.locals.user?.userId,req.body)
             if(returnUserData){
-                console.log('this is userData',returnUserData)
                 res.status(200).json({success:true,message:userMessages.EDIT_PROFILE_SUCCESS,returnUserData})
             }
         } catch (error:any) {
             res.status(400).json({success:false,message:userMessages.EDIT_PROFILE_FAILURE})
+        }
+    }
+    async addProfileImage(req:Request,res:Response):Promise<void>{
+        try {
+            const userProfilePicUrl = await this.userService.addProfilePic(res.locals.user?.userId,req.body.userProfileImage)
+            if(userProfilePicUrl){
+                res.status(200).json({success:true,message:userMessages.ADD_PROFILE_IMAGE_SUCCESS,userProfilePicUrl})
+            }
+        } catch (error:any) {
+              res.status(400).json({success:false,message:userMessages.ADD_PROFILE_IMAGE_FAILURE})
         }
     }
 }

@@ -75,17 +75,13 @@ export default function TrainerSignup() {
       const response = await verifyOtp(trainerData?.email as string,otp)
       if(response?.data.success){
         showSuccessToast(response.data.message)
-        console.log(typeof trainerData?.trainerCertificate)
        const axiosResponse= await uploadFile(trainerData?.trainerCertificate as FileList,'trainerCertificate')
-       if(axiosResponse){
-        console.log('success',axiosResponse)
-       }
+      
         if(trainerData){
         const finalTrainerData = {
           ...trainerData,
           trainerCertificate:axiosResponse.data.url
         }
-console.log('this is finaltrainerdata',finalTrainerData)
             const res = await trainerSignup(finalTrainerData)
           if(res?.data.success){
             showSuccessToast(res.data.message)
@@ -97,7 +93,6 @@ console.log('this is finaltrainerdata',finalTrainerData)
         }
       }
     } catch (error:any) {
-      console.log('error in handlotp',error.response.data)
       if(error.response.data.message === 'Your otp is invalid , check again or resend after 30 seconds'){
         showErrorToast(error.response.data.message)
         return 

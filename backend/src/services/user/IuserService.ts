@@ -6,4 +6,5 @@ export interface IUserService{
     loginUser(data:IUserLogin):Promise<ILoginResponse|null>
     getUserProfile(userId:string):Promise<IUserProfile|null>
     editUserProfile(userId:string,userProfileData:IUserProfile):Promise<IUserProfile|null>
+    addProfilePic(userId:string,userProfilePic:string):Promise<string|null>
 }

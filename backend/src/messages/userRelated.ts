@@ -7,5 +7,7 @@ export const userMessages = {
     ERROR_GET_PROFILE:'Error occured during profile fetching',
     GET_PROFILE_SUCCESS:'Successfully fetch user profile',
     EDIT_PROFILE_SUCCESS:'Successfully updated your profile',
-    EDIT_PROFILE_FAILURE:'Error occured during the profile editing process'
+    EDIT_PROFILE_FAILURE:'Error occured during the profile editing process',
+    ADD_PROFILE_IMAGE_FAILURE:'Error occured during the profile pictrue adding',
+    ADD_PROFILE_IMAGE_SUCCESS:'Successfully updated profile picture'
 }

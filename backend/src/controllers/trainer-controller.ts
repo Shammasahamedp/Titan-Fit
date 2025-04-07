@@ -1,4 +1,3 @@
-import { Certificate } from "crypto";
 import { trainerMessages } from "../messages/trainerRelated";
 import { ITrainerService } from "../services/trainer/ItrainerService";
 import { Request,Response } from "express";
