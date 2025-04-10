@@ -18,6 +18,5 @@ export interface ITrainerEditProfile{
     age:number;
     phone:string;
     bio:string;
-    trainerCertificate:string;
     yearsOfExperience:number;
 }

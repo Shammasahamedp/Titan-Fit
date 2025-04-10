@@ -25,7 +25,7 @@ export interface ILoginResponse  {
     refreshToken:string
 }
 
-export interface IUserProfile {
+export interface  IUserProfile {
     name:string;
     email:string;
     gender:string;

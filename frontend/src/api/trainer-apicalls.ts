@@ -15,6 +15,7 @@ export const getTrainerProfile = async ()=>{
 
 export const editTrainerProfile = async (trainerProfileData:ITrainerEditProfile)=>{
     try {
+        console.log('thiis is trainerprofiledata',trainerProfileData)//trainerProfileData
         const response = await axiosInstance.put('http://localhost:3000/trainer/editprofile',trainerProfileData)
         if(response.data){
             return response.data
@@ -27,9 +28,9 @@ export const editTrainerProfile = async (trainerProfileData:ITrainerEditProfile)
 
 export const uploadTrainerProfileImage = async (trainerProfileImage:string)=>{
     try {
-        const response = await axiosInstance.post('http://localhost:3000/trainer/addprofilepic',trainerProfileImage)
+        const response = await axiosInstance.post('http://localhost:3000/trainer/addprofilepic',{trainerProfileImage})
         if(response.data){
-            return response.data
+            return response
         }
     } catch (error) {
         console.log(error)

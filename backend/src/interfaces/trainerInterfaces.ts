@@ -7,6 +7,7 @@ export interface ITrainerSignUp{
     gender:string;
     age:number;
     yearsOfExperience:number;
+    bio:string
     trainerCertificate:string|null
 }
 
@@ -23,4 +24,16 @@ export interface ITrainerLoginResponse{
     trainer:ITrainerDocument;
     accessToken:string;
     refreshToken:string
+}
+
+export interface ITrainerProfile{
+    name:string;
+    email:string;
+    gender:string;
+    age:number;
+    yearsOfExperience:number;
+    bio:string;
+    profilePicture?:string;
+    trainerCertificate:string
+
 }

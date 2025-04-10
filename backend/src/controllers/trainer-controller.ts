@@ -37,4 +37,30 @@ export class TrainerController {
             res.status(401).json({success:false,message:trainerMessages.LOGIN_FAILED})
         }
     }
+
+    async getTrainerProfile(req:Request,res:Response):Promise<void>{
+        try {
+            const trainerProfile = await this.trainerService.getTrainerProfile(res.locals.user?.userId)
+            res.status(200).json({success:true,message:trainerMessages.GET_TRAINER_PROFILE_SUCCESS,trainerProfile})
+        } catch (error:any) {
+            res.status(400).json({success:false,message:trainerMessages.GET_TRAINER_PROFILE_FAILURE})
+        }
+    }
+    async editTrainerProfile(req:Request,res:Response):Promise<void>{
+        try {
+            console.log('this is trainerediteddata',req.body)
+            const updatedTrainerProfile = await this.trainerService.editTrainerProfile(res.locals?.user.userId,req.body)
+            res.status(200).json({success:true,message:trainerMessages.TRAINER_EDIT_PROFILE_SUCCESS,returnedTrainerProfile:updatedTrainerProfile})
+        } catch (error) {
+            res.status(400).json({success:false,message:trainerMessages.EDIT_TRAINER_PROFILE_ERROR})
+        }
+    }
+    async addTrainerProfilImage(req:Request,res:Response):Promise<void>{
+        try {
+            const trainerProfileImage = await this.trainerService.addTrainerProfilePic(res.locals.user?.userId,req.body.trainerProfileImage)
+            res.status(200).json({success:true,message:trainerMessages.ADD_PROFILE_IMAGE_SUCCESS,trainerProfileImage})
+        } catch (error) {
+            res.status(400).json({success:false,message:trainerMessages.ADD_PROFILE_IMAGE_ERROR})
+        }
+    }
 }

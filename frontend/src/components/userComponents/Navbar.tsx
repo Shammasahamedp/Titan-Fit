@@ -2,25 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Menu, X } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/reduxStore/store";
-import { clearToken } from "@/api/localStorage";
-import { authLogout } from "@/api/auth";
-import { logout } from "@/reduxStore/slices/user-slice";
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const user = useSelector((state: RootState) => state.user.user);
-  const dispatch = useDispatch();
 
-  const userLogout = async() => {
-   try {
-   await authLogout()
-    clearToken();
-    dispatch(logout());
-   } catch (error) {
-    
-   }
-  };
+
+import { INavebarProps } from "@/interfaces/InavbarProps";
+const Navbar:React.FC<INavebarProps> = ({logout,role}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
 
   return (
     <nav className="bg-black text-white h-16 p-4 fixed w-full top-0 z-50 border-b border-yellow-500">
@@ -38,7 +25,7 @@ const Navbar = () => {
             About
           </Link>
 
-          {!user ? (
+          {!role ? (
             <Link to="/login">
               <Button className="bg-[#FFC436] text-black hover:bg-black hover:text-[#FFC436]">
                 Get Started
@@ -50,7 +37,7 @@ const Navbar = () => {
                 My Profile
               </Link>
               <Button
-                onClick={userLogout}
+                onClick={logout}
                 className="bg-[#FFC436] text-black hover:bg-black hover:text-[#FFC436]"
               >
                 Logout
@@ -76,7 +63,7 @@ const Navbar = () => {
       >
        
         {
-          !user?(
+          !role?(
             <Link to="/about" className="block py-2 px-6 hover:bg-[#FFC436]">
           About
         </Link>
@@ -90,7 +77,7 @@ const Navbar = () => {
 
         {/* Show "Get Started" or "Logout" based on user state */}
         <div className="p-4">
-          {!user ? (
+          {!role ? (
             <Link to="/login">
               <Button className="bg-[#FFC436] text-black w-full hover:bg-black hover:text-[#FFC436]">
                 Get Started
@@ -100,7 +87,7 @@ const Navbar = () => {
             
             <Button
               onClick={() => {
-                userLogout();
+                logout();
                 setIsOpen(false);
               }}
               className="bg-[#FFC436] text-black w-full hover:bg-black hover:text-[#FFC436]"

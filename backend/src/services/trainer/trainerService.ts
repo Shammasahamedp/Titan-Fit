@@ -1,4 +1,5 @@
-import { ITrainerDocument, ITrainerLogin, ITrainerLoginResponse, ITrainerSignUp } from "../../interfaces/trainerInterfaces";
+import { ITrainerDocument, ITrainerLogin, ITrainerLoginResponse, ITrainerProfile, ITrainerSignUp } from "../../interfaces/trainerInterfaces";
+import { IUserProfile } from "../../interfaces/userInterfaces";
 import { trainerMessages } from "../../messages/trainerRelated";
 import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
 import { IUserRepository } from "../../repositories/user/IuserRepository";
@@ -38,5 +39,60 @@ export class TrainerService implements ITrainerService{
         data.password = await hashPassword(data.password)
         console.log('this is data inside register',data)
         return await this.trainerRepository.createTrainer(data)
+    }
+  async  getTrainerProfile(trainerId: string): Promise<ITrainerProfile | null> {
+        try {
+            const trainer = await this.trainerRepository.findTrainerById(trainerId)
+            if(trainer){
+                const {
+                    name,
+                    email,
+                    gender,
+                    age,
+                    yearsOfExperience,
+                    bio,
+                    profilePicture,
+                    trainerCertificate
+                } = trainer
+
+                const trainerProfile = {
+                    name,
+                    email,
+                    gender,
+                    age,
+                    yearsOfExperience,
+                    bio,
+                    profilePicture,
+                    trainerCertificate
+                }
+                return trainerProfile as ITrainerProfile
+            }
+            throw new Error(trainerMessages.TRAINER_NOT_FOUND)
+        } catch (error) {
+            throw new Error (trainerMessages.ERROR_GET_PROFILE)
+        }
+    }
+    async editTrainerProfile(trainerId: string, trainerProfileData: ITrainerProfile): Promise<ITrainerProfile | null> {
+        try {
+            const editedTrainerProfile = await this.trainerRepository.editTrainerProfile(trainerId,trainerProfileData)
+            if(!editedTrainerProfile){
+                throw new Error(trainerMessages.EDIT_TRAINER_PROFILE_ERROR)
+            }
+            return editedTrainerProfile
+        } catch (error) {
+            throw new Error(trainerMessages.EDIT_TRAINER_PROFILE_ERROR)
+        }
+    }
+
+   async addTrainerProfilePic(trainerId: string, trainerProfilePic: string): Promise<string | null> {
+        try {
+            const trainerData = await this.trainerRepository.addProfilePic(trainerId,trainerProfilePic)
+            if(!trainerData){
+                throw new Error(trainerMessages.TRAINER_NOT_FOUND)
+            }
+            return trainerData?.profilePicture as string
+        } catch (error) {
+            throw new Error(trainerMessages.ADD_PROFILE_IMAGE_ERROR)
+        }
     }
 }

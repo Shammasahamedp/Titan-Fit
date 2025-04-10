@@ -12,6 +12,7 @@ export class OtpService implements IOtpService{
 
     async sendOtp(email: string): Promise<void> {
         const otp = generateOtp()
+        console.log('this is otp:',otp)
         await this.otpRepository.saveOtp(email,otp,60)
         await sendMail(email,emailMessages.OTP_SUBJECT,`Your otp is ${otp}`)
     }

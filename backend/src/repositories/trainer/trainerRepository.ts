@@ -1,4 +1,4 @@
-import { ITrainerDocument, ITrainerSignUp } from "../../interfaces/trainerInterfaces";
+import { ITrainerDocument, ITrainerProfile, ITrainerSignUp } from "../../interfaces/trainerInterfaces";
 import { ITrainerRepository } from "./ItrainerRepository";
 import { trainerModel } from "../../models/trainer/trainerModel";
 import { IUserDocument } from "../../interfaces/userInterfaces";
@@ -27,4 +27,14 @@ export class TrainerRepository implements ITrainerRepository{
             {new:true}
         )
     }
+    async findTrainerById(trainerId: string): Promise<ITrainerDocument | null> {
+        return await trainerModel.findById(trainerId)
+    }
+    async editTrainerProfile(trainerId: string, trainerProfileData: ITrainerProfile): Promise<ITrainerDocument | null> {
+        return await trainerModel.findByIdAndUpdate(trainerId,trainerProfileData,{new:true})
+    }
+    async addProfilePic(trainerId: string, profilePic: string): Promise<ITrainerDocument | null> {
+        return await trainerModel.findByIdAndUpdate(trainerId,{profilePicture:profilePic},{new:true})
+    }
+    
 }

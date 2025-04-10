@@ -23,11 +23,12 @@ const SideBar: React.FC<ISidebarProps> = ({ items,profilePicture,role,uploadProf
       if(uploadFileResponse.data){
         console.log('this is url',uploadFileResponse.data.url)
        const response = await uploadProfilePicApi(uploadFileResponse.data.url)
-       if(!response?.data){
+       console.log(response)
+       if(!response?.data.success){
         throw new Error()
        }
-       showSuccessToast(response.data.message)
-       setimgUrl(response.data.userProfilePicUrl)
+       showSuccessToast(response?.data.message)
+       setimgUrl(response.data.trainerProfileImage)
       }
     } catch (error) {
         console.log(error)

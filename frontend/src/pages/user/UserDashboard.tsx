@@ -12,8 +12,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ToastContainer } from "react-toastify";
 import SelectField from "@/components/common/SelectField";
+import { useDispatch } from "react-redux";
+import { logout } from "@/reduxStore/slices/user-slice";
 const UserDashboard: React.FC = () => {
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
+  const dispatch=useDispatch()
   const {
     register,
     handleSubmit,
@@ -23,7 +26,10 @@ const UserDashboard: React.FC = () => {
     resolver: yupResolver(userProfileEditSchema),
     mode:"onChange"
   });
-
+  
+  const userLogout = ()=>{
+    dispatch(logout())
+  }
   const onSubmit = async (data: IUserEditProfile) => {
     try {
       console.log("li");
@@ -75,7 +81,7 @@ const UserDashboard: React.FC = () => {
   
   return (
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-      <Navbar />
+      <Navbar logout={userLogout}  role="user"/>
       <div className="flex flex-1   text-white">
         {/* Sidebar */}
 
