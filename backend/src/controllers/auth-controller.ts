@@ -14,9 +14,9 @@ export class AuthController {
         try {
            const isTrue= await this.authService.findUserOrTrainerByEmail(req.query.email as string)
             if(isTrue){
-                res.status(409).json({success:false,message:commonErrors.EMAIL_ALREADY_EXIST})
+                res.status(200).json({success:true,message:commonErrors.EMAIL_ALREADY_EXIST})
             }else {
-                res.status(200).json({success:true,message:commonMessages.NO_DUPLICATE_EMAIL})
+                res.status(200).json({success:false,message:commonMessages.NO_DUPLICATE_EMAIL})
             }
 
         } catch (error) {

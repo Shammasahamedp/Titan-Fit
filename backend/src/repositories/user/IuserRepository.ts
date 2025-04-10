@@ -8,4 +8,5 @@ export interface IUserRepository{
     findUserById(userId:string):Promise<IUserDocument|null>
     editUserProfile(userId:string,profileData:IUserProfile):Promise<IUserDocument|null>
     addProfilePic(userId:string,profilePic:string):Promise<IUserDocument|null>
+    updatePassword(email:string,password:string):Promise<IUserDocument|null>
 }

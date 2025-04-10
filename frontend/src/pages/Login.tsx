@@ -5,7 +5,7 @@ import { LoginFormInput } from "@/interfaces/IloginFormInput";
 import { loginSchema } from "@/schemas/login-schema";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { googleLogin, login } from "@/api/auth";
+import { findByEmail, googleLogin, login } from "@/api/auth";
 import { ToastContainer } from "react-toastify";
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import SelectField from "@/components/common/SelectField";
@@ -14,11 +14,17 @@ import { logingStart, loginSuccess,loginFailure } from "@/reduxStore/slices/user
 import { trainerLoginFailure, trainerLoginStart,trainerLoginSuccess } from "@/reduxStore/slices/trainer-slice";
 import { RootState } from "@/reduxStore/store";
 import { commonErrors } from "@/messages/common-error";
+import ForgotPasswordModal from "@/modal/forgotPasswordModal";
+import { useState } from "react";
+import { sendLinkToMail } from "@/api/reset-password";
+
+
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const { userLoading } = useSelector((state: RootState) => state.user);
   const { trainerLoading } = useSelector((state: RootState) => state.trainer);
+  const [forgotPassModalState,setShowEmailModal] = useState(false)
   const {
     register,
     handleSubmit,
@@ -145,6 +151,30 @@ export default function Login() {
        showErrorToast(error?.response.data.message)
     }
   }
+  const handleSendResetLink = async (email:string)=>{
+    try {
+      console.log('this is onSubmit')
+       const isExist = await findByEmail(email)
+       if(!isExist){
+        showErrorToast(commonErrors.EMAIL_NOT_FOUND)
+        return 
+       }
+       const response = await sendLinkToMail(email)
+       if(response.data.success){
+        showSuccessToast(response.data.message)
+       }else{
+        throw new Error(response.data.message)
+       }
+    } catch (error:any) {
+      if(error?.message){
+        showErrorToast(error.message)
+        return
+      }
+      showErrorToast(commonErrors.SEND_RESET_PASSWORD_ERROR)
+    }
+  }
+  
+ 
   return (
     
     <div className="relative flex items-center justify-center min-h-screen bg-[url('/black-bg.jpg')] bg-cover bg-center bg-black/60">
@@ -191,9 +221,9 @@ export default function Login() {
         />
         {/* Forgot Password */}
         <div className="flex justify-center items-center mt-4 text-sm">
-          <Link to="/forgotpassword" className="text-black hover:underline">
+          <p onClick={()=>setShowEmailModal(true)} className="text-black hover:underline hover:cursor-pointer">
             Forgot password?
-          </Link>
+          </p>
         </div>
        
         <button
@@ -223,6 +253,7 @@ export default function Login() {
           </Link>
         </p>
       </div>
+      {forgotPassModalState &&( <ForgotPasswordModal isOpen={forgotPassModalState} onClose={()=>setShowEmailModal(false)} onSubmit={handleSendResetLink}/>)}
       <ToastContainer />
     </div>
   );

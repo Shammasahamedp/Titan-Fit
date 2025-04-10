@@ -1,9 +1,9 @@
 import Redis from "ioredis";
 import { redisClient } from "../../config/redis";
-import { IOtpRepository } from "./Iotp-repository";
+import { IRedisRepository } from "./IRedis-repository";
 
 
-export class OtpRepository implements IOtpRepository {
+export class RedisRepository implements IRedisRepository {
   private redis: Redis ;
 
   constructor() {
@@ -22,4 +22,14 @@ export class OtpRepository implements IOtpRepository {
   async deleteOtp(email: string): Promise<void> {
       await this.redis.del(`otp:${email}`)
   }
+  async deleteToken(email: string): Promise<void> {
+      await this.redis.del(`token:${email}`)
+  }
+  async getToken(email: string): Promise<string | null> {
+      return await this.redis?.get(`token:${email}`)
+  }
+  async saveToken(email: string, token: string, expiry: number): Promise<void> {
+      await this.redis?.setex(`token:${email}`,expiry,token)
+  } 
+  
 }

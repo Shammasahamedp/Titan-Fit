@@ -1,19 +1,19 @@
-import { IOtpRepository } from "../../repositories/otp/Iotp-repository";
+import { IRedisRepository } from "../../repositories/redis/IRedis-repository";
 import { IOtpService } from "./IOtpService";
 import { generateOtp } from "../../utils/otp";
 import { sendMail } from "../../utils/nodeMailer";
-import { otpMessages } from "../../messages/otp-related";
+import { emailMessages } from "../../messages/mail-related";
 export class OtpService implements IOtpService{
-    private otpRepository:IOtpRepository
+    private otpRepository:IRedisRepository
 
-    constructor(otpRepository:IOtpRepository){
+    constructor(otpRepository:IRedisRepository){
         this.otpRepository = otpRepository
     }
 
     async sendOtp(email: string): Promise<void> {
         const otp = generateOtp()
         await this.otpRepository.saveOtp(email,otp,60)
-        await sendMail(email,otpMessages.OTP_SUBJECT,`Your otp is ${otp}`)
+        await sendMail(email,emailMessages.OTP_SUBJECT,`Your otp is ${otp}`)
     }
 
     async verifyOtp(email: string, enteredOtp: string): Promise<boolean> {

@@ -51,9 +51,7 @@ export class UserService implements IUserService {
   }
   async getUserProfile(userId: string): Promise<IUserProfile | null> {
     try {
-      console.log('thsi is userId',userId)
       const user = await this.userRepository.findUserById(userId);
-      console.log('user in dffds',user)
       if (!user) {
         throw new Error(userMessages.USER_NOT_FOUND);
         
@@ -85,7 +83,6 @@ export class UserService implements IUserService {
       };
       return userProfile
     } catch (error) {
-      console.log('error in service',error)
          throw new Error(userMessages.ERROR_GET_PROFILE)
     }
   }

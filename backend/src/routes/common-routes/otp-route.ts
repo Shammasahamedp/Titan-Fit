@@ -1,13 +1,13 @@
 import express from "express"
 import { OtpController } from "../../controllers/otp-controller"
 import { OtpService } from "../../services/otp/OtpService"
-import { OtpRepository } from "../../repositories/otp/otp-repository"
+import { RedisRepository } from "../../repositories/redis/redis-repository"
 import { Request,Response } from "express"
 
 const otpRoute = express.Router()
 
-const otpRepository = new OtpRepository()
-const otpService = new OtpService(otpRepository)
+const redisRepository = new RedisRepository()
+const otpService = new OtpService(redisRepository)
 const otpController = new OtpController(otpService)
 
 otpRoute.post('/send',(req:Request,res:Response)=>otpController.sendOtp(req,res))

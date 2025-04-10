@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IOtpService } from "../services/otp/IOtpService";
-import { otpMessages } from "../messages/otp-related";
+import { emailMessages } from "../messages/mail-related";
 import { userMessages } from "../messages/userRelated";
 
 export class OtpController {
@@ -19,7 +19,7 @@ export class OtpController {
     this.otpService.sendOtp(email);
     res
       .status(200)
-      .json({ success: true, message: otpMessages.OTP_SEND_SUCCESSFULL });
+      .json({ success: true, message: emailMessages.OTP_SEND_SUCCESSFULL });
   }
 
   async verifyOtp(req: Request, res: Response): Promise<void> {
@@ -27,16 +27,16 @@ export class OtpController {
     if (!email || !otp){
         res
         .status(400)
-        .json({ success: false, message: otpMessages.REQUIRE_EMAIL_OTP });
+        .json({ success: false, message: emailMessages.REQUIRE_EMAIL_OTP });
     }
       
     const isValid = await this.otpService.verifyOtp(email, otp);
     if (isValid === false) {
       res
         .status(400)
-        .json({ success: false, message: otpMessages.INVALID_OTP });
+        .json({ success: false, message: emailMessages.INVALID_OTP });
         return 
     }
-    res.status(200).json({ success: true, messages: otpMessages.SUCCESS_OTP });
+    res.status(200).json({ success: true, messages: emailMessages.SUCCESS_OTP });
   }
 }

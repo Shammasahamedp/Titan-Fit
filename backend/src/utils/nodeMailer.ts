@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer"
-import { otpMessages } from "../messages/otp-related"
+import { emailMessages } from "../messages/mail-related"
 const transporter = nodemailer.createTransport({
     service:"gmail",
     auth:{
@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
 })
 
 
-export const sendMail = async (to:string,subject:string=otpMessages.OTP_SUBJECT,text:string) =>{
+export const sendMail = async (to:string,subject:string=emailMessages.OTP_SUBJECT,text:string) =>{
     try {
         await transporter.sendMail({
             from:process.env.EMAIL_USER,

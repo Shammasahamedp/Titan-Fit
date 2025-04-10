@@ -6,4 +6,5 @@ export interface ITrainerRepository{
     createTrainer(data:ITrainerSignUp):Promise<ITrainerDocument>
     findOne(googleId:string):Promise<ITrainerDocument|null>
     saveGoogleId(email:string,googleId:string):Promise<IUserDocument|null>
+    updatePassword(email:string,password:string):Promise<ITrainerDocument|null>
 }

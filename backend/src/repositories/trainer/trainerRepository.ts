@@ -20,4 +20,11 @@ export class TrainerRepository implements ITrainerRepository{
             {new:true}
         )
     }
+    async updatePassword(email: string, password: string): Promise<ITrainerDocument | null> {
+        return await trainerModel.findOneAndUpdate(
+            {email:email},
+            {$set:{password:password}},
+            {new:true}
+        )
+    }
 }

@@ -10,8 +10,6 @@ const InputField: React.FC<IinputFieldProps> = ({
   disabled=false,
   
 }) => {
- console.log('this is error',error)
-  // const [val,setValue] = useState(value)
   return (
     <div className="mt-6">
       <label className="block text-black text-sm font-medium">{label}</label>

@@ -28,7 +28,7 @@ export default function Signup() {
       setUserData(data);
       console.log(data)
       const isEmailExistResponse=await findByEmail(data.email)
-      if(!isEmailExistResponse.data.success){
+      if(isEmailExistResponse.data.success){
         showErrorToast(isEmailExistResponse.data.message)
         return 
       }

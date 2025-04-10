@@ -9,5 +9,8 @@ export const commonErrors = {
     INVALID_GOOGLE_TOKEN:'Invalid google token',
     GOOGLE_LOGIN_FAILURE:'you are not aouthorised . if you havent account go to signup',
     INVALID_JWT_TOKEN : 'Invalid token, not autherised',
-    LOGOUT_FAILURE:'Logout failed'
+    LOGOUT_FAILURE:'Logout failed',
+    INVALID_TOKEN:'Invalid token , not autherised for further procedure',
+    RESET_PASSWORD_ERROR:'Error occured during reset password',
+    
 }

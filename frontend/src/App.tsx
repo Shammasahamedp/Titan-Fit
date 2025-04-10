@@ -11,6 +11,8 @@ import UserDashboard from "./pages/user/UserDashboard"
 import PublicRoute from "./routes/PublicRoute"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import TrainerDashboard from "./pages/trainer/TrainerDashboard"
+import ForgotPassword from "./pages/ForgotPassword"
+
 
 function App() {
 
@@ -24,6 +26,7 @@ function App() {
           <Route path='/signup' element={<Signup/>}/>
           <Route path='/trainer/signup' element={<TrainerSignup/>}/>
           <Route path='/admin/login' element={<AdminLogin/>}/>
+          <Route path='/reset-password/:token' element={<ForgotPassword/>}/>
           </Route>
 
 

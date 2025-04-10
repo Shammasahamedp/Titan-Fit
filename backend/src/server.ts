@@ -21,6 +21,7 @@ import uploadRoute from "./routes/common-routes/upload-file"
 import tokenRoute from "./routes/common-routes/token-route"
 import adminRoute from "./routes/admin-route"
 import authRoute from "./routes/common-routes/auth-route"
+import resetPasswordRoute from "./routes/common-routes/reset-password.route"
 
 const app = express()
 app.use(cors({
@@ -43,6 +44,7 @@ app.use('/otp',otpRoute)
 app.use('/upload',uploadRoute)
 app.use('/token',tokenRoute)
 app.use('/auth',authRoute)
+app.use('/reset-password',resetPasswordRoute)
 app.listen(3000,"0.0.0.0",async()=>{
     console.log("server is running on http://localhost:3000")
     
