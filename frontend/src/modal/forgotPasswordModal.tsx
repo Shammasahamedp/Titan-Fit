@@ -3,7 +3,7 @@ import { showErrorToast } from "@/utils/toast";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
-const ForgotPasswordModal:React.FC<IForgotPasswordModalProps> = ({isOpen,onClose,onSubmit}) => {
+const ForgotPasswordModal:React.FC<IForgotPasswordModalProps> = ({onClose,onSubmit}) => {
     const [email,setEmail] = useState('')
     const [canResend,setCanSend] = useState(true)
  

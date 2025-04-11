@@ -13,12 +13,20 @@ const getFolderName = (fieldName:string):string=>{
 
 const storage = new CloudinaryStorage({
     cloudinary,
-    params:async (req:Request,file:Express.Multer.File)=>(console.log('this is file.fieldname',file.fieldname),{
-        
-        folder : getFolderName(file.fieldname),
+    params:async (req:Request,file:Express.Multer.File)=>{
+         const isPdf = file.mimetype === 'application/pdf'
+         console.log(isPdf)
+        return {
+            folder : getFolderName(file.fieldname),
         format:file.mimetype.split("/")[1],
-        public_id:Date.now()+"-"+file.originalname
-    })
+        public_id:Date.now()+"-"+file.originalname,
+        resource_type:isPdf?'raw':'auto',
+        type:'upload'
+        }
+
+    
+    }
+
 })
 
 const fileFilter = (req:Request,file:Express.Multer.File,cb:FileFilterCallback)=>{

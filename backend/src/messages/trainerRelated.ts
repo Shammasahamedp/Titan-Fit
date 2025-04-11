@@ -11,5 +11,8 @@ export const trainerMessages = {
     ADD_PROFILE_IMAGE_SUCCESS:'Successfully added the profile picture',
     GET_TRAINER_PROFILE_SUCCESS:'Successfully fetch trainer profile',
     GET_TRAINER_PROFILE_FAILURE:'Error occured during fetch trainer profile',
-    TRAINER_EDIT_PROFILE_SUCCESS:'Successfully updated trainer profile'
+    TRAINER_EDIT_PROFILE_SUCCESS:'Successfully updated trainer profile',
+    TRAINER_CERTIFICATE_ADD_SUCCESS:'Successfully added trainer certificate',
+    TRAINER_CERTIFICATE_ADD_FAILURE:'Error occured during certificate upload'
+
 }

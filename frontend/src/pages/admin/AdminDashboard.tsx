@@ -10,7 +10,7 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="flex h-screen bg-black text-white">
       {/* Sidebar */}
-      <Navbar/>
+      <Navbar />
       <div className="w-64 bg-black border-r border-yellow-500 p-4">
         {/* <h1 className="text-3xl font-bold text-yellow-500 mb-6">Titan Fit</h1>
          */}

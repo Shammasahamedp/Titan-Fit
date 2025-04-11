@@ -20,4 +20,5 @@ trainerRoute.post('/auth/login',validate(loginSchema),(req:Request,res:Response)
 trainerRoute.get('/profile',jwtTokenVerify,(req:Request,res:Response)=>trainerContrller.getTrainerProfile(req,res))
 trainerRoute.put('/editprofile',jwtTokenVerify,validate(trainerProfileSchema),(req:Request,res:Response)=>trainerContrller.editTrainerProfile(req,res))
 trainerRoute.post('/addprofilepic',jwtTokenVerify,(req:Request,res:Response)=>trainerContrller.addTrainerProfilImage(req,res))
+trainerRoute.post('/addcertificate',jwtTokenVerify,(req:Request,res:Response)=>trainerContrller.addCertificate(req,res))
 export default trainerRoute

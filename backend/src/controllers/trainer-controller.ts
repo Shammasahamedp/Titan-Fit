@@ -63,4 +63,13 @@ export class TrainerController {
             res.status(400).json({success:false,message:trainerMessages.ADD_PROFILE_IMAGE_ERROR})
         }
     }
+    async addCertificate(req:Request,res:Response):Promise<void>{
+        try {
+             const trainerCertificate= await this.trainerService.addCertificate(res.locals.user?.userId,req.body.trainerCertificate)
+                 res.status(201).json({success:true,message:trainerMessages.TRAINER_CERTIFICATE_ADD_SUCCESS,trainerCertificate})
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({success:false,message:trainerMessages.TRAINER_CERTIFICATE_ADD_FAILURE})
+        }
+    }
 }

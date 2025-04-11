@@ -1,5 +1,4 @@
 import { ITrainerDocument, ITrainerLogin, ITrainerLoginResponse, ITrainerProfile, ITrainerSignUp } from "../../interfaces/trainerInterfaces";
-import { IUserProfile } from "../../interfaces/userInterfaces";
 import { trainerMessages } from "../../messages/trainerRelated";
 import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
 import { IUserRepository } from "../../repositories/user/IuserRepository";
@@ -51,6 +50,7 @@ export class TrainerService implements ITrainerService{
                     age,
                     yearsOfExperience,
                     bio,
+                    phone,
                     profilePicture,
                     trainerCertificate
                 } = trainer
@@ -62,6 +62,7 @@ export class TrainerService implements ITrainerService{
                     age,
                     yearsOfExperience,
                     bio,
+                    phone,
                     profilePicture,
                     trainerCertificate
                 }
@@ -93,6 +94,19 @@ export class TrainerService implements ITrainerService{
             return trainerData?.profilePicture as string
         } catch (error) {
             throw new Error(trainerMessages.ADD_PROFILE_IMAGE_ERROR)
+        }
+    }
+   async addCertificate(trainerId: string, trainerCertificate: string): Promise<string[]> {
+        try {
+            console.log('this is trainercertificate',trainerCertificate)
+           const trainerData= await this.trainerRepository.addCertificate(trainerId,trainerCertificate)
+           if(!trainerData){
+            throw new Error(trainerMessages.TRAINER_NOT_FOUND)
+           }
+           return trainerData.trainerCertificate as string[]
+        } catch (error) {
+            console.log(error)
+            throw new Error()
         }
     }
 }

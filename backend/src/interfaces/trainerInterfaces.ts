@@ -34,6 +34,6 @@ export interface ITrainerProfile{
     yearsOfExperience:number;
     bio:string;
     profilePicture?:string;
-    trainerCertificate:string
+    trainerCertificate:string[]
 
 }

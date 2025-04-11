@@ -76,7 +76,7 @@ export default function TrainerSignup() {
         if(trainerData){
         const finalTrainerData = {
           ...trainerData,
-          trainerCertificate:axiosResponse.data.url
+          trainerCertificate:[axiosResponse.data.url as string]
         }
             const res = await trainerSignup(finalTrainerData)
           if(res?.data.success){

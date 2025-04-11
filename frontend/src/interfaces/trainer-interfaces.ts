@@ -6,7 +6,7 @@ export interface ITrainerProfile{
     phone:string;
     bio:string;
     profilePicture?:string;
-    trainerCertificate:string;
+    trainerCertificate:string[];
     yearsOfExperience:number;
     
 }

@@ -12,7 +12,7 @@ const TrainerSchema: Schema = new Schema(
     phone: { type: Number },
     bio: { type: String },
     profilePicture: { type: String },
-    trainerCertificate: { type: String },
+    trainerCertificate: { type: [String] },
     yearsOfExperience: { type: Number },
     approved: { type: Boolean, default: false },
     availableSlots: { type: Types.ObjectId },

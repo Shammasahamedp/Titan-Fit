@@ -36,5 +36,14 @@ export class TrainerRepository implements ITrainerRepository{
     async addProfilePic(trainerId: string, profilePic: string): Promise<ITrainerDocument | null> {
         return await trainerModel.findByIdAndUpdate(trainerId,{profilePicture:profilePic},{new:true})
     }
+
+   async addCertificate(trainerId: string, trainerCertificate: string): Promise<ITrainerDocument|null> {
+    console.log('this is certificatae',trainerCertificate)
+        return await trainerModel.findByIdAndUpdate(
+            trainerId,
+            {$push:{trainerCertificate:trainerCertificate}},
+            {new:true}
+        )
+    }
     
 }

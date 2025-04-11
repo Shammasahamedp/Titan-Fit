@@ -1,5 +1,4 @@
 import { ITrainerDocument, ITrainerLogin, ITrainerLoginResponse, ITrainerProfile, ITrainerSignUp } from "../../interfaces/trainerInterfaces";
-import { IUserProfile } from "../../interfaces/userInterfaces";
 
 
 export interface ITrainerService {
@@ -8,4 +7,5 @@ export interface ITrainerService {
     getTrainerProfile(trainerId:string):Promise<ITrainerProfile|null>
     editTrainerProfile(trainerId:string,trainerProfileData:ITrainerProfile):Promise<ITrainerProfile|null>
     addTrainerProfilePic(trainerId:string,trainerProfilePic:string):Promise<string|null>
+    addCertificate(trainerId:string,trainerCertificate:string):Promise<string[]>
 }

@@ -9,7 +9,7 @@ export interface ITrainerModel extends Document{
     phone?:string;
     bio:string;
     profilePicture?:string;
-    trainerCertificate:string;
+    trainerCertificate:string[];
     yearsOfExperience:number;
     approved:boolean;
     availableSlots?:Types.ObjectId;

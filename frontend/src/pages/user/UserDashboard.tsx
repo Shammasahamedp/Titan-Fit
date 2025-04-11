@@ -8,14 +8,18 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { userErrors } from "@/messages/userside-error";
 import { userProfileEditSchema } from "@/schemas/user-profile-edit-schema";
 import InputField from "@/components/common/InputField";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ToastContainer } from "react-toastify";
 import SelectField from "@/components/common/SelectField";
 import { useDispatch } from "react-redux";
 import { logout } from "@/reduxStore/slices/user-slice";
+import { authLogout, findByEmail } from "@/api/auth";
+import { sendLinkToMail } from "@/api/reset-password";
+import { commonErrors } from "@/messages/common-error";
 const UserDashboard: React.FC = () => {
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
+  const [disable,setButtonDisable] = useState(false)
   const dispatch=useDispatch()
   const {
     register,
@@ -26,9 +30,36 @@ const UserDashboard: React.FC = () => {
     resolver: yupResolver(userProfileEditSchema),
     mode:"onChange"
   });
+  const handleSendResetLink = async (email:string)=>{
+        try {
+          setButtonDisable(true)
+          console.log('this is onSubmit')
+           const isExist = await findByEmail(email)
+           if(!isExist){
+            showErrorToast(commonErrors.EMAIL_NOT_FOUND)
+            return 
+           }
+           const response = await sendLinkToMail(email)
+           if(response.data.success){
+            showSuccessToast(response.data.message)
+            setButtonDisable(false)
+           }else{
+            throw new Error(response.data.message)
+           }
+        } catch (error:any) {
+          if(error?.message){
+            showErrorToast(error.message)
+            setButtonDisable(false)
+            return
+          }
+          showErrorToast(commonErrors.SEND_RESET_PASSWORD_ERROR)
+          setButtonDisable(false)
+        }
+      }
   
   const userLogout = ()=>{
     dispatch(logout())
+    authLogout()
   }
   const onSubmit = async (data: IUserEditProfile) => {
     try {
@@ -81,7 +112,7 @@ const UserDashboard: React.FC = () => {
   
   return (
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-      <Navbar logout={userLogout}  role="user"/>
+      <Navbar logout={userLogout}  role='user'/>
       <div className="flex flex-1   text-white">
         {/* Sidebar */}
 
@@ -248,19 +279,28 @@ const UserDashboard: React.FC = () => {
                 </div>
               </div>
 
-              <button
+             <div className="flex justify-around">
+             <button
                 onClick={() => setIsEditing(true)}
-                className="mt-4 bg-[#FFC436] text-black px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] w-full"
+                className="mt-4 bg-[#FFC436] text-black px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] w-1/4"
               >
                 Edit Profile
               </button>
+              <button
+              disabled={disable}
+                onClick={() => handleSendResetLink(userProfile?.email as string)}
+                className="mt-4 bg-[#FFC436] text-black px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] w-1/4"
+              >
+                {disable ? 'Loading...':'Reset Password'}
+              </button>
+             </div>
             </div>
           )}
 
           {/* Table Wrapper - Scrollable */}
         </div>
       </div>
-      <ToastContainer />
+d      <ToastContainer />
     </div>
   );
 };

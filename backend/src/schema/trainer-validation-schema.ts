@@ -11,7 +11,7 @@ export const trainerSignupSchema = z.object({
     age:z.number().min(15,{message:validationMessage.INVALID_AGE}),
     bio:z.string().nonempty('bio is required'),
     yearsOfExperience:z.number().positive({message:validationMessage.NEGETIVE_YEARSOF_EXP}),
-    trainerCertificate:z.string({message:validationMessage.REQUIRE_SINGLE_FILE}).nonempty('Cerificate is required')
+    trainerCertificate:z.array(z.string({message:validationMessage.REQUIRE_SINGLE_FILE})).nonempty('Cerificate is required')
 })
 
 export const trainerProfileSchema = z.object({

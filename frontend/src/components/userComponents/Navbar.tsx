@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react";
 import { INavebarProps } from "@/interfaces/InavbarProps";
 const Navbar:React.FC<INavebarProps> = ({logout,role}) => {
   const [isOpen, setIsOpen] = useState(false);
-
+ console.log('this is role',role)
 
   return (
     <nav className="bg-black text-white h-16 p-4 fixed w-full top-0 z-50 border-b border-yellow-500">

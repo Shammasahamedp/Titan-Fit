@@ -1,90 +1,154 @@
-import Navbar from "@/components/userComponents/Navbar"
-import SideBar from "@/components/common/SideBar"
-import InputField from "@/components/common/InputField"
-import SelectField from "@/components/common/SelectField"
-import { ToastContainer } from "react-toastify"
-import { useForm } from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { trainerProfileEditSchema } from "@/schemas/trainer-profile-edit"
-import { ITrainerEditProfile, ITrainerProfile } from "@/interfaces/trainer-interfaces"
-import { useEffect, useState } from "react"
-import { showErrorToast, showSuccessToast } from "@/utils/toast"
-import { trainerErrors } from "@/messages/trainer-errors"
-import { editTrainerProfile, getTrainerProfile, uploadTrainerProfileImage } from "@/api/trainer-apicalls"
-import { trainerLogout } from "@/reduxStore/slices/trainer-slice"
-import { useDispatch } from "react-redux"
+import Navbar from "@/components/userComponents/Navbar";
+import SideBar from "@/components/common/SideBar";
+import InputField from "@/components/common/InputField";
+import SelectField from "@/components/common/SelectField";
+import { ToastContainer } from "react-toastify";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { trainerProfileEditSchema } from "@/schemas/trainer-profile-edit";
+import { Button } from "@/components/ui/button";
+import {
+  ITrainerEditProfile,
+  ITrainerProfile,
+} from "@/interfaces/trainer-interfaces";
+import { useEffect, useRef, useState } from "react";
+import { showErrorToast, showSuccessToast } from "@/utils/toast";
+import { trainerErrors } from "@/messages/trainer-errors";
+import {
+  editTrainerProfile,
+  getTrainerProfile,
+  uploadTrainerProfileImage,
+} from "@/api/trainer-apicalls";
+import { trainerLogout } from "@/reduxStore/slices/trainer-slice";
+import { useDispatch } from "react-redux";
+import { authLogout, findByEmail } from "@/api/auth";
+import { sendLinkToMail } from "@/api/reset-password";
+import { commonErrors } from "@/messages/common-error";
+import { uploadFile } from "@/api/file-upload";
+import { uploadTrainerCertificate } from "@/api/trainer-apicalls";
 const TrainerDashboard = () => {
-  const [trainerProfile,setTrainerProfile] = useState<ITrainerProfile|null>(null)
-  const [isEditing,setIsEditing] = useState(false)
-  const dispatch = useDispatch()
+  const [trainerProfile, setTrainerProfile] = useState<ITrainerProfile | null>(
+    null
+  );
+  const [certificates,setCertificates] = useState([])
+  const [isEditing, setIsEditing] = useState(false);
+  const [disable, setButtonDisable] = useState(false);
+  const dispatch = useDispatch();
+  const certificatePdfInput = useRef<HTMLInputElement>(null)
   const {
-register,
-handleSubmit,
-formState:{errors},
-reset
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
   } = useForm<ITrainerEditProfile>({
-    resolver:yupResolver(trainerProfileEditSchema),
+    resolver: yupResolver(trainerProfileEditSchema),
+  });
 
-  })
-
-  const trainerLogoutMethod = ()=>{
-dispatch(trainerLogout())
+  const trainerLogoutMethod = () => {
+    dispatch(trainerLogout());
+    authLogout();
+  };
+  const handleCertificateUpload = async(event:React.ChangeEvent<HTMLInputElement>)=>{
+    try {
+      console.log('this is the function')
+          const fileList = event.target.files
+          const uploadFileResponse = await uploadFile(fileList as FileList,'trainer-certificate')
+          if(uploadFileResponse.data){
+            console.log('this is url',uploadFileResponse.data.url)
+           const response = await uploadTrainerCertificate(uploadFileResponse.data.url)
+           console.log(response)
+           if(!response?.data.success){
+            throw new Error()
+           }
+           showSuccessToast(response?.data.message)
+           setCertificates(response.data.trainerCertificate)
+          }
+        } catch (error) {
+            console.log(error)
+            showErrorToast(trainerErrors.CERTIFICATE_UPLOAD_ERROR)
+        }
   }
-const onSubmit = async (data:ITrainerEditProfile)=>{
-  try {
-    if(trainerProfile){
-      const {profilePicture,trainerCertificate,...rest} = trainerProfile
-       const existingData = JSON.stringify(rest)
-       const newData = JSON.stringify(data)
-       if(existingData === newData){
-        showErrorToast(trainerErrors.PROFILE_CHANGE_NEED)
-        return 
-       }
-       console.log('this is data',data)
-       const responseData = await editTrainerProfile(data)
-       if(responseData.success){
-        showSuccessToast(responseData.message)
-        console.log(responseData)
-        setTrainerProfile(responseData.returnedTrainerProfile)
-       }
-    }
-  } catch (error) {
-    console.log(error)
-    showErrorToast(trainerErrors.PROFILE_EDIT_ERROR)
-  }
-}
-  useEffect(()=>{
-    const fetchTrainerProfile = async()=>{
-      try {
-         const trainerProfileDetails = await getTrainerProfile()
-         if(trainerProfileDetails){
-          console.log(trainerProfileDetails)
-          setTrainerProfile(trainerProfileDetails.trainerProfile)
-         }
-      } catch (error) {
-        showErrorToast(trainerErrors.PROFILE_ERROR)
+  const handleSendResetLink = async (email: string) => {
+    setButtonDisable(true);
+    try {
+      console.log("this is onSubmit");
+      const isExist = await findByEmail(email);
+      if (!isExist) {
+        showErrorToast(commonErrors.EMAIL_NOT_FOUND);
+        return;
       }
+      const response = await sendLinkToMail(email);
+      if (response.data.success) {
+        showSuccessToast(response.data.message);
+        setButtonDisable(false);
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error: any) {
+      if (error?.message) {
+        showErrorToast(error.message);
+        setButtonDisable(false);
+        return;
+      }
+      showErrorToast(commonErrors.SEND_RESET_PASSWORD_ERROR);
+      setButtonDisable(false);
     }
-    fetchTrainerProfile()
-  },[])
+  };
+  const onSubmit = async (data: ITrainerEditProfile) => {
+    try {
+      if (trainerProfile) {
+        const { profilePicture, trainerCertificate, ...rest } = trainerProfile;
+        const existingData = JSON.stringify(rest);
+        const newData = JSON.stringify(data);
+        if (existingData === newData) {
+          showErrorToast(trainerErrors.PROFILE_CHANGE_NEED);
+          return;
+        }
+        console.log("this is data", data);
+        const responseData = await editTrainerProfile(data);
+        if (responseData.success) {
+          showSuccessToast(responseData.message);
+          console.log(responseData);
+          setTrainerProfile(responseData.returnedTrainerProfile);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      showErrorToast(trainerErrors.PROFILE_EDIT_ERROR);
+    }
+  };
+  useEffect(() => {
+    const fetchTrainerProfile = async () => {
+      try {
+        const trainerProfileDetails = await getTrainerProfile();
+        if (trainerProfileDetails) {
+          console.log(trainerProfileDetails);
+          setTrainerProfile(trainerProfileDetails.trainerProfile);
+          setCertificates(trainerProfileDetails.trainerProfile.trainerCertificate)
+        }
+      } catch (error) {
+        showErrorToast(trainerErrors.PROFILE_ERROR);
+      }
+    };
+    fetchTrainerProfile();
+  }, []);
 
-  useEffect(()=>{
-    if(trainerProfile&& isEditing){
-      const {profilePicture,trainerCertificate,...rest} = trainerProfile
-      reset (rest)
+  useEffect(() => {
+    if (trainerProfile && isEditing) {
+      const { profilePicture, trainerCertificate, ...rest } = trainerProfile;
+      reset(rest);
     }
-  },[isEditing,reset])
+  }, [isEditing, reset]);
   return (
-   
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
       <Navbar logout={trainerLogoutMethod} role="trainer" />
       <div className="flex flex-1   text-white">
         {/* Sidebar */}
 
         <SideBar
-        profilePicture={trainerProfile?.profilePicture}
-        uploadProfilePicApi={uploadTrainerProfileImage}
-        role="user"
+          profilePicture={trainerProfile?.profilePicture}
+          uploadProfilePicApi={uploadTrainerProfileImage}
+          role="user"
           items={[
             "my bookings",
             "my meal plan",
@@ -122,7 +186,7 @@ const onSubmit = async (data:ITrainerEditProfile)=>{
                       error={errors.email?.message}
                       disabled={true}
                     />
-                   
+
                     <SelectField
                       label="Gender"
                       options={[
@@ -138,9 +202,6 @@ const onSubmit = async (data:ITrainerEditProfile)=>{
                       type="number"
                     />
 
-                    
-                    
-
                     <InputField
                       label="Phone"
                       register={register("phone")}
@@ -152,17 +213,15 @@ const onSubmit = async (data:ITrainerEditProfile)=>{
                       register={register("bio")}
                       error={errors.bio?.message}
                       type="text"
-                    /><InputField
-                    label="Years Of Experience"
-                    register={register("yearsOfExperience")}
-                    error={errors.yearsOfExperience?.message}
-                    type="text"
-                  />
-
-                    
+                    />
+                    <InputField
+                      label="Years Of Experience"
+                      register={register("yearsOfExperience")}
+                      error={errors.yearsOfExperience?.message}
+                      type="text"
+                    />
                   </div>
 
-                  {/* Sign In Button */}
                   <div className="flex justify-center">
                     <button
                       onClick={handleSubmit(onSubmit)}
@@ -213,28 +272,69 @@ const onSubmit = async (data:ITrainerEditProfile)=>{
                     {trainerProfile?.yearsOfExperience || "not added"}
                   </span>
                 </div>
-                
-
-                
               </div>
 
-              <button
-                onClick={() => setIsEditing(true)}
-                className="mt-4 bg-[#FFC436] text-black px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] w-full"
-              >
-                Edit Profile
-              </button>
+              <div className="flex justify-around">
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="mt-4 bg-[#FFC436]  text-black px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] w-1/4 "
+                >
+                  Edit Profile
+                </button>
+                <button
+                  disabled={disable}
+                  onClick={() =>
+                    handleSendResetLink(trainerProfile?.email as string)
+                  }
+                  className="mt-4 mx-4 bg-[#FFC436]  text-black px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] w-1/4 "
+                >
+                  {disable ? "Loading..." : " Reset Password"}
+                </button>
+              </div>
             </div>
           )}
+
+          <div className="w-full min-h-screen bg-black p-8">
+            <div className="flex justify-end mb-6">
+              <Button onClick={()=>{if(certificatePdfInput.current){certificatePdfInput.current.click()}}} className="bg-[#FFC436] text-black hover:bg-black hover:text-[#FFC436]">
+                Add Certificate
+              </Button>
+              <input type="file" onChange={handleCertificateUpload} className="hidden" ref={certificatePdfInput}  />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {certificates?.map(
+                (certificate: string, index: number) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center"
+                  >
+                    <iframe
+                      src={certificate}
+                      className="w-full h-[300px] border rounded-lg"
+                      title={`Trainer Certificate ${index + 1}`}
+                    />
+                    <a
+                      target="_blank"
+                      href={certificate}
+                      rel="noopener noreferrer"
+                    >
+                      <Button className="mt-4 bg-[#FFC436] text-black hover:bg-black hover:text-[#FFC436]">
+                        View
+                      </Button>
+                    </a>
+                  </div>
+                )
+              )}
+            </div>
+          </div>
 
           {/* Table Wrapper - Scrollable */}
         </div>
       </div>
       <ToastContainer />
     </div>
-  
+  );
+};
 
-  )
-}
-
-export default TrainerDashboard
+export default TrainerDashboard;

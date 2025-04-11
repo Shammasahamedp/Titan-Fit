@@ -253,7 +253,7 @@ export default function Login() {
           </Link>
         </p>
       </div>
-      {forgotPassModalState &&( <ForgotPasswordModal isOpen={forgotPassModalState} onClose={()=>setShowEmailModal(false)} onSubmit={handleSendResetLink}/>)}
+      {forgotPassModalState &&( <ForgotPasswordModal  onClose={()=>setShowEmailModal(false)} onSubmit={handleSendResetLink}/>)}
       <ToastContainer />
     </div>
   );

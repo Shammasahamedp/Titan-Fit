@@ -37,3 +37,15 @@ export const uploadTrainerProfileImage = async (trainerProfileImage:string)=>{
         throw error
     }
 }
+
+export const uploadTrainerCertificate = async(trainerCertificate:string)=>{
+    try {
+        const response = await axiosInstance.post('http://localhost:3000/trainer/addcertificate',{trainerCertificate})
+        if(response.data){
+            return response
+        }
+    } catch (error) {
+        console.log(error)
+        throw error
+    }
+}

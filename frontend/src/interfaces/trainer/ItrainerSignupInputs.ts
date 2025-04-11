@@ -18,6 +18,6 @@ export interface TrainerSignupData{
     gender:string;
     age:number;
     yearsOfExperience:number;
-    trainerCertificate:string;
+    trainerCertificate:string[];
     bio:string
 }
