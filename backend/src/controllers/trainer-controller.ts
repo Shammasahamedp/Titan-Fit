@@ -57,8 +57,8 @@ export class TrainerController {
     }
     async addTrainerProfilImage(req:Request,res:Response):Promise<void>{
         try {
-            const trainerProfileImage = await this.trainerService.addTrainerProfilePic(res.locals.user?.userId,req.body.trainerProfileImage)
-            res.status(200).json({success:true,message:trainerMessages.ADD_PROFILE_IMAGE_SUCCESS,trainerProfileImage})
+            const image = await this.trainerService.addTrainerProfilePic(res.locals.user?.userId,req.body.trainerProfileImage)
+            res.status(200).json({success:true,message:trainerMessages.ADD_PROFILE_IMAGE_SUCCESS,image})
         } catch (error) {
             res.status(400).json({success:false,message:trainerMessages.ADD_PROFILE_IMAGE_ERROR})
         }
@@ -72,4 +72,5 @@ export class TrainerController {
             res.status(400).json({success:false,message:trainerMessages.TRAINER_CERTIFICATE_ADD_FAILURE})
         }
     }
+   
 }

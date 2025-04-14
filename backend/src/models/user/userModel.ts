@@ -16,6 +16,7 @@ const UserSchema: Schema = new Schema(
     fitnessGoal: { type: String ,required:true},
     fitnessLevel: { type: String ,required:true},
     subscriptionId: { type: Types.ObjectId },
+    blocked:{type:Boolean,default:false},
     mealPlanId: { type: Types.ObjectId },
     testimonialId: { type: Types.ObjectId },
     googleId:{type:String},

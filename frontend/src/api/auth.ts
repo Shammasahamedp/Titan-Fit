@@ -4,8 +4,10 @@ import { SignupFormatInputs } from "@/interfaces/user/IsignUpFomatInput";
 import { LoginFormInput } from "@/interfaces/IloginFormInput";
 import { TrainerSignupData } from "@/interfaces/trainer/ItrainerSignupInputs";
 import { AdminLoginFormInput } from "@/interfaces/admin/ILoginFormInput";
-
-
+import { trainerLogout } from "@/reduxStore/slices/trainer-slice";
+import { logout } from "@/reduxStore/slices/user-slice";
+import { adminLogout } from "@/reduxStore/slices/admin-slice";
+import { store } from "@/reduxStore/store";
 
 
 export const login = async(loginData:LoginFormInput)=>{
@@ -99,4 +101,19 @@ export const refreshToken = async()=>{
        
         throw error
     }
+}
+
+export const logoutTrainer = async ()=>{
+    store.dispatch(trainerLogout())
+    authLogout()
+}
+
+export const logoutUser = async ()=>{
+    store.dispatch(logout())
+    authLogout()
+}
+
+export const logoutAdmin = async()=>{
+    store.dispatch(adminLogout())
+    authLogout()
 }

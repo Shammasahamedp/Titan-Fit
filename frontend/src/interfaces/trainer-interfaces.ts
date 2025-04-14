@@ -20,3 +20,17 @@ export interface ITrainerEditProfile{
     bio:string;
     yearsOfExperience:number;
 }
+
+export interface ITrainers{
+    _id:string
+    name:string;
+    email:string;
+    gender:string;
+    age:number;
+    phone:string;
+    bio:string;
+    profilePicture?:string;
+    trainerCertificate:string[];
+    yearsOfExperience:number;
+    approved:boolean
+}

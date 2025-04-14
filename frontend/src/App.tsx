@@ -12,14 +12,16 @@ import PublicRoute from "./routes/PublicRoute"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import TrainerDashboard from "./pages/trainer/TrainerDashboard"
 import ForgotPassword from "./pages/ForgotPassword"
-
-
+import AdminUserManagement from "./pages/admin/AdminUserManagement"
+import AdminTrainerManagement from "./pages/admin/AdminTrainerManagement"
 function App() {
 
   return (
     <Router>
       <Routes>
            {/* Public routes */}
+           <Route path='/reset-password/:token' element={<ForgotPassword/>}/>
+
           <Route element={<PublicRoute/>}>
           <Route path='/' element={<LandingPage/>}/>
           <Route path='/login' element={<Login/>}/>
@@ -38,6 +40,9 @@ function App() {
 
           <Route element={<AdminProtectedRoute/>}>
             <Route path='/admin/dashboard' element={<AdminDashboard/>}/>
+            <Route path="/admin/usermanagement" element={<AdminUserManagement/>}/>
+            <Route path="/admin/trainermanagement" element={<AdminTrainerManagement/>}/>
+
           </Route>
 
           <Route element={<TrainerProtectedRoute/>}>

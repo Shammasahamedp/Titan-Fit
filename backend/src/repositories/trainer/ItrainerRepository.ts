@@ -11,4 +11,6 @@ export interface ITrainerRepository{
     addProfilePic(trainerId:string,profilePic:string):Promise<ITrainerDocument|null>
     updatePassword(email:string,password:string):Promise<ITrainerDocument|null>
     addCertificate(trainerId:string,trainerCertificate:string):Promise<ITrainerDocument|null>
+    getTrainers():Promise<ITrainerDocument[]|null>
+    changeApproval(trainerId:string,approved:boolean):Promise<ITrainerDocument|null>
 }

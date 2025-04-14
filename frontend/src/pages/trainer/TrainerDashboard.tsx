@@ -11,6 +11,7 @@ import {
   ITrainerEditProfile,
   ITrainerProfile,
 } from "@/interfaces/trainer-interfaces";
+import { logoutTrainer } from "@/api/auth";
 import { useEffect, useRef, useState } from "react";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { trainerErrors } from "@/messages/trainer-errors";
@@ -19,9 +20,7 @@ import {
   getTrainerProfile,
   uploadTrainerProfileImage,
 } from "@/api/trainer-apicalls";
-import { trainerLogout } from "@/reduxStore/slices/trainer-slice";
-import { useDispatch } from "react-redux";
-import { authLogout, findByEmail } from "@/api/auth";
+import {  findByEmail } from "@/api/auth";
 import { sendLinkToMail } from "@/api/reset-password";
 import { commonErrors } from "@/messages/common-error";
 import { uploadFile } from "@/api/file-upload";
@@ -33,7 +32,6 @@ const TrainerDashboard = () => {
   const [certificates,setCertificates] = useState([])
   const [isEditing, setIsEditing] = useState(false);
   const [disable, setButtonDisable] = useState(false);
-  const dispatch = useDispatch();
   const certificatePdfInput = useRef<HTMLInputElement>(null)
   const {
     register,
@@ -44,10 +42,7 @@ const TrainerDashboard = () => {
     resolver: yupResolver(trainerProfileEditSchema),
   });
 
-  const trainerLogoutMethod = () => {
-    dispatch(trainerLogout());
-    authLogout();
-  };
+
   const handleCertificateUpload = async(event:React.ChangeEvent<HTMLInputElement>)=>{
     try {
       console.log('this is the function')
@@ -141,7 +136,7 @@ const TrainerDashboard = () => {
   }, [isEditing, reset]);
   return (
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-      <Navbar logout={trainerLogoutMethod} role="trainer" />
+      <Navbar logout={logoutTrainer} role="trainer" />
       <div className="flex flex-1   text-white">
         {/* Sidebar */}
 
@@ -150,10 +145,9 @@ const TrainerDashboard = () => {
           uploadProfilePicApi={uploadTrainerProfileImage}
           role="user"
           items={[
-            "my bookings",
-            "my meal plan",
-            "my wallet",
-            "my subscription",
+            ["my bookings",'booking'],
+            ["my meal plan",'mealplan'],
+           [ "my wallet",'wallet'],
           ]}
         />
 

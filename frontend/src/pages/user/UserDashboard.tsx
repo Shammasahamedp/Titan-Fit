@@ -8,19 +8,16 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { userErrors } from "@/messages/userside-error";
 import { userProfileEditSchema } from "@/schemas/user-profile-edit-schema";
 import InputField from "@/components/common/InputField";
-import { set, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ToastContainer } from "react-toastify";
 import SelectField from "@/components/common/SelectField";
-import { useDispatch } from "react-redux";
-import { logout } from "@/reduxStore/slices/user-slice";
-import { authLogout, findByEmail } from "@/api/auth";
+import {  findByEmail, logoutUser } from "@/api/auth";
 import { sendLinkToMail } from "@/api/reset-password";
 import { commonErrors } from "@/messages/common-error";
 const UserDashboard: React.FC = () => {
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
   const [disable,setButtonDisable] = useState(false)
-  const dispatch=useDispatch()
   const {
     register,
     handleSubmit,
@@ -57,10 +54,7 @@ const UserDashboard: React.FC = () => {
         }
       }
   
-  const userLogout = ()=>{
-    dispatch(logout())
-    authLogout()
-  }
+
   const onSubmit = async (data: IUserEditProfile) => {
     try {
       console.log("li");
@@ -112,7 +106,7 @@ const UserDashboard: React.FC = () => {
   
   return (
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-      <Navbar logout={userLogout}  role='user'/>
+      <Navbar logout={logoutUser}  role='user'/>
       <div className="flex flex-1   text-white">
         {/* Sidebar */}
 
@@ -121,10 +115,9 @@ const UserDashboard: React.FC = () => {
         uploadProfilePicApi={uploadUserProfileImage}
         role="user"
           items={[
-            "my bookings",
-            "my meal plan",
-            "my wallet",
-            "my subscription",
+            ["my bookings",'bookings'],
+            ["my meal plan",'mealplan'],
+            ["my subscription",'subscription'],
           ]}
         />
 

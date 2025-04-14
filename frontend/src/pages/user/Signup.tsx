@@ -146,13 +146,23 @@ export default function Signup() {
               error={errors.confirmPassword?.message}
             />
             {/* gender */}
-            <InputField
+            {/* <InputField
               label="Gender"
               type="text"
               placeholder="Enter Your Gender"
               register={register('gender')}
               error={errors.gender?.message}
+            /> */}
+            <SelectField
+              label="Gender"
+              options={[
+                { value: "male", label: "Male" },
+                { value: "female", label: "Female" },
+              ]}
+              register={register('gender')}
+              error={errors.gender?.message}
             />
+
             {/* age */}
             <InputField
               label="Age"
@@ -170,7 +180,7 @@ export default function Signup() {
                 { value: "intermediate", label: "Intermediate" },
                 { value: "advanced", label: "Advanced" },
               ]}
-              register={register('fitnessGoal')}
+              register={register('fitnessLevel')}
               error={errors.fitnessLevel?.message}
             />
             {/*  fitness goal */}
@@ -181,7 +191,7 @@ export default function Signup() {
                 { value: "buildmuscle", label: "Build Muscle" },
                 { value: "maintenance", label: "Maintenance" },
               ]}
-              register={register('fitnessLevel')}
+              register={register('fitnessGoal')}
               error={errors.fitnessGoal?.message}
             />
           </div>

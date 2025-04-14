@@ -36,4 +36,14 @@ export class UserRepository implements IUserRepository{
             {new:true}
         )
     }
+    async getUsers(): Promise<IUserDocument[] | null> {
+        return await userModel.find().select('-password -createdAt -updatedAt -__v -googleId')
+    }
+    async userToggle(userId: string, blocked: boolean): Promise<IUserDocument | null> {
+        return await userModel.findByIdAndUpdate(
+            userId,
+            {$set:{blocked:!blocked}},
+            {new:true}
+        )
+    }
 }

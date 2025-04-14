@@ -36,5 +36,20 @@ export interface IUserEditProfile{
     fitnessLevel:string;
 }
 
+export interface IUsers{
+    _id:string;
+    name:string;
+    email:string;
+    phone:string;
+    profilePicture?:string;
+    age:number;
+    weight:number;
+    height:number;
+    gender:string;
+    fitnessGoal:string;
+    fitnessLevel:string;
+    blocked:boolean
+}
+
 
 

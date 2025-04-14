@@ -14,7 +14,7 @@ import { sendOtp, verifyOtp } from "@/api/otp";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { findByEmail, trainerSignup } from "@/api/auth";
 import { uploadFile } from "@/api/file-upload";
-
+import SelectField from "@/components/common/SelectField";
 export default function TrainerSignup() {
   const [trainerData, setTrainerData] = useState<TrainerSignupSchemaInput | null>(
     null
@@ -161,13 +161,16 @@ export default function TrainerSignup() {
                 error={errors.confirmPassword?.message}
               />
               {/* gender */}
-              <InputField
-                label="Gender"
-                type="text"
-                placeholder="Enter Your Gender"
-                register={register("gender")}
-                error={errors.gender?.message}
-              />
+             
+              <SelectField
+              label="Gender"
+              options={[
+                { value: "male", label: "Male" },
+                { value: "female", label: "Female" },
+              ]}
+              register={register('gender')}
+              error={errors.gender?.message}
+            />
               {/* age */}
               <InputField
                 label="Age"

@@ -25,7 +25,7 @@ const Navbar:React.FC<INavebarProps> = ({logout,role}) => {
             About
           </Link>
 
-          {!role ? (
+          {!role || role ==='admin' ? (
             <Link to="/login">
               <Button className="bg-[#FFC436] text-black hover:bg-black hover:text-[#FFC436]">
                 Get Started

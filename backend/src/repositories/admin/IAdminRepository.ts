@@ -1,5 +1,7 @@
-import { IAdminDocument, IAdminLogin } from "../../interfaces/adminInterfaces";
+import { IAdminDocument } from "../../interfaces/adminInterfaces";
+import { IUserDocument } from "../../interfaces/userInterfaces";
 
 export interface IAdminRepository{
-    findAdminByEmail(email:string):Promise<IAdminDocument|null>
+    findAdminByEmail(email:string):Promise<IAdminDocument|null>;
+
 }

@@ -42,7 +42,7 @@ const ForgotPassword = () => {
       <div className="flex justify-between items-center mb-5">
         <h2 className="text-xl font-semibold">Enter New Password</h2>
         <Link to='/login'  className="text-gray-500 hover:text-gray-700 hover:underline hover:cursor-pointer">
-          login
+          login or Home
         </Link>
       </div>
        <label className="text-black mt-3">Password</label>
