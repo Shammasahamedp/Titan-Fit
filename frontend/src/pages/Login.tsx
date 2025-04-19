@@ -109,12 +109,19 @@ export default function Login() {
       dispatch(logingStart())
       if(tokenResponse?.data.success){
         const {_id,name,email} = tokenResponse.data.data.user
+        console.log(_id,name,tokenResponse.data.data.message)
         dispatch(loginSuccess({
             user:{_id,name,email,role:'user'},
             token:tokenResponse.data.data.accessToken
         }))
-        showSuccessToast(tokenResponse.data.data.message)
-        navigate('/user/home')
+        showSuccessToast(tokenResponse.data.message)
+        if(tokenResponse.data.data.userNew){
+            navigate('/user/profile-complete')
+            return 
+        }else{
+          navigate('/user/home')
+        }
+       
         
      }
     }else if(role === 'trainer'){
@@ -125,9 +132,15 @@ export default function Login() {
           trainer:{_id,name,email,role:'trainer'},
           token:tokenResponse.data.data.accessToken
         }))
-
         showSuccessToast(tokenResponse.data.data.message)
+
+        if(tokenResponse.data.data.trainerNew){
+             navigate('/trainer/profile-complete')
+             return 
+        }else{
         navigate('/trainer/dashboard')
+        }
+        
       }
     }
     
@@ -135,7 +148,9 @@ export default function Login() {
     
 
     } catch (error:any) {
+      console.log(error)
        if(role==='user'){
+        console.log('error')
         if(!error.response){
           dispatch(loginFailure(commonErrors.NETWORK_ISSUE))
           showErrorToast(commonErrors.NETWORK_ISSUE)

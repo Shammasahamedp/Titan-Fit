@@ -20,7 +20,7 @@ export class TrainerService implements ITrainerService{
         if(!trainer){
             throw new Error(trainerMessages.LOGIN_FAILED)
         }
-        const isValid = comparePassword(data.password,trainer.password)
+        const isValid = comparePassword(data.password,trainer.password as string)
         if(!isValid){
             throw new Error(trainerMessages.LOGIN_FAILED)
         }
@@ -73,7 +73,7 @@ export class TrainerService implements ITrainerService{
             throw new Error (trainerMessages.ERROR_GET_PROFILE)
         }
     }
-    async editTrainerProfile(trainerId: string, trainerProfileData: ITrainerProfile): Promise<ITrainerProfile | null> {
+    async editTrainerProfile(trainerId: string, trainerProfileData: ITrainerProfile): Promise<ITrainerDocument | null> {
         try {
             const editedTrainerProfile = await this.trainerRepository.editTrainerProfile(trainerId,trainerProfileData)
             if(!editedTrainerProfile){
@@ -98,7 +98,6 @@ export class TrainerService implements ITrainerService{
     }
    async addCertificate(trainerId: string, trainerCertificate: string): Promise<string[]> {
         try {
-            console.log('this is trainercertificate',trainerCertificate)
            const trainerData= await this.trainerRepository.addCertificate(trainerId,trainerCertificate)
            if(!trainerData){
             throw new Error(trainerMessages.TRAINER_NOT_FOUND)
@@ -106,6 +105,35 @@ export class TrainerService implements ITrainerService{
            return trainerData.trainerCertificate as string[]
         } catch (error) {
             console.log(error)
+            throw new Error()
+        }
+    }
+
+    async checkPassword(trainerId: string, password: string): Promise<boolean> {
+        try {
+            
+            const trainer = await this.trainerRepository.findTrainerById(trainerId)
+            if(!trainer){
+                return false
+            }
+            const isValid =await  comparePassword(password,trainer.password as string)
+            if(!isValid){
+                return false
+            }
+            return true
+        } catch (error) {
+            throw new Error()
+        }
+    }
+    async resetPassword(trainerId: string, password: string): Promise<ITrainerDocument | null> {
+        try {
+            const hashedPassword =await hashPassword(password)
+            const trainer = await this.trainerRepository.updatePassword(trainerId,hashedPassword)
+            if(trainer){
+                return trainer
+            }
+            throw new Error()
+        } catch (error) {
             throw new Error()
         }
     }

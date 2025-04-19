@@ -8,7 +8,7 @@ export interface IUserRepository{
     findUserById(userId:string):Promise<IUserDocument|null>
     editUserProfile(userId:string,profileData:IUserProfile):Promise<IUserDocument|null>
     addProfilePic(userId:string,profilePic:string):Promise<IUserDocument|null>
-    updatePassword(email:string,password:string):Promise<IUserDocument|null>
+    updatePassword(id:string,password:string):Promise<IUserDocument|null>
     getUsers():Promise<IUserDocument[]|null>
     userToggle(userId:string,blocked:boolean):Promise<IUserDocument|null>
 }

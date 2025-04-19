@@ -30,7 +30,9 @@ export class AuthController {
             if(res.locals.user){
             const {email,role,googleId} = res.locals.user
            const loginResponseData=await this.authService.handleGoogleLogin(role,email,googleId)
+           console.log('this isloogin response',loginResponseData)
            if(loginResponseData){
+            console.log('inside')
             res.cookie('refreshToken',loginResponseData?.refreshToken,{
                 httpOnly:true,
                 secure:false,

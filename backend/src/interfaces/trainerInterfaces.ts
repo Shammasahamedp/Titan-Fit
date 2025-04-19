@@ -23,7 +23,8 @@ export interface ITrainerDocument extends ITrainerModel,Document{
 export interface ITrainerLoginResponse{
     trainer:ITrainerDocument;
     accessToken:string;
-    refreshToken:string
+    refreshToken:string;
+    trainerNew?:boolean
 }
 
 export interface ITrainerProfile{

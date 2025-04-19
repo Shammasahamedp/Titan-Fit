@@ -27,6 +27,14 @@ const userSlice = createSlice({
             state.error = action.payload
            
         },
+        updateUserProfile:(state,action:PayloadAction<Partial<UserState["user"]>>)=>{
+           if(state.user){
+            state.user={
+                ...state.user,
+                ...action.payload
+            }
+           }
+        },
         logout:(state)=>{
             state.error=null;
             state.userLoading=false;
@@ -36,5 +44,5 @@ const userSlice = createSlice({
     }
 })
 
-export const {logingStart,loginSuccess,loginFailure,logout} = userSlice.actions
+export const {logingStart,loginSuccess,loginFailure,logout,updateUserProfile} = userSlice.actions
 export default userSlice.reducer

@@ -12,12 +12,16 @@ import {  useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ToastContainer } from "react-toastify";
 import SelectField from "@/components/common/SelectField";
-import {  findByEmail, logoutUser } from "@/api/auth";
-import { sendLinkToMail } from "@/api/reset-password";
-import { commonErrors } from "@/messages/common-error";
+import {   logoutUser } from "@/api/auth";
+import ConfirmPasswordModal from "@/modal/ConfirmPasswordModal";
+import { checkPasswordMatching } from "@/api/user-apicalls";
+import { resetPassword } from "@/api/user-apicalls";
+import ResetPasswordModal from "@/modal/ResetPasswordModal";
 const UserDashboard: React.FC = () => {
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
   const [disable,setButtonDisable] = useState(false)
+  const [isModalOpen,setConfirmPasswordModal] = useState(false)
+  const [isResetModalOpen,setResetPasswordModal] = useState(false)
   const {
     register,
     handleSubmit,
@@ -27,33 +31,30 @@ const UserDashboard: React.FC = () => {
     resolver: yupResolver(userProfileEditSchema),
     mode:"onChange"
   });
-  const handleSendResetLink = async (email:string)=>{
-        try {
-          setButtonDisable(true)
-          console.log('this is onSubmit')
-           const isExist = await findByEmail(email)
-           if(!isExist){
-            showErrorToast(commonErrors.EMAIL_NOT_FOUND)
-            return 
-           }
-           const response = await sendLinkToMail(email)
-           if(response.data.success){
-            showSuccessToast(response.data.message)
-            setButtonDisable(false)
-           }else{
-            throw new Error(response.data.message)
-           }
-        } catch (error:any) {
-          if(error?.message){
-            showErrorToast(error.message)
-            setButtonDisable(false)
-            return
-          }
-          showErrorToast(commonErrors.SEND_RESET_PASSWORD_ERROR)
-          setButtonDisable(false)
-        }
-      }
   
+  const confirmPassword = async(password:string)=>{
+    try {
+      const response = await checkPasswordMatching(password)
+      if(response?.data.success){
+               setConfirmPasswordModal(false)
+               setResetPasswordModal(true)
+      }
+    } catch (error:any) {
+      console.log(error)
+      showErrorToast(error.response.data.message)
+    }
+  }
+  const resetUserPassword = async (password:string)=>{
+    try {
+      const response = await resetPassword(password)
+      if(response?.data.success){
+        showSuccessToast(response.data.message)
+        setResetPasswordModal(false)
+      }
+    } catch (error) {
+      showErrorToast(userErrors.RESET_PASSWORD_ERROR)
+    }
+  }
 
   const onSubmit = async (data: IUserEditProfile) => {
     try {
@@ -281,7 +282,7 @@ const UserDashboard: React.FC = () => {
               </button>
               <button
               disabled={disable}
-                onClick={() => handleSendResetLink(userProfile?.email as string)}
+                onClick={() => setConfirmPasswordModal(true)}
                 className="mt-4 bg-[#FFC436] text-black px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] w-1/4"
               >
                 {disable ? 'Loading...':'Reset Password'}
@@ -293,6 +294,13 @@ const UserDashboard: React.FC = () => {
           {/* Table Wrapper - Scrollable */}
         </div>
       </div>
+      {isModalOpen&&
+        <ConfirmPasswordModal onClose={()=>setConfirmPasswordModal(false)} onSubmit={confirmPassword}/>
+      }
+      {
+        isResetModalOpen&&
+        <ResetPasswordModal onClose={()=>setResetPasswordModal(false)} onSubmit={resetUserPassword}/>
+      }
 d      <ToastContainer />
     </div>
   );

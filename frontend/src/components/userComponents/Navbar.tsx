@@ -14,9 +14,9 @@ const Navbar:React.FC<INavebarProps> = ({logout,role}) => {
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         {/* Logo */}
         <div className="flex-1">
-        <Link to="/" className=" items-center  ">
+        {/* <Link to="/" className=" items-center  ">
           <img src="/titan-fit.png" alt="Logo" className="h-10" />
-        </Link>
+        </Link> */}
         </div>
 
         {/* Desktop Navigation */}

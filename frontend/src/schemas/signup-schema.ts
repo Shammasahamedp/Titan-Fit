@@ -16,6 +16,7 @@ export const signupSchema = yup.object().shape({
     .required("Confirm password is required"),
   gender: yup.string().required("Gender is required"),
   age: yup.number()
+    .typeError('Age must be a number')
     .min(10,'You must be at least 10 year old to proceed ')
     .positive("Age must be a positive number")
     .integer("Age must be a whole number")

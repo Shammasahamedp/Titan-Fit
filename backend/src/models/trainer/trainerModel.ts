@@ -1,12 +1,12 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { ITrainerModel } from "./ItrainerModel";
+import { ITrainerDocument } from "../../interfaces/trainerInterfaces";
 
 
 const TrainerSchema: Schema = new Schema(
   {
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true },
+    name: { type: String },
+    email: { type: String },
+    password: { type: String },
     gender: { type: String },
     age: { type: String },
     phone: { type: Number },
@@ -17,12 +17,13 @@ const TrainerSchema: Schema = new Schema(
     approved: { type: Boolean, default: false },
     availableSlots: { type: Types.ObjectId },
     priceForSession: { type: Number },
-    googleId:{type:String}
+    googleId:{type:String},
+    isGoogleAuthenticated:{type:Boolean,default:false}
   },
   { timestamps: true }
 );
 
-export const trainerModel = mongoose.model<ITrainerModel>(
+export const trainerModel = mongoose.model<ITrainerDocument>(
   "Trainer",
   TrainerSchema
 );

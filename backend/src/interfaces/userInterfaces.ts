@@ -22,7 +22,8 @@ export interface IUserDocument extends IuserModel,Document{
 export interface ILoginResponse  {
     user:IUserDocument;
     accessToken:string;
-    refreshToken:string
+    refreshToken:string;
+    userNew?:boolean
 }
 
 export interface  IUserProfile {

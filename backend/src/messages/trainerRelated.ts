@@ -13,6 +13,9 @@ export const trainerMessages = {
     GET_TRAINER_PROFILE_FAILURE:'Error occured during fetch trainer profile',
     TRAINER_EDIT_PROFILE_SUCCESS:'Successfully updated trainer profile',
     TRAINER_CERTIFICATE_ADD_SUCCESS:'Successfully added trainer certificate',
-    TRAINER_CERTIFICATE_ADD_FAILURE:'Error occured during certificate upload'
+    TRAINER_CERTIFICATE_ADD_FAILURE:'Error occured during certificate upload',
+    PASSWORD_CHECK_SUCCESS:'Password verification is successfull',
+    PASSWORD_CHECK_FAILURE:'Password verification is failure',
+    PASSWORD_CHECK_ERROR:'Error occured during password verification'
 
 }

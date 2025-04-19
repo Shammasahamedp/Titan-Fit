@@ -21,8 +21,7 @@ const ForgotPassword = () => {
                 showErrorToast('password must contain 8 letters')
                 return 
             }
-         const email = query.get('email')
-       const response = await verifyLinkAndSetPassword(email as string,password,token as string)
+       const response = await verifyLinkAndSetPassword(password,token as string)
        if(response.data){
         showSuccessToast(response.data.message)
        }

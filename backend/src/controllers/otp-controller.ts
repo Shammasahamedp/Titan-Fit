@@ -23,6 +23,7 @@ export class OtpController {
   }
 
   async verifyOtp(req: Request, res: Response): Promise<void> {
+    console.log('this is verify otp')
     const { email, otp } = req.body;
     if (!email || !otp){
         res
@@ -37,6 +38,7 @@ export class OtpController {
         .json({ success: false, message: emailMessages.INVALID_OTP });
         return 
     }
+    console.log(';success')
     res.status(200).json({ success: true, messages: emailMessages.SUCCESS_OTP });
   }
 }

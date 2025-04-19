@@ -12,3 +12,15 @@ export const clearToken = ()=>{
     localStorage.removeItem("accessToken")
     
 }
+
+export const setProfileCompletionStatus = (userNew:string)=>{
+    localStorage.setItem('user-new',userNew)
+}
+
+export const getProfileCompletionStatus = ()=>{
+    return localStorage.getItem('user-new')
+}
+
+export const removeProfileCompletionStatus = ()=>{
+    localStorage.removeItem('user-new')
+}

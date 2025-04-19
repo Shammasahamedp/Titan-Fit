@@ -15,6 +15,7 @@ export interface IuserModel extends Document {
     mealPlanId?:Types.ObjectId;
     blocked:boolean;
     testimonialId?:Types.ObjectId,
-    googleId:string
+    googleId:string;
+    isGoogleAuthenticated:boolean
     
 }

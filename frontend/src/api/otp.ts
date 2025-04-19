@@ -1,11 +1,13 @@
 import {axiosInstance} from "./axiosInstance"
 
+const API = import.meta.env.VITE_BASE_URL
+
 export const sendOtp = async(email:string)=>{
-    return axiosInstance.post('http://localhost:3000/otp/send',{email})
+    return axiosInstance.post(`${API}/otp/send`,{email})
 }
 
 export const verifyOtp = async(email:string,otp:string)=>{
     console.log('this is verifyotp')
-    return axiosInstance.post('http://localhost:3000/otp/verify',{email,otp})
+    return axiosInstance.post(`${API}/otp/verify`,{email,otp})
 }
 

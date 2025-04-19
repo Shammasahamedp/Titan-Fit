@@ -1,4 +1,4 @@
-import { setToken } from "./localStorage";
+import { setProfileCompletionStatus, setToken } from "./localStorage";
 import { axiosInstance } from "./axiosInstance";
 import { SignupFormatInputs } from "@/interfaces/user/IsignUpFomatInput";
 import { LoginFormInput } from "@/interfaces/IloginFormInput";
@@ -9,10 +9,11 @@ import { logout } from "@/reduxStore/slices/user-slice";
 import { adminLogout } from "@/reduxStore/slices/admin-slice";
 import { store } from "@/reduxStore/store";
 
-
+const API = import.meta.env.VITE_BASE_URL
+console.log('llllllllllllll',API)
 export const login = async(loginData:LoginFormInput)=>{
     try {
-        const response = await axiosInstance.post(`http://localhost:3000/${loginData.role}/auth/login`,{email:loginData.email,password:loginData.password},{withCredentials:true})
+        const response = await axiosInstance.post(`${API}/${loginData.role}/auth/login`,{email:loginData.email,password:loginData.password},{withCredentials:true})
         console.log(response)
     setToken(response.data.data.accessToken)
     return response
@@ -23,7 +24,7 @@ export const login = async(loginData:LoginFormInput)=>{
 
 export const authLogout = async()=>{
     try {
-        const response = await axiosInstance.post('http://localhost:3000/auth/logout',{},{withCredentials:true})
+        const response = await axiosInstance.post(`${API}/auth/logout`,{},{withCredentials:true})
         return(response.data.success)
     } catch (error) {
         throw error
@@ -32,14 +33,14 @@ export const authLogout = async()=>{
 
 export const findByEmail = async(email:string)=>{
     try {
-        return await axiosInstance.get(`http://localhost:3000/auth/check-email?email=${email}`)
+        return await axiosInstance.get(`${API}/auth/check-email?email=${email}`)
     } catch (error) {
         throw error
     }
 }
 export const adminLogin = async(data:AdminLoginFormInput)=>{
    try {
-    const response = await axiosInstance.post('http://localhost:3000/admin/auth/login',data,{withCredentials:true})
+    const response = await axiosInstance.post(`${API}/admin/auth/login`,data,{withCredentials:true})
     setToken(response.data.accessToken)
     return response
    } catch (error) {
@@ -50,7 +51,7 @@ export const adminLogin = async(data:AdminLoginFormInput)=>{
 
 export const signUp = async(data:SignupFormatInputs)=>{
     try {
-        const response = await axiosInstance.post('http://localhost:3000/user/auth/signup',data,{withCredentials:true})
+        const response = await axiosInstance.post(`${API}/user/auth/signup`,data,{withCredentials:true})
     if(response.data)
     return response
     } catch (error) {
@@ -60,7 +61,7 @@ export const signUp = async(data:SignupFormatInputs)=>{
 
 export const trainerSignup = async(data:TrainerSignupData)=>{
     try {
-        const response = await axiosInstance.post('http://localhost:3000/trainer/auth/signup',data,{withCredentials:true})
+        const response = await axiosInstance.post(`${API}/trainer/auth/signup`,data,{withCredentials:true})
     if(response.data){
         return response
     }
@@ -72,12 +73,13 @@ export const trainerSignup = async(data:TrainerSignupData)=>{
 export const googleLogin = async(token:string,role:string)=>{
     try {
         const response = await axiosInstance.post(
-            'http://localhost:3000/auth/google/gettoken',
+            `${API}/auth/google/gettoken`,
             {token,role},{withCredentials:true}
         )
         if(response.data){
             console.log('this is response.data',response.data)
             setToken(response.data.data.accessToken)
+            setProfileCompletionStatus(response.data.data.userNew)
             return response
         }
 
@@ -94,7 +96,7 @@ export const refreshToken = async()=>{
     
     try {
         console.log('thisi si refershtmethod ')
-        const {data} = await axiosInstance.post('http://localhost:3000/token/refresh',{},{withCredentials:true})
+        const {data} = await axiosInstance.post(`${API}/token/refresh`,{},{withCredentials:true})
         setToken(data.accessToken)
         return data.accessToken
     } catch (error) {

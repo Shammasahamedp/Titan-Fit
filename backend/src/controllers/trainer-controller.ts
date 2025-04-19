@@ -1,3 +1,5 @@
+import { commonMessages } from "../messages/common";
+import { commonErrors } from "../messages/common-errors";
 import { trainerMessages } from "../messages/trainerRelated";
 import { ITrainerService } from "../services/trainer/ItrainerService";
 import { Request,Response } from "express";
@@ -70,6 +72,27 @@ export class TrainerController {
         } catch (error) {
             console.log(error)
             res.status(400).json({success:false,message:trainerMessages.TRAINER_CERTIFICATE_ADD_FAILURE})
+        }
+    }
+
+    async checkPassword(req:Request,res:Response):Promise<void>{
+        try {
+            const isTrue = await this.trainerService.checkPassword(res.locals.user?.userId,req.body.password)
+            if(isTrue){
+                res.status(200).json({success:true,message:trainerMessages.PASSWORD_CHECK_SUCCESS})
+                return 
+            }
+            res.status(403).json({success:false,message:trainerMessages.PASSWORD_CHECK_FAILURE})
+        } catch (error) {
+            res.status(400).json({success:false,message:trainerMessages.PASSWORD_CHECK_ERROR})
+        }
+    }
+    async resetPassword(req:Request,res:Response):Promise<void>{
+        try {
+            const trainer = await this.trainerService.resetPassword(res.locals.user.userId,req.body.password)
+            if(trainer) res.status(201).json({success:true,message:commonMessages.PASSWORD_UPDATE_SUCCESS})
+        } catch (error) {
+            res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
         }
     }
    

@@ -1,10 +1,12 @@
 import { IUserProfile,IUserEditProfile } from "@/interfaces/user-interfaces"
 import { axiosInstance } from "./axiosInstance"
 
+const API = import.meta.env.VITE_BASE_URL
+
 export const getProfile = async()=>{
   console.log('hello this si')
   try {
-      const response = await axiosInstance.get('http://localhost:3000/user/profile')
+      const response = await axiosInstance.get(`${API}/user/profile`)
       if(response.data){
         return response.data.userProfile as IUserProfile
       }
@@ -16,7 +18,7 @@ export const getProfile = async()=>{
 
 export const editUserProfile = async(userProfileData:IUserEditProfile)=>{
   try {
-    const response = await axiosInstance.put('http://localhost:3000/user/editprofile',userProfileData)
+    const response = await axiosInstance.put(`${API}/user/editprofile`,userProfileData)
     if(response.data){
       return response.data
     }
@@ -29,7 +31,7 @@ export const editUserProfile = async(userProfileData:IUserEditProfile)=>{
 export const uploadUserProfileImage = async(userProfileImage:string) =>{
   try {
 
-    const response = await axiosInstance.post('http://localhost:3000/user/addprofilepic',{userProfileImage:userProfileImage})
+    const response = await axiosInstance.post(`${API}/user/addprofilepic`,{userProfileImage:userProfileImage})
     if(response.data){
       return response
     }
@@ -37,4 +39,26 @@ export const uploadUserProfileImage = async(userProfileImage:string) =>{
     console.log(error)
     throw error
   }
+}
+
+export const checkPasswordMatching = async(password:string)=>{
+    try {
+        const response = await axiosInstance.post(`${API}/user/check-password`,{password})
+        if(response.data){
+            return response
+        }
+    } catch (error) {
+        throw error
+    }
+}
+
+export const resetPassword = async (password:string)=>{
+    try {
+        const response = await axiosInstance.put(`${API}/user/reset-password`,{password})
+        if(response.data){
+            return response
+        }
+    } catch (error) {
+        throw error
+    }
 }

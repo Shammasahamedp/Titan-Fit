@@ -1,18 +1,19 @@
 import { Types,Document } from "mongoose";
 
 export interface ITrainerModel extends Document{
-    name:string;
-    email:string;
-    password:string;
-    gender:string;
-    age:number;
+    name?:string;
+    email?:string;
+    password?:string;
+    gender?:string;
+    age?:number;
     phone?:string;
-    bio:string;
+    bio?:string;
     profilePicture?:string;
     trainerCertificate:string[];
-    yearsOfExperience:number;
+    yearsOfExperience?:number;
     approved:boolean;
     availableSlots?:Types.ObjectId;
     priceForSession?:number;
-    googleId?:string
+    googleId?:string,
+    isGoogleAuthenticated:boolean
 }

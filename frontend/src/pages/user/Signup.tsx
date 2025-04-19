@@ -24,6 +24,7 @@ export default function Signup() {
     formState: { errors },
   } = useForm<SignupFormatInputs>({ resolver: yupResolver(signupSchema) });
   const onSubmit = async (data: SignupFormatInputs) => {
+    console.log(errors)
     try {
       setUserData(data);
       console.log(data)
@@ -79,6 +80,11 @@ export default function Signup() {
       }
      } catch (error:any) {
       console.log('error in ',error.response.data)
+      if(error.response.data.validationError){
+        console.log(error.response.data.errorResult)
+        showErrorToast(error.response.data.errorResult)
+        return 
+      }
         if(error.response.data.message === 'Your otp is invalid , check again or resend after 30 seconds'){
           showErrorToast(error.response.data.message)
           return 
@@ -146,13 +152,7 @@ export default function Signup() {
               error={errors.confirmPassword?.message}
             />
             {/* gender */}
-            {/* <InputField
-              label="Gender"
-              type="text"
-              placeholder="Enter Your Gender"
-              register={register('gender')}
-              error={errors.gender?.message}
-            /> */}
+            
             <SelectField
               label="Gender"
               options={[

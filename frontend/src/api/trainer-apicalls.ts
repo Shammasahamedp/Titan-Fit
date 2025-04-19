@@ -1,9 +1,11 @@
 import { ITrainerEditProfile } from "@/interfaces/trainer-interfaces"
 import { axiosInstance } from "./axiosInstance"
 
+const API = import.meta.env.VITE_BASE_URL
+
 export const getTrainerProfile = async ()=>{
     try {
-        const response = await axiosInstance.get('http://localhost:3000/trainer/profile')
+        const response = await axiosInstance.get(`${API}/trainer/profile`)
         if(response.data){
             return response.data
         }
@@ -16,7 +18,7 @@ export const getTrainerProfile = async ()=>{
 export const editTrainerProfile = async (trainerProfileData:ITrainerEditProfile)=>{
     try {
         console.log('thiis is trainerprofiledata',trainerProfileData)//trainerProfileData
-        const response = await axiosInstance.put('http://localhost:3000/trainer/editprofile',trainerProfileData)
+        const response = await axiosInstance.put(`${API}/trainer/editprofile`,trainerProfileData)
         if(response.data){
             return response.data
         }
@@ -28,7 +30,7 @@ export const editTrainerProfile = async (trainerProfileData:ITrainerEditProfile)
 
 export const uploadTrainerProfileImage = async (trainerProfileImage:string)=>{
     try {
-        const response = await axiosInstance.post('http://localhost:3000/trainer/addprofilepic',{trainerProfileImage})
+        const response = await axiosInstance.post(`${API}/trainer/addprofilepic`,{trainerProfileImage})
         if(response.data){
             return response
         }
@@ -40,12 +42,34 @@ export const uploadTrainerProfileImage = async (trainerProfileImage:string)=>{
 
 export const uploadTrainerCertificate = async(trainerCertificate:string)=>{
     try {
-        const response = await axiosInstance.post('http://localhost:3000/trainer/addcertificate',{trainerCertificate})
+        const response = await axiosInstance.post(`${API}/trainer/addcertificate`,{trainerCertificate})
         if(response.data){
             return response
         }
     } catch (error) {
         console.log(error)
+        throw error
+    }
+}
+
+export const checkPasswordMatching = async(password:string)=>{
+    try {
+        const response = await axiosInstance.post(`${API}/trainer/check-password`,{password})
+        if(response.data){
+            return response
+        }
+    } catch (error) {
+        throw error
+    }
+}
+
+export const resetPassword = async (password:string)=>{
+    try {
+        const response = await axiosInstance.put(`${API}/trainer/reset-password`,{password})
+        if(response.data){
+            return response
+        }
+    } catch (error) {
         throw error
     }
 }

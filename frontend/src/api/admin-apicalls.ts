@@ -1,8 +1,10 @@
 import { axiosInstance } from "./axiosInstance"
 
+const API = import.meta.env.VITE_BASE_URL
+
 export const fetchUsers = async ()=>{
     try {
-        const response = await axiosInstance.get('http://localhost:3000/admin/get-users')
+        const response = await axiosInstance.get(`${API}/admin/get-users`)
         if(response.data){
             return response
         }
@@ -14,7 +16,7 @@ export const fetchUsers = async ()=>{
 
 export const fetchTrainers = async ()=>{
     try {
-        const response = await  axiosInstance.get('http://localhost:3000/admin/get-trainers')
+        const response = await  axiosInstance.get(`${API}/admin/get-trainers`)
         if(response.data){
             return response
         }
@@ -26,7 +28,7 @@ export const fetchTrainers = async ()=>{
 
 export const toggleTrainer = async (trainerId:string,approved:boolean)=>{
     try {
-        const response = await axiosInstance.put('http://localhost:3000/admin/change-approval',{trainerId,approved})
+        const response = await axiosInstance.put(`${API}/admin/change-approval`,{trainerId,approved})
         if(response.data){
             return response
         }
@@ -38,7 +40,7 @@ export const toggleTrainer = async (trainerId:string,approved:boolean)=>{
 
 export const toggleUser = async(userId:string,blocked:boolean)=>{
     try {
-        const response = await axiosInstance.put('http://localhost:3000/admin/user-toggle',{userId,blocked})
+        const response = await axiosInstance.put(`${API}/admin/user-toggle`,{userId,blocked})
         if(response.data){
             return response
         }

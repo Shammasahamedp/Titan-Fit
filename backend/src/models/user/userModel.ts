@@ -1,28 +1,29 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { IuserModel } from "./IuserModel";
+import { IUserDocument } from "../../interfaces/userInterfaces";
 
 
 const UserSchema: Schema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String },
     email: { type: String, required: true },
-    password: { type: String, required: true },
+    password: { type: String},
     phone: { type: String },
     profilePicture: { type: String },
     age: { type: Number },
     weight: { type: Number },
     height: { type: Number },
     gender: { type: String , },
-    fitnessGoal: { type: String ,required:true},
-    fitnessLevel: { type: String ,required:true},
+    fitnessGoal: { type: String },
+    fitnessLevel: { type: String },
     subscriptionId: { type: Types.ObjectId },
     blocked:{type:Boolean,default:false},
     mealPlanId: { type: Types.ObjectId },
     testimonialId: { type: Types.ObjectId },
     googleId:{type:String},
+    isGoogleAuthenticated:{type:Boolean,default:false}
    
   },
   { timestamps: true }
 );
 
-export const userModel = mongoose.model<IuserModel>("User", UserSchema);
+export const userModel = mongoose.model<IUserDocument>("User", UserSchema);

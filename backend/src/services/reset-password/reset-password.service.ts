@@ -19,33 +19,33 @@ export class ResetPasswordService implements IResetPasswordService{
         this.trainerRepository = trainerRepository
     }
 
-    async sendLink(email: string): Promise<void> {
+    async sendLink(email: string,id:string): Promise<void> {
         try {
             const token = generateToken()
-        await this.redisRepository.saveToken(email,token,600)
-        await sendMail(email,emailMessages.TOKEN_SUBJECT,`click the link http://localhost:5173/reset-password/${token}?email=${email}`)
+        await this.redisRepository.saveToken(id,token,600)
+        await sendMail(email,emailMessages.TOKEN_SUBJECT,`click the link http://localhost:5173/reset-password/${token}`)
         } catch (error) {
             throw error
         }
 
     }
 
-   async verifyLink(email:string,password: string, token: string): Promise<void> {
+   async verifyLink(id:string,password: string, token: string): Promise<void> {
         try {
-           const existingToken= await this.redisRepository.getToken(email)
+           const existingToken= await this.redisRepository.getToken(id)
            if(existingToken !== token){
             throw new Error (commonErrors.INVALID_TOKEN)
            }
            const hashedPassword = await hashPassword(password)
-           const user = await this.userRepository.findUserByEmail(email)
+           const user = await this.userRepository.findUserById(id)
            
            if(user){
-              await this.userRepository.updatePassword(email,hashedPassword)
+              await this.userRepository.updatePassword(id,hashedPassword)
               return 
            }
-           const trainer = await this.trainerRepository.findTrainerByEmail(email)
+           const trainer = await this.trainerRepository.findTrainerById(id)
            if(trainer){
-            await this.trainerRepository.updatePassword(email,hashedPassword)
+            await this.trainerRepository.updatePassword(id,hashedPassword)
             return 
            }
         } catch (error:any) {

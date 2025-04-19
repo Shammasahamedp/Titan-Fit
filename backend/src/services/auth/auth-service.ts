@@ -1,5 +1,7 @@
-import { ITrainerLoginResponse } from "../../interfaces/trainerInterfaces";
-import { ILoginResponse } from "../../interfaces/userInterfaces";
+import { ITrainerDocument, ITrainerLoginResponse } from "../../interfaces/trainerInterfaces";
+import { ILoginResponse, IUserDocument } from "../../interfaces/userInterfaces";
+import { trainerModel } from "../../models/trainer/trainerModel";
+import { userModel } from "../../models/user/userModel";
 import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
 import { IUserRepository } from "../../repositories/user/IuserRepository";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
@@ -27,50 +29,79 @@ export class AuthService implements IAuthService{
     }
 
     async handleGoogleLogin(role:string,email:string,googleId:string):Promise<ILoginResponse|ITrainerLoginResponse|null|undefined>{
-        if(role === 'user'){
+        try {
+            if(role === 'user'){
             
-            const user= await this.userRepository.findOne(googleId)
-            if(user){
-                
-                const accessToken = generateAccessToken(user?._id.toString() as string)
-            const refreshToken = generateRefreshToken(user?._id.toString() as string)
-            console.log('this is tokens',accessToken,'llllllllllllllllllllllllllllllllllllllllllllllllllllllll',refreshToken)
-            return {user,accessToken,refreshToken}
-            }
-            if(!user){
-                const user = await this.userRepository.findUserByEmail(email)
+                const user= await this.userRepository.findOne(googleId)
                 if(user){
-                    await this.userRepository.saveGoogleId(email,googleId)
+                    
                     const accessToken = generateAccessToken(user?._id.toString() as string)
-            const refreshToken = generateRefreshToken(user?._id.toString() as string)
-
-            return {user,accessToken,refreshToken}
+                const refreshToken = generateRefreshToken(user?._id.toString() as string)
+                return {user,accessToken,refreshToken}
                 }
-                throw new Error('user not found')
-            }
-            
-
-        }else if(role === 'trainer'){
-            const trainer= await this.trainerRepository.findOne(googleId)
-            if(trainer){
+                if(!user){
+                    const user = await this.userRepository.findUserByEmail(email)
+                    if(user){
+                        await this.userRepository.saveGoogleId(email,googleId)
+                        const accessToken = generateAccessToken(user?._id.toString() as string)
+                const refreshToken = generateRefreshToken(user?._id.toString() as string)
+    
+                return {user,accessToken,refreshToken}
+                    }
+                    else{
+                        console.log('reached..')
+                        const newUser = new userModel(
+                                {
+                                    googleId:googleId,
+                                    email:email,
+                                    isGoogleAuthenticated:true
+                                }
+                        )
+    
+                       const user:IUserDocument|null= await newUser.save()
+                       
+                       const accessToken = generateAccessToken(user?._id.toString() as string)
+                       const refreshToken = generateRefreshToken(user?._id.toString() as string)
+                       return {user,accessToken,refreshToken,userNew:true}
+                    }
+                }
                 
-                const accessToken = generateAccessToken(trainer?._id.toString() as string)
-            const refreshToken = generateRefreshToken(trainer?._id.toString() as string)
-
-            return {trainer,accessToken,refreshToken}
-            }
-            if(!trainer){
-                const trainer = await this.trainerRepository.findTrainerByEmail(email)
+    
+    
+            }else if(role === 'trainer'){
+                const trainer= await this.trainerRepository.findOne(googleId)
                 if(trainer){
-                    await this.trainerRepository.saveGoogleId(email,googleId)
+                    
                     const accessToken = generateAccessToken(trainer?._id.toString() as string)
-            const refreshToken = generateRefreshToken(trainer?._id.toString() as string)
-
-            return {trainer,accessToken,refreshToken}
+                const refreshToken = generateRefreshToken(trainer?._id.toString() as string)
+    
+                return {trainer,accessToken,refreshToken}
                 }
-                throw new Error('trainer not found')
+                if(!trainer){
+                    const trainer = await this.trainerRepository.findTrainerByEmail(email)
+                    if(trainer){
+                        await this.trainerRepository.saveGoogleId(email,googleId)
+                        const accessToken = generateAccessToken(trainer?._id.toString() as string)
+                const refreshToken = generateRefreshToken(trainer?._id.toString() as string)
+    
+                return {trainer,accessToken,refreshToken}
+                    }else{
+                        const newTrainer = new trainerModel({
+                            googleId:googleId,
+                            email:email,
+                            isGoogleAuthenticated:true
+                        })
+    
+                        const trainer:ITrainerDocument|null = await newTrainer.save()
+                        const accessToken = generateAccessToken(trainer?._id.toString() as string)
+                        const refreshToken = generateRefreshToken(trainer?._id.toString() as string)
+                            return {trainer,accessToken,refreshToken,trainerNew:true}
+                    }
+                }
+                
             }
-            
+        } catch (error) {
+            console.log(error)
         }
     }
 }

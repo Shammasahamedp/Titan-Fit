@@ -20,11 +20,12 @@ import {
   getTrainerProfile,
   uploadTrainerProfileImage,
 } from "@/api/trainer-apicalls";
-import {  findByEmail } from "@/api/auth";
-import { sendLinkToMail } from "@/api/reset-password";
-import { commonErrors } from "@/messages/common-error";
 import { uploadFile } from "@/api/file-upload";
 import { uploadTrainerCertificate } from "@/api/trainer-apicalls";
+import { checkPasswordMatching } from "@/api/trainer-apicalls";
+import ResetPasswordModal from "@/modal/ResetPasswordModal";
+import { resetPassword } from "@/api/trainer-apicalls";
+import ConfirmPasswordModal from "@/modal/ConfirmPasswordModal";
 const TrainerDashboard = () => {
   const [trainerProfile, setTrainerProfile] = useState<ITrainerProfile | null>(
     null
@@ -32,6 +33,8 @@ const TrainerDashboard = () => {
   const [certificates,setCertificates] = useState([])
   const [isEditing, setIsEditing] = useState(false);
   const [disable, setButtonDisable] = useState(false);
+  const [isModalOpen,setPasswordModal] = useState(false)
+  const [isResetModalOpen,setResetPasswordModal] = useState(false)
   const certificatePdfInput = useRef<HTMLInputElement>(null)
   const {
     register,
@@ -63,38 +66,38 @@ const TrainerDashboard = () => {
             showErrorToast(trainerErrors.CERTIFICATE_UPLOAD_ERROR)
         }
   }
-  const handleSendResetLink = async (email: string) => {
-    setButtonDisable(true);
+ 
+  const confirmPassword = async(password:string)=>{
     try {
-      console.log("this is onSubmit");
-      const isExist = await findByEmail(email);
-      if (!isExist) {
-        showErrorToast(commonErrors.EMAIL_NOT_FOUND);
-        return;
+      const response = await checkPasswordMatching(password)
+      if(response?.data.success){
+               setPasswordModal(false)
+               setResetPasswordModal(true)
       }
-      const response = await sendLinkToMail(email);
-      if (response.data.success) {
-        showSuccessToast(response.data.message);
-        setButtonDisable(false);
-      } else {
-        throw new Error(response.data.message);
-      }
-    } catch (error: any) {
-      if (error?.message) {
-        showErrorToast(error.message);
-        setButtonDisable(false);
-        return;
-      }
-      showErrorToast(commonErrors.SEND_RESET_PASSWORD_ERROR);
-      setButtonDisable(false);
+    } catch (error) {
+      console.log(error)
+      showErrorToast(trainerErrors.CONFIRM_PASSWORD_ERROR)
     }
-  };
+  }
+  const resetTrainerPassword = async (password:string)=>{
+    try {
+      const response = await resetPassword(password)
+      if(response?.data.success){
+        showSuccessToast(response.data.message)
+        setResetPasswordModal(false)
+      }
+    } catch (error) {
+      showErrorToast(trainerErrors.RESET_PASSWORD_ERROR)
+    }
+  }
   const onSubmit = async (data: ITrainerEditProfile) => {
     try {
+      console.log((data))
       if (trainerProfile) {
         const { profilePicture, trainerCertificate, ...rest } = trainerProfile;
         const existingData = JSON.stringify(rest);
         const newData = JSON.stringify(data);
+        console.log('hello',existingData,newData)
         if (existingData === newData) {
           showErrorToast(trainerErrors.PROFILE_CHANGE_NEED);
           return;
@@ -278,7 +281,7 @@ const TrainerDashboard = () => {
                 <button
                   disabled={disable}
                   onClick={() =>
-                    handleSendResetLink(trainerProfile?.email as string)
+                    setPasswordModal(true)
                   }
                   className="mt-4 mx-4 bg-[#FFC436]  text-black px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] w-1/4 "
                 >
@@ -326,6 +329,14 @@ const TrainerDashboard = () => {
           {/* Table Wrapper - Scrollable */}
         </div>
       </div>
+      {
+        isModalOpen&&
+        <ConfirmPasswordModal onClose={()=>setPasswordModal(false)} onSubmit={confirmPassword}/>
+      }
+      {
+        isResetModalOpen&&
+        <ResetPasswordModal onClose={()=>setResetPasswordModal(false)} onSubmit={resetTrainerPassword}/>
+      }
       <ToastContainer />
     </div>
   );

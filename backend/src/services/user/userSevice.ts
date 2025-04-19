@@ -110,4 +110,31 @@ export class UserService implements IUserService {
         throw new Error(userMessages.ADD_PROFILE_IMAGE_FAILURE)
       }
   }
+  async checkPassword(userId: string, password: string): Promise<boolean> {
+      try {
+        const user = await this.userRepository.findUserById(userId)
+        if(!user){
+          return false
+        }
+        const isValid = await comparePassword(password,user.password as string)
+        if(!isValid){
+          return false
+        }
+        return true
+      } catch (error) {
+        throw new Error()
+      }
+  }
+  async resetPassword(userId: string, password: string): Promise<IUserDocument | null> {
+      try {
+        const hashedPassword = await hashPassword(password)
+        const user = await this.userRepository.updatePassword(userId,hashedPassword)
+        if(!user){
+          throw new Error()
+        }
+        return user
+      } catch (error) {
+        throw new Error()
+      }
+  }
 }

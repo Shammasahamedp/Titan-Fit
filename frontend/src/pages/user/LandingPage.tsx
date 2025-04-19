@@ -15,7 +15,7 @@ const LandingPage = () => {
   }
   return(
     <div>
-       {user ? <Navbar logout={userLogout} role='user' /> : <Navbar  />}
+       {user ? <Navbar logout={userLogout} role='user' /> : <Navbar  role=""  />}
        <Hero/>
        <Services/>
        <ServiceSecondPart/>

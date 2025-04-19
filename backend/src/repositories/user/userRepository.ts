@@ -29,9 +29,9 @@ export class UserRepository implements IUserRepository{
    async addProfilePic(userId: string, profilePic: string): Promise<IUserDocument | null> {
         return await userModel.findByIdAndUpdate(userId,{profilePicture:profilePic},{new:true})
     }
-   async updatePassword(email: string, password: string): Promise<IUserDocument | null> {
+   async updatePassword(id: string, password: string): Promise<IUserDocument | null> {
         return await userModel.findOneAndUpdate(
-            {email:email},
+            {_id:id},
             {$set:{password:password}},
             {new:true}
         )

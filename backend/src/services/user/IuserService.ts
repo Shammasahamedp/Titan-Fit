@@ -7,4 +7,6 @@ export interface IUserService{
     getUserProfile(userId:string):Promise<IUserProfile|null>
     editUserProfile(userId:string,userProfileData:IUserProfile):Promise<IUserProfile|null>
     addProfilePic(userId:string,userProfilePic:string):Promise<string|null>
+    checkPassword(userId:string,password:string):Promise<boolean>
+    resetPassword(userId:string,password:string):Promise<IUserDocument|null>
 }

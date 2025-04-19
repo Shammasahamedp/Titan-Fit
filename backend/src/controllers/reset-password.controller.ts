@@ -13,7 +13,7 @@ export class ResetPasswordController{
 
    async sendLink(req:Request,res:Response){
       try {
-       await this.resetPasswordService.sendLink(req.body.email)
+       await this.resetPasswordService.sendLink(req.body.email,res.locals.user.userId)
        res.status(200).json({success:true,message:emailMessages.TOKEN_SEND_SUCCESSFULL})
       } catch (error:any) {
         res.status(400).json({success:false,message:emailMessages.TOKEN_SEND_FAILURE})
@@ -22,7 +22,7 @@ export class ResetPasswordController{
 
    async verifyLink(req:Request,res:Response){
       try {
-         await this.resetPasswordService.verifyLink(req.body.email,req.body.password,req.body.token)
+         await this.resetPasswordService.verifyLink(res.locals.user.userId,req.body.password,req.body.token)
          res.status(200).json({success:true,message:commonMessages.PASSWORD_UPDATE_SUCCESS})
       } catch (error:any) {
          if(error.message){

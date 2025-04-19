@@ -21,4 +21,6 @@ userRouter.post('/auth/login',validate(loginSchema),(req:Request,res:Response)=>
 userRouter.get('/profile',jwtTokenVerify,(req:Request,res:Response)=>userController.getProfile(req,res))
 userRouter.put('/editprofile',jwtTokenVerify,validate(userProfileEditSchema),(req:Request,res:Response)=>userController.editProfile(req,res))
 userRouter.post('/addprofilepic',jwtTokenVerify,(req:Request,res:Response)=>userController.addProfileImage(req,res))
+userRouter.post('/check-password',jwtTokenVerify,(req:Request,res:Response)=>userController.checkPassword(req,res))
+userRouter.put('/reset-password',jwtTokenVerify,(req:Request,res:Response)=>userController.resetPassword(req,res))
 export default userRouter
