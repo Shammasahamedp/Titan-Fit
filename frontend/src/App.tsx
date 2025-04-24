@@ -16,7 +16,7 @@ import AdminUserManagement from "./pages/admin/AdminUserManagement"
 import AdminTrainerManagement from "./pages/admin/AdminTrainerManagement"
 import UserProfileComplete from "./pages/user/UserProfileComplete"
 import TrainerProfileComplete from './pages/trainer/TrainerProfileComplete'
-// import AdminSubscriptionManagement from "./pages/admin/AdminSubscriptionManagement"
+import AdminSubscriptionManagement from "./pages/admin/AdminSubscriptionManagement"
 function App() {
 
   return (
@@ -49,7 +49,7 @@ function App() {
             <Route path='/admin/dashboard' element={<AdminDashboard/>}/>
             <Route path="/admin/usermanagement" element={<AdminUserManagement/>}/>
             <Route path="/admin/trainermanagement" element={<AdminTrainerManagement/>}/>
-            {/* <Route path="/admin/subscriptionmanagement" element={<AdminSubscriptionManagement/>}/> */}
+            <Route path="/admin/subscriptionmanagement" element={<AdminSubscriptionManagement/>}/>
 
           </Route>
 

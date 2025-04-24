@@ -9,8 +9,8 @@ const TrainerProtectedRoute = () => {
     const trainer = useSelector((state:RootState)=>state.trainer.trainer)
     const trainerNew = getProfileCompletionStatus()
     if(trainer&&trainerNew === 'true'){
-        <Navigate to='/trainer/profile-complete'/>
-        return 
+        return <Navigate to='/trainer/profile-complete'/>
+         
     }
     return trainer ? <Outlet/> : <Navigate to = '/login'/>
 }

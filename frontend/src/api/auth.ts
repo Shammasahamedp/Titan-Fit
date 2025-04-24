@@ -92,11 +92,11 @@ export const googleLogin = async(token:string,role:string)=>{
 
 
 
-export const refreshToken = async()=>{
+export const refreshToken = async(role:string)=>{
     
     try {
         console.log('thisi si refershtmethod ')
-        const {data} = await axiosInstance.post(`${API}/token/refresh`,{},{withCredentials:true})
+        const {data} = await axiosInstance.post(`${API}/token/refresh/${role}`,{},{withCredentials:true})
         setToken(data.accessToken)
         return data.accessToken
     } catch (error) {

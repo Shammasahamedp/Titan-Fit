@@ -35,16 +35,16 @@ export class AuthService implements IAuthService{
                 const user= await this.userRepository.findOne(googleId)
                 if(user){
                     
-                    const accessToken = generateAccessToken(user?._id.toString() as string)
-                const refreshToken = generateRefreshToken(user?._id.toString() as string)
+                    const accessToken = generateAccessToken(user?._id.toString() as string,role)
+                const refreshToken = generateRefreshToken(user?._id.toString() as string,role)
                 return {user,accessToken,refreshToken}
                 }
                 if(!user){
                     const user = await this.userRepository.findUserByEmail(email)
                     if(user){
                         await this.userRepository.saveGoogleId(email,googleId)
-                        const accessToken = generateAccessToken(user?._id.toString() as string)
-                const refreshToken = generateRefreshToken(user?._id.toString() as string)
+                        const accessToken = generateAccessToken(user?._id.toString() as string,'user')
+                const refreshToken = generateRefreshToken(user?._id.toString() as string,'user')
     
                 return {user,accessToken,refreshToken}
                     }
@@ -60,8 +60,8 @@ export class AuthService implements IAuthService{
     
                        const user:IUserDocument|null= await newUser.save()
                        
-                       const accessToken = generateAccessToken(user?._id.toString() as string)
-                       const refreshToken = generateRefreshToken(user?._id.toString() as string)
+                       const accessToken = generateAccessToken(user?._id.toString() as string,'user')
+                       const refreshToken = generateRefreshToken(user?._id.toString() as string,'user')
                        return {user,accessToken,refreshToken,userNew:true}
                     }
                 }
@@ -72,8 +72,8 @@ export class AuthService implements IAuthService{
                 const trainer= await this.trainerRepository.findOne(googleId)
                 if(trainer){
                     
-                    const accessToken = generateAccessToken(trainer?._id.toString() as string)
-                const refreshToken = generateRefreshToken(trainer?._id.toString() as string)
+                    const accessToken = generateAccessToken(trainer?._id.toString() as string,'trainer')
+                const refreshToken = generateRefreshToken(trainer?._id.toString() as string,'trainer')
     
                 return {trainer,accessToken,refreshToken}
                 }
@@ -81,8 +81,8 @@ export class AuthService implements IAuthService{
                     const trainer = await this.trainerRepository.findTrainerByEmail(email)
                     if(trainer){
                         await this.trainerRepository.saveGoogleId(email,googleId)
-                        const accessToken = generateAccessToken(trainer?._id.toString() as string)
-                const refreshToken = generateRefreshToken(trainer?._id.toString() as string)
+                        const accessToken = generateAccessToken(trainer?._id.toString() as string,'trainer')
+                const refreshToken = generateRefreshToken(trainer?._id.toString() as string,'trainer')
     
                 return {trainer,accessToken,refreshToken}
                     }else{
@@ -93,8 +93,8 @@ export class AuthService implements IAuthService{
                         })
     
                         const trainer:ITrainerDocument|null = await newTrainer.save()
-                        const accessToken = generateAccessToken(trainer?._id.toString() as string)
-                        const refreshToken = generateRefreshToken(trainer?._id.toString() as string)
+                        const accessToken = generateAccessToken(trainer?._id.toString() as string,'trainer')
+                        const refreshToken = generateRefreshToken(trainer?._id.toString() as string,'trainer')
                             return {trainer,accessToken,refreshToken,trainerNew:true}
                     }
                 }

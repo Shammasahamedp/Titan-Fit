@@ -1,213 +1,217 @@
-// import Navbar from "@/components/userComponents/Navbar"
-// import SideBar from "@/components/common/SideBar"
-// import { logoutAdmin } from "@/api/auth"
-// const AdminSubscriptionManagement = () => {
-//   return (
-//     <div className="flex flex-col bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-//     <Navbar logout={logoutAdmin} role="trainer"/>
-//     <div className="flex flex-1 text-white">
-//       <SideBar role="admin"  items={[
-//         ['User management','usermanagement'],
-//         ['Trainer management','trainermanagement'],
-//         ['Subscription management','subscriptionmanagement']
-//       ]}/>
-//        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-//               {certificates?.map(
-//                 (certificate: string, index: number) => (
-//                   <div
-//                     key={index}
-//                     className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center"
-//                   >
-//                     <iframe
-//                       src={certificate}
-//                       className="w-full h-[300px] border rounded-lg"
-//                       title={`Trainer Certificate ${index + 1}`}
-//                     />
+
+import { useState, useEffect } from "react";
+import Navbar from "@/components/userComponents/Navbar";
+import SideBar from "@/components/common/SideBar";
+import { logoutAdmin } from "@/api/auth";
+import { ISubscriptionInput } from "@/interfaces/IsubscriptionInputs";
+import InputField from "@/components/common/InputField";
+import { useForm } from "react-hook-form";
+import SelectField from "@/components/common/SelectField";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { subscriptionSchema } from "@/schemas/subcription-schema";
+import { addSubscriptionPlan, getAllSubscriptions,editSubscriptionPlan } from "@/api/subscription-apicalls";
+import { showErrorToast, showSuccessToast } from "@/utils/toast";
+import { Button } from "@/components/ui/button";
+import { ToastContainer } from "react-toastify";
+import { subscriptionErrors } from "@/messages/subscription-errors";
+const AdminSubscriptionManagement = () => {
+  const [subscriptions, setSubscriptions] = useState<(ISubscriptionInput&{_id:string})[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [editSubscription,setEditSubscription] = useState<ISubscriptionInput&{_id:string}|null>(null)
+  const {
+register,
+formState:{errors},
+handleSubmit,
+reset
+  } = useForm<ISubscriptionInput>({resolver:yupResolver(subscriptionSchema)})
+  
+  const fetchSubscriptions = async()=>{
+    try {
+        const response = await getAllSubscriptions()
+    if(response?.data){
+        setSubscriptions(response.data.subscriptions)
+    }
+    } catch (error) {
+        showErrorToast(subscriptionErrors.SUBSCRIPTION_GET_ERROR)
+    }
+  }
+  useEffect(() => {
+    fetchSubscriptions()
+  }, []);
+
+
+
+
+
+ const onSubmit = async (data:ISubscriptionInput)=>{
+    try {
+      if(editSubscription){
+              const response = await editSubscriptionPlan(data,editSubscription._id)
+              if(response?.data.success){
+                setEditSubscription(null)
+                setShowModal(false)
+                showSuccessToast(response.data.message)
+                reset()
+              }
+      }else{
+        const response = await addSubscriptionPlan(data)
+        if(response?.data.success){
+            setShowModal(false)
+            showSuccessToast(response.data.message)
+            
+        }
+      }
+      fetchSubscriptions()
+      
+        
+    } catch (error) {
+        console.log(error)
+        showErrorToast(subscriptionErrors.ADD_SUBSCRIPTION_ERROR)
+    }
+ }
+
+  
+
+  return (
+    <>
+    <div className="flex flex-col bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
+      <Navbar logout={logoutAdmin} role="trainer" />
+      <div className="flex flex-1 text-white">
+        <SideBar
+          role="admin"
+          items={[
+            ["User management", "usermanagement"],
+            ["Trainer management", "trainermanagement"],
+            ["Subscription management", "subscriptionmanagement"],
+          ]}
+        />
+
+        <div className="flex-1 p-6 pt-16 md:ml-64">
+          <div className="flex justify-between items-center mb-6">
+            <h2 onClick={()=>setShowModal(false)} className="text-3xl font-bold">Subscription Management</h2>
+            <button
+              className="bg-yellow-500 text-black px-4 py-2  rounded hover:bg-yellow-600"
+              onClick={()=>setShowModal(true)}
+            >
+              Add Subscription
+            </button>
+          </div>
+          {showModal && (
+             <>
+             <div className="flex justify-center mb-6">
+               <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
+               <button
+        onClick={() => {
+          setEditSubscription(null)
+          reset()
+          setShowModal(false)}}
+        className=" top-3 right-3 text-gray-500 hover:text-black text-2xl font-bold"
+      >
+        &times;
+      </button>
+                 <h2 className="text-2xl font-bold text-center text-black">
+                   Subscription
+                 </h2>
+                 <p className="text-center text-sm text-black mt-4"></p>
+                 <div className="grid grid-cols-2 gap-4 ">
+                   <InputField
+                     label="Name"
+                     register={register("planName")}
+                     placeholder="Enter the plan name"
+                     error={errors.planName?.message}
+                     type="text"
+                   />
+                   <InputField
+                     label="Price"
+                     register={register("price")}
+                     placeholder="Enter the price"
+                     error={errors.price?.message}
+                   />
+
+                   <InputField
+                     label="Description"
+                     register={register("description")}
+                     placeholder="Enter description"
+                     error={errors.description?.message}
+                     type="textarea"
+                   />
+
+                   <InputField
+                     label="Duration "
+                     register={register("durationInMonth")}
+                     placeholder="Enter the duration in month"
+                     error={errors.durationInMonth?.message}
+                     type="number"
+                   />
+                   <InputField
+                     label="Credits"
+                     register={register("credits")}
+                     placeholder="Enter the credits"
+                     error={errors.credits?.message}
+                     type="number"
+                   />
+                   <SelectField
+                   label="Status"
+                   options={
+                    [
+                        {label:'Active', value:true},
+                        {label:'Inactive',value:false}
+                    ]
+                   }
+                   register={register('isActive')}
                    
-//                   </div>
-//                 )
-//               )}
-//             </div>
-//     </div>
-//  </div>
-//   )
-// }
+                   error={errors.isActive?.message}
+                   />
+                 </div>
 
-// export default AdminSubscriptionManagement
+                 <div className="flex justify-center">
+                   <button
+                     onClick={handleSubmit(onSubmit)}
+                     className="w-1/3  bg-black text-white py-2 mt-6 rounded-lg hover:bg-gray-700 transition"
+                   >
+                    { editSubscription ? 'Edit':'Add'}
+                   </button>
+                 </div>
+               </div>
+             </div>
+           </>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {subscriptions.map((sub, index) => (
+              <div
+                key={index}
+                className="bg-white text-black rounded-lg shadow-lg p-4 flex flex-col justify-between"
+              >
+                <div>
+                  <h3 className="text-xl font-bold mb-2">{sub.planName}</h3>
+                  <p><strong>Price:</strong> ₹{sub.price}</p>
+                  <p><strong>Description:</strong> {sub.description}</p>
+                  <p><strong>Duration:</strong> {sub.durationInMonth} month(s)</p>
+                  <p><strong>Credits:</strong> {sub.credits}</p>
+                  <p><strong>Status:</strong> {sub.isActive ? "Active" : "Inactive"}</p>
+                </div>
+                <Button
+                  className="mt-4 bg-[#FFC436] text-black hover:bg-black hover:text-[#FFC436]"
+                  onClick={() =>
+                    {
+                      setEditSubscription(sub)
+                      reset(sub)
+                      setShowModal(true)}}
+                >
+                  Edit
+                </Button>
+              </div>
+            ))}
+          </div>
 
-// import { useState, useEffect } from "react";
-// import Navbar from "@/components/userComponents/Navbar";
-// import SideBar from "@/components/common/SideBar";
-// import { logoutAdmin } from "@/api/auth";
-// import { ISubscription } from "@/interfaces/subscription-interface";
-// import Modal from "@/components/common/Modal"; // Assuming you have a generic Modal component
+         
+        </div>
+      </div>
+    </div>
+    <ToastContainer/>
+    </>
+  );
+};
 
-// const AdminSubscriptionManagement = () => {
-//   const [subscriptions, setSubscriptions] = useState<ISubscription[]>([]);
-//   const [showModal, setShowModal] = useState(false);
-//   const [editingSub, setEditingSub] = useState<ISubscription | null>(null);
-
-//   const [formData, setFormData] = useState({
-//     planName: "",
-//     price: 0,
-//     description: "",
-//     durationInMonth: 1,
-//     credits: 0,
-//     isActive: true,
-//   });
-
-//   useEffect(() => {
-//     // fetchSubscriptions(); <-- You'll handle this part
-//   }, []);
-
-//   const openAddModal = () => {
-//     setEditingSub(null);
-//     setFormData({
-//       planName: "",
-//       price: 0,
-//       description: "",
-//       durationInMonth: 1,
-//       credits: 0,
-//       isActive: true,
-//     });
-//     setShowModal(true);
-//   };
-
-//   const openEditModal = (subscription: ISubscription) => {
-//     setEditingSub(subscription);
-//     setFormData(subscription);
-//     setShowModal(true);
-//   };
-
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-//     const { name, value, type, checked } = e.target;
-//     setFormData((prev) => ({
-//       ...prev,
-//       [name]: type === "checkbox" ? checked : value,
-//     }));
-//   };
-
-//   const handleSubmit = () => {
-//     if (editingSub) {
-//       // updateSubscription(editingSub._id, formData); // You'll handle API
-//     } else {
-//       // addSubscription(formData); // You'll handle API
-//     }
-//     setShowModal(false);
-//   };
-
-//   return (
-//     <div className="flex flex-col bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-//       <Navbar logout={logoutAdmin} role="trainer" />
-//       <div className="flex flex-1 text-white">
-//         <SideBar
-//           role="admin"
-//           items={[
-//             ["User management", "usermanagement"],
-//             ["Trainer management", "trainermanagement"],
-//             ["Subscription management", "subscriptionmanagement"],
-//           ]}
-//         />
-
-//         <div className="flex-1 p-6 pt-16 md:ml-64">
-//           <div className="flex justify-between items-center mb-6">
-//             <h2 className="text-3xl font-bold">Subscription Management</h2>
-//             <button
-//               className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600"
-//               onClick={openAddModal}
-//             >
-//               Add Subscription
-//             </button>
-//           </div>
-
-//           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-//             {subscriptions.map((sub, index) => (
-//               <div
-//                 key={index}
-//                 className="bg-white text-black rounded-lg shadow-lg p-4 flex flex-col justify-between"
-//               >
-//                 <div>
-//                   <h3 className="text-xl font-bold mb-2">{sub.planName}</h3>
-//                   <p><strong>Price:</strong> ₹{sub.price}</p>
-//                   <p><strong>Description:</strong> {sub.description}</p>
-//                   <p><strong>Duration:</strong> {sub.durationInMonth} month(s)</p>
-//                   <p><strong>Credits:</strong> {sub.credits}</p>
-//                   <p><strong>Status:</strong> {sub.isActive ? "Active" : "Inactive"}</p>
-//                 </div>
-//                 <button
-//                   className="mt-4 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-//                   onClick={() => openEditModal(sub)}
-//                 >
-//                   Edit
-//                 </button>
-//               </div>
-//             ))}
-//           </div>
-
-//           {showModal && (
-//             <Modal onClose={() => setShowModal(false)} title={editingSub ? "Edit Subscription" : "Add Subscription"}>
-//               <div className="flex flex-col gap-3">
-//                 <input
-//                   name="planName"
-//                   placeholder="Plan Name"
-//                   value={formData.planName}
-//                   onChange={handleChange}
-//                   className="p-2 border rounded"
-//                 />
-//                 <input
-//                   name="price"
-//                   type="number"
-//                   placeholder="Price"
-//                   value={formData.price}
-//                   onChange={handleChange}
-//                   className="p-2 border rounded"
-//                 />
-//                 <textarea
-//                   name="description"
-//                   placeholder="Description"
-//                   value={formData.description}
-//                   onChange={handleChange}
-//                   className="p-2 border rounded"
-//                 />
-//                 <input
-//                   name="durationInMonth"
-//                   type="number"
-//                   placeholder="Duration (months)"
-//                   value={formData.durationInMonth}
-//                   onChange={handleChange}
-//                   className="p-2 border rounded"
-//                 />
-//                 <input
-//                   name="credits"
-//                   type="number"
-//                   placeholder="Credits"
-//                   value={formData.credits}
-//                   onChange={handleChange}
-//                   className="p-2 border rounded"
-//                 />
-//                 <label className="flex items-center gap-2">
-//                   <input
-//                     type="checkbox"
-//                     name="isActive"
-//                     checked={formData.isActive}
-//                     onChange={handleChange}
-//                   />
-//                   Active
-//                 </label>
-//                 <button
-//                   className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-//                   onClick={handleSubmit}
-//                 >
-//                   {editingSub ? "Update" : "Add"} Subscription
-//                 </button>
-//               </div>
-//             </Modal>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AdminSubscriptionManagement;
+export default AdminSubscriptionManagement;
 

@@ -69,5 +69,7 @@ export class AdminController {
             res.status(400).json({success:false,message:adminMessages.TOGGLE_USER_FAILURE})
         }
     }
+     
+   
    
 }

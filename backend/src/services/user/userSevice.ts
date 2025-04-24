@@ -44,8 +44,8 @@ export class UserService implements IUserService {
     if (!isValid) {
       throw new Error("Invalid credentials");
     }
-    const accessToken = generateAccessToken(user._id.toString());
-    const refreshToken = generateRefreshToken(user._id.toString());
+    const accessToken = generateAccessToken(user._id.toString(),'user');
+    const refreshToken = generateRefreshToken(user._id.toString(),'user');
 
     return { user, accessToken, refreshToken };
   }

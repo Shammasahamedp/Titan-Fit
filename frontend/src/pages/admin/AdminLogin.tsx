@@ -13,6 +13,7 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { ClipLoader } from "react-spinners";
 export default function AdminLogin() {
   const dispatch = useDispatch()
+  // dispatch(adminLoginFailure('error'))
   const {adminLoading} = useSelector((state:RootState)=>state.admin)
    const {
     register,handleSubmit,formState:{errors},
@@ -30,9 +31,14 @@ export default function AdminLogin() {
               admin:response.data.data.admin,
               token:response.data.data.accessToken
             })
+            //  dispatch(loginSuccess({
+            //             user:{_id,name,email,role:'user'},
+            //             token:tokenResponse.data.data.accessToken
+            //         }))
           )
           showSuccessToast(response?.data.message)
         }
+        
      } catch (error:any) {
         dispatch(adminLoginFailure(error?.response.data.message))
         showErrorToast(error?.response.data.message)

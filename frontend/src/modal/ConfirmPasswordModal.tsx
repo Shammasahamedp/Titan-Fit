@@ -19,7 +19,7 @@ const ConfirmPasswordModal:React.FC<IForgotPasswordModalProps> = ({onClose,onSub
         
         setTimeout(() => {
           setCanSend(true)
-        }, 30000);
+        }, 3000);
         
          
       }
@@ -49,7 +49,7 @@ const ConfirmPasswordModal:React.FC<IForgotPasswordModalProps> = ({onClose,onSub
         <button
           onClick={handleSubmit}
           className={`mt-4 w-full bg-black py-2 rounded-lg hover:bg-gray-600 ${!canResend ? 'text-gray-500' : 'text-white'} `}
-          disabled={!canResend}
+          // disabled={!canResend}
         >
          {canResend ? 'Submit':'Loading..'}
         </button>

@@ -1,4 +1,5 @@
 import { IAdminLogin, IAdminLoginResponse } from "../../interfaces/adminInterfaces";
+import { ISubscriptionDocument } from "../../interfaces/subscriptionInterfaces";
 import { ITrainerDocument } from "../../interfaces/trainerInterfaces";
 import { IUserDocument } from "../../interfaces/userInterfaces";
 import { AdminRepository } from "../../repositories/admin/adminRepository";
@@ -23,8 +24,8 @@ export class AdminService implements IAdminService{
             throw new Error ('invalide credentials')
         }
        
-        const accessToken = generateAccessToken(admin._id.toString())
-        const refreshToken = generateRefreshToken(admin._id.toString())
+        const accessToken = generateAccessToken(admin._id.toString(),'admin')
+        const refreshToken = generateRefreshToken(admin._id.toString(),'admin')
 
         return {admin,accessToken,refreshToken}
     }
@@ -76,4 +77,5 @@ export class AdminService implements IAdminService{
             throw new Error()
         }
     }
+    
 }

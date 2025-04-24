@@ -1,11 +1,10 @@
 import { ISubscriptionInput } from "@/interfaces/IsubscriptionInputs"
 import { axiosInstance } from "./axiosInstance"
-
 const API = import.meta.env.VITE_BASE_URL
 
-export const fetchUsers = async ()=>{
+export const addSubscriptionPlan = async (newSubscription:ISubscriptionInput)=>{
     try {
-        const response = await axiosInstance.get(`${API}/admin/get-users`)
+        const response = await axiosInstance.post(`${API}/subscription/add`,newSubscription)
         if(response.data){
             return response
         }
@@ -15,9 +14,9 @@ export const fetchUsers = async ()=>{
     }
 }
 
-export const fetchTrainers = async ()=>{
+export const getAllSubscriptions = async ()=>{
     try {
-        const response = await  axiosInstance.get(`${API}/admin/get-trainers`)
+        const response = await axiosInstance.get(`${API}/subscription/get`)
         if(response.data){
             return response
         }
@@ -26,10 +25,9 @@ export const fetchTrainers = async ()=>{
         throw error
     }
 }
-
-export const toggleTrainer = async (trainerId:string,approved:boolean)=>{
+export const getActiveSubscription = async ()=>{
     try {
-        const response = await axiosInstance.put(`${API}/admin/change-approval`,{trainerId,approved})
+        const response = await axiosInstance.get(`${API}/subscription/get-active`)
         if(response.data){
             return response
         }
@@ -38,10 +36,9 @@ export const toggleTrainer = async (trainerId:string,approved:boolean)=>{
         throw error
     }
 }
-
-export const toggleUser = async(userId:string,blocked:boolean)=>{
+export const editSubscriptionPlan = async (toEditSubscription:ISubscriptionInput,id:string)=>{
     try {
-        const response = await axiosInstance.put(`${API}/admin/user-toggle`,{userId,blocked})
+        const response = await axiosInstance.put(`${API}/subscription/edit`,{toEditSubscription,id})
         if(response.data){
             return response
         }
@@ -50,4 +47,3 @@ export const toggleUser = async(userId:string,blocked:boolean)=>{
         throw error
     }
 }
-

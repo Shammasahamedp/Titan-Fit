@@ -24,8 +24,8 @@ export class TrainerService implements ITrainerService{
         if(!isValid){
             throw new Error(trainerMessages.LOGIN_FAILED)
         }
-        const accessToken = generateAccessToken(trainer._id.toString())
-        const refreshToken = generateRefreshToken(trainer._id.toString())
+        const accessToken = generateAccessToken(trainer._id.toString(),'trainer')
+        const refreshToken = generateRefreshToken(trainer._id.toString(),'trainer')
 
         return {trainer,accessToken,refreshToken}
     }

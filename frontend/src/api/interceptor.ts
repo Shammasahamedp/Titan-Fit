@@ -54,7 +54,17 @@ axiosInstance.interceptors.response.use(
             isRefreshing = true
 
             try{
-                const newAccessToken = await refreshToken()
+                const state = store.getState()
+                let role:string|null = null
+                if (state.user?.user?.role) {
+                    role = state.user.user.role;
+                  } else if (state.trainer?.trainer?.role) {
+                    role = state.trainer.trainer.role;
+                  } else if (state.admin?.admin?.role) {
+                    role = state.admin.admin.role;
+                  }
+                  if(!role) throw new Error('Role is required to refresh the token')
+                const newAccessToken = await refreshToken(role )
                 axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`
                 processQueue(null,newAccessToken)
                 return axiosInstance(originalRequest)

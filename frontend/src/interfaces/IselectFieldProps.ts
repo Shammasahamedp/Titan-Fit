@@ -4,5 +4,5 @@ export interface IselectFieldProps{
     label :string;
     register : UseFormRegisterReturn<any>;
     error?:string;
-    options:{value:string,label:string}[]
+    options:{value:string|boolean,label:string}[]
 }

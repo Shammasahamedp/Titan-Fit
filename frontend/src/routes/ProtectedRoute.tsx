@@ -10,8 +10,8 @@ const ProtectedRoute = () => {
     const userNew = getProfileCompletionStatus()
     console.log('th',userNew)
     if(user&&userNew === 'true') {
-      <Navigate to = '/user/profile-complete'/>
-      return 
+      return <Navigate to = '/user/profile-complete'/>
+       
     }
   return user ? <Outlet/> :<Navigate to ='/' state={{from:location}} replace/>
 }

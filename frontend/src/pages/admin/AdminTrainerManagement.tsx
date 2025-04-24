@@ -40,7 +40,7 @@ const AdminTrainerManagement = () => {
           <SideBar role="admin"  items={[
             ['User management','usermanagement'],
             ['Trainer management','trainermanagement'],
-            ['Subscription management','trainermanagement']
+            ['Subscription management','subscriptionmanagement']
           ]}/>
           <div className="flex-1  p-6 pt-16 md:ml-64 overflow-x-auto">
              <h2 className="text-3xl font-bold mb-4 o hover:cursor-pointer">

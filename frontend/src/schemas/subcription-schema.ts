@@ -14,5 +14,5 @@ export const subscriptionSchema = yup.object().shape({
   ),
     durationInMonth:yup.number().positive('Must be a positive number').integer('Must be a whole number').required('Duration is required'),
     credits:yup.number().positive('Must be a positive number').integer('Must be a whole number').required('Credits is required'),
-    
+    isActive:yup.boolean().required('Select a field')
 })

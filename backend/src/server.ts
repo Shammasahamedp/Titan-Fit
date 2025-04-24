@@ -22,6 +22,7 @@ import tokenRoute from "./routes/common-routes/token-route"
 import adminRoute from "./routes/admin-route"
 import authRoute from "./routes/common-routes/auth-route"
 import resetPasswordRoute from "./routes/common-routes/reset-password.route"
+import subscriptionRoute from "./routes/subscription-route"
 
 const app = express()
 app.use(cors({
@@ -31,11 +32,7 @@ app.use(cors({
 }))
 connectDB()
 app.use(cookieParser())
-// app.use(session({
-//     secret:'adfarqwtgvbaa',
-//     resave:false,
-//     saveUninitialized:false
-// }))
+
 app.use(express.json())
 app.use('/user',userRouter)
 app.use('/trainer',trainerRoute)
@@ -45,6 +42,7 @@ app.use('/upload',uploadRoute)
 app.use('/token',tokenRoute)
 app.use('/auth',authRoute)
 app.use('/reset-password',resetPasswordRoute)
+app.use('/subscription',subscriptionRoute)
 app.listen(3000,"0.0.0.0",async()=>{
     console.log("server is running on http://localhost:3000")
     

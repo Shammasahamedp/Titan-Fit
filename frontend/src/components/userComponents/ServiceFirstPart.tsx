@@ -1,11 +1,23 @@
 import { Button } from '../ui/button';
+import SubscriptionModal from "@/modal/SubscriptionModal";
+import { useState } from 'react';
 const Services = () => {
+  const [isSubscriptionModalOpen,setSubscriptionModal] = useState(false)
+
+   const handleSubscription = async(subscriptionId:string)=>{
+      try {
+        console.log(subscriptionId)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
   return (
     <section className="w-full py-16 px-4 md:px-8" style={{backgroundImage:"url('/white-bg.jpg')"}}>
          <div className="max-w-4xl mx-auto text-center mb-12">
         <h2 className="text-4xl font-bold text-black">Take Your Fitness to the Next Level</h2>
         <p className="mt-2 text-lg text-gray-700">Join our exclusive training programs and meal plans designed for you.</p>
-        <Button className="mt-4 bg-[#FFC436] text-black px-6 py-3 rounded-lg hover:bg-[#0f0f0f] hover:text-[#FFC436]" >
+        <Button onClick={()=>setSubscriptionModal(true)} className="mt-4 bg-[#FFC436] text-black px-6 py-3 rounded-lg hover:bg-[#0f0f0f] hover:text-[#FFC436]" >
           Go Pro
         </Button>
       </div>
@@ -46,6 +58,10 @@ const Services = () => {
         </div>
 
       </div>
+      {
+        isSubscriptionModalOpen&&
+        <SubscriptionModal  isOpen={isSubscriptionModalOpen}  onClose={()=>setSubscriptionModal(false)} onSubscribe={handleSubscription}/>
+      }
     </section>
   );
 };
