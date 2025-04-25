@@ -24,3 +24,4 @@ export const getProfileCompletionStatus = ()=>{
 export const removeProfileCompletionStatus = ()=>{
     localStorage.removeItem('user-new')
 }
+

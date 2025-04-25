@@ -23,20 +23,20 @@ export class UserService implements IUserService {
     this.trainerRepository = trainerRepository;
   }
 
-  async registerUser(data: IUserSignUp): Promise<IUserDocument> {
-    const existingUser = await this.userRepository.findUserByEmail(data.email);
-    const existingTrainer = await this.trainerRepository.findTrainerByEmail(
-      data.email
+  async registerUser(data: IUserSignUp): Promise<IUserDocument|null> {
+    const existingUser = await this.userRepository.findOne({email:data.email});
+    const existingTrainer = await this.trainerRepository.findOne(
+      {email:data.email}
     );
     if (existingUser || existingTrainer) {
       throw new Error("User already exist");
     }
     data.password = await hashPassword(data.password);
-    return await this.userRepository.createUser(data);
+    return await this.userRepository.create(data);
   }
 
   async loginUser(data: IUserLogin): Promise<ILoginResponse> {
-    const user = await this.userRepository.findUserByEmail(data.email);
+    const user = await this.userRepository.findOne({email:data.email});
     if (!user) {
       throw new Error("User not found");
     }
@@ -51,7 +51,7 @@ export class UserService implements IUserService {
   }
   async getUserProfile(userId: string): Promise<IUserProfile | null> {
     try {
-      const user = await this.userRepository.findUserById(userId);
+      const user = await this.userRepository.findById(userId);
       if (!user) {
         throw new Error(userMessages.USER_NOT_FOUND);
         
@@ -89,7 +89,7 @@ export class UserService implements IUserService {
 
  async editUserProfile(userId:string,userProfileData: IUserProfile): Promise<IUserProfile | null> {
       try {
-          const editedProfileData = await this.userRepository.editUserProfile(userId,userProfileData)
+          const editedProfileData = await this.userRepository.findByIdAndUpdate(userId,userProfileData,{new:true})
           if(!editedProfileData){
             throw new Error(userMessages.EDIT_PROFILE_FAILURE)
           }
@@ -100,7 +100,9 @@ export class UserService implements IUserService {
   }
   async addProfilePic(userId: string, userProfilePic: string): Promise<string | null> {
       try {
-        const userData = await this.userRepository.addProfilePic(userId,userProfilePic)
+        console.log('this isserviceurl',userProfilePic)
+        const userData = await this.userRepository.findByIdAndUpdate(userId,{profilePicture:userProfilePic},{new:true})
+        console.log('this is userdata',userData)
          if(!userData){
             throw new Error()
          }
@@ -112,7 +114,7 @@ export class UserService implements IUserService {
   }
   async checkPassword(userId: string, password: string): Promise<boolean> {
       try {
-        const user = await this.userRepository.findUserById(userId)
+        const user = await this.userRepository.findById(userId)
         if(!user){
           return false
         }
@@ -128,7 +130,7 @@ export class UserService implements IUserService {
   async resetPassword(userId: string, password: string): Promise<IUserDocument | null> {
       try {
         const hashedPassword = await hashPassword(password)
-        const user = await this.userRepository.updatePassword(userId,hashedPassword)
+        const user = await this.userRepository.findByIdAndUpdate(userId,{password:hashedPassword},{new:true})
         if(!user){
           throw new Error()
         }

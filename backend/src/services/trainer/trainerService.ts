@@ -16,7 +16,7 @@ export class TrainerService implements ITrainerService{
     }
 
     async loginTrainer(data: ITrainerLogin): Promise<ITrainerLoginResponse | null> {
-        const trainer = await this.trainerRepository.findTrainerByEmail(data.email)
+        const trainer = await this.trainerRepository.findOne({email:data.email})
         if(!trainer){
             throw new Error(trainerMessages.LOGIN_FAILED)
         }
@@ -30,18 +30,18 @@ export class TrainerService implements ITrainerService{
         return {trainer,accessToken,refreshToken}
     }
     async registerTrainer(data: ITrainerSignUp): Promise<ITrainerDocument | null> {
-        const existingTrainer = await this.trainerRepository.findTrainerByEmail(data.email)
-        const existingUser = await this.userRepository.findUserByEmail(data.email)
+        const existingTrainer = await this.trainerRepository.findOne({email:data.email})
+        const existingUser = await this.userRepository.findOne({email:data.email})
         if(existingTrainer || existingUser){
             throw new Error(trainerMessages.EMAIL_ALREADY_EXIST)
         }
         data.password = await hashPassword(data.password)
         console.log('this is data inside register',data)
-        return await this.trainerRepository.createTrainer(data)
+        return await this.trainerRepository.create(data)
     }
   async  getTrainerProfile(trainerId: string): Promise<ITrainerProfile | null> {
         try {
-            const trainer = await this.trainerRepository.findTrainerById(trainerId)
+            const trainer = await this.trainerRepository.findById(trainerId)
             if(trainer){
                 const {
                     name,
@@ -75,7 +75,7 @@ export class TrainerService implements ITrainerService{
     }
     async editTrainerProfile(trainerId: string, trainerProfileData: ITrainerProfile): Promise<ITrainerDocument | null> {
         try {
-            const editedTrainerProfile = await this.trainerRepository.editTrainerProfile(trainerId,trainerProfileData)
+            const editedTrainerProfile = await this.trainerRepository.findByIdAndUpdate(trainerId,trainerProfileData,{new:true})
             if(!editedTrainerProfile){
                 throw new Error(trainerMessages.EDIT_TRAINER_PROFILE_ERROR)
             }
@@ -87,7 +87,7 @@ export class TrainerService implements ITrainerService{
 
    async addTrainerProfilePic(trainerId: string, trainerProfilePic: string): Promise<string | null> {
         try {
-            const trainerData = await this.trainerRepository.addProfilePic(trainerId,trainerProfilePic)
+            const trainerData = await this.trainerRepository.findByIdAndUpdate(trainerId,{profilePicture:trainerProfilePic},{new:true})
             if(!trainerData){
                 throw new Error(trainerMessages.TRAINER_NOT_FOUND)
             }
@@ -112,7 +112,7 @@ export class TrainerService implements ITrainerService{
     async checkPassword(trainerId: string, password: string): Promise<boolean> {
         try {
             
-            const trainer = await this.trainerRepository.findTrainerById(trainerId)
+            const trainer = await this.trainerRepository.findById(trainerId)
             if(!trainer){
                 return false
             }
@@ -128,7 +128,7 @@ export class TrainerService implements ITrainerService{
     async resetPassword(trainerId: string, password: string): Promise<ITrainerDocument | null> {
         try {
             const hashedPassword =await hashPassword(password)
-            const trainer = await this.trainerRepository.updatePassword(trainerId,hashedPassword)
+            const trainer = await this.trainerRepository.findByIdAndUpdate(trainerId,{password:hashedPassword},{new:true})
             if(trainer){
                 return trainer
             }

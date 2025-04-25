@@ -1,5 +1,4 @@
 import { IAdminLogin, IAdminLoginResponse } from "../../interfaces/adminInterfaces";
-import { ISubscriptionDocument } from "../../interfaces/subscriptionInterfaces";
 import { ITrainerDocument } from "../../interfaces/trainerInterfaces";
 import { IUserDocument } from "../../interfaces/userInterfaces";
 import { AdminRepository } from "../../repositories/admin/adminRepository";
@@ -19,7 +18,7 @@ export class AdminService implements IAdminService{
         this.trainerRepository = trainerRepository
     }
    async loginAdmin(data: IAdminLogin): Promise<IAdminLoginResponse> {
-        const admin = await this.adminRepository.findAdminByEmail(data.email)
+        const admin = await this.adminRepository.findOne({email:data.email})
         if(!admin){
             throw new Error ('invalide credentials')
         }
@@ -31,7 +30,7 @@ export class AdminService implements IAdminService{
     }
    async getUsers(): Promise<IUserDocument[]> {
         try {
-            const users = await this.userRepository.getUsers()
+            const users = await this.userRepository.find({})
             if(!users){
                 throw new Error()
             }
@@ -42,7 +41,7 @@ export class AdminService implements IAdminService{
     }
    async getTrainers(): Promise<ITrainerDocument[]> {
         try {
-            const trainers = await this.trainerRepository.getTrainers()
+            const trainers = await this.trainerRepository.find({})
             if(!trainers){
                 throw new Error()
             }
@@ -54,7 +53,7 @@ export class AdminService implements IAdminService{
    
    async  changeTrainerApproval(trainerId: string,approved:boolean): Promise<ITrainerDocument> {
         try {
-           const trainer= await this.trainerRepository.changeApproval(trainerId,approved)
+           const trainer= await this.trainerRepository.findByIdAndUpdate(trainerId,{approved:!approved},{new:true})
            if(!trainer){
             throw new Error()
            }
@@ -67,7 +66,7 @@ export class AdminService implements IAdminService{
 
     async userToggle(userId: string, blocked: boolean): Promise<IUserDocument> {
         try {
-            const user = await this.userRepository.userToggle(userId,blocked)
+            const user = await this.userRepository.findByIdAndUpdate(userId,{blocked:!blocked},{new:true})
             if(!user){
                 throw new Error()
             }

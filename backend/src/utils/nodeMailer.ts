@@ -21,5 +21,7 @@ export const sendMail = async (to:string,subject:string=emailMessages.OTP_SUBJEC
         console.log('Email sent successfully to',to)
     } catch (error) {
         console.error('error in sending mail',error)
+        throw error
+        
     }
 }

@@ -14,10 +14,12 @@ const ForgotPasswordModal:React.FC<IForgotPasswordModalProps> = ({onClose,onSubm
             showErrorToast('Please enter a valid registered email')
             return
          }
+        //  setEmail(email)
          setCanSend(false)
         onSubmit(email)
         
         setTimeout(() => {
+          // removeEmail()
           setCanSend(true)
         }, 30000);
         

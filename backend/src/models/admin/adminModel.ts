@@ -1,9 +1,7 @@
 
 
 import mongoose, { Schema, Document, Types } from "mongoose";
-import { IAdminModel } from "./IAdminModel";;
-
-interface IAdminDocument extends IAdminModel, Document {}
+import { IAdminDocument } from "../../interfaces/adminInterfaces"; 
 
 const adminSchema: Schema = new Schema(
   {

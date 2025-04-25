@@ -2,7 +2,7 @@ import { verifyLinkAndSetPassword } from "@/api/reset-password";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Link, useParams,useLocation } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 const ForgotPassword = () => {
@@ -10,9 +10,9 @@ const ForgotPassword = () => {
     const [password,setPassword] = useState('')
     const [confirmPassword,setConfirmPassword] = useState('')
     const {token} = useParams<{token:string}>()
-    const query =  new URLSearchParams(useLocation().search)
     const handleSubmit = async ()=>{
         try {
+          console.log('helo')
             if(password !== confirmPassword){
                 showErrorToast('password doesnt match')
                 return
@@ -21,10 +21,11 @@ const ForgotPassword = () => {
                 showErrorToast('password must contain 8 letters')
                 return 
             }
-       const response = await verifyLinkAndSetPassword(password,token as string)
+        const response = await verifyLinkAndSetPassword(password,token as string)
        if(response.data){
         showSuccessToast(response.data.message)
        }
+       
         } catch (error:any) {
             console.log(error)
             showErrorToast(error.message)

@@ -8,7 +8,7 @@ export interface ITrainerSignUp{
     age:number;
     yearsOfExperience:number;
     bio:string
-    trainerCertificate:string|null
+    trainerCertificate:string[]
 }
 
 export interface ITrainerLogin{

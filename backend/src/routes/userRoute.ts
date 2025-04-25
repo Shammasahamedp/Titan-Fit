@@ -7,6 +7,7 @@ import { validate } from "../middlewares/validation-middleware"
 import { loginSchema, signUpSchema,userProfileEditSchema } from "../schema/validation-schema"
 import { TrainerRepository } from "../repositories/trainer/trainerRepository"
 import { jwtTokenVerify } from "../middlewares/jwt-token-validation"
+import { checkIfUserBlocked } from "../middlewares/check-if-user-blocked"
 
 const userRouter = express.Router()
 
@@ -18,9 +19,9 @@ const userController = new UserController(userService)
 
 userRouter.post('/auth/signup',validate(signUpSchema),(req:Request,res:Response)=> userController.registerUser(req,res))
 userRouter.post('/auth/login',validate(loginSchema),(req:Request,res:Response)=> userController.loginUser(req,res))
-userRouter.get('/profile',jwtTokenVerify(['user']),(req:Request,res:Response)=>userController.getProfile(req,res))
-userRouter.put('/editprofile',jwtTokenVerify(['user']),validate(userProfileEditSchema),(req:Request,res:Response)=>userController.editProfile(req,res))
-userRouter.post('/addprofilepic',jwtTokenVerify(['user']),(req:Request,res:Response)=>userController.addProfileImage(req,res))
-userRouter.post('/check-password',jwtTokenVerify(['user']),(req:Request,res:Response)=>userController.checkPassword(req,res))
-userRouter.put('/reset-password',jwtTokenVerify(['user']),(req:Request,res:Response)=>userController.resetPassword(req,res))
+userRouter.get('/profile',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.getProfile(req,res))
+userRouter.put('/editprofile',jwtTokenVerify(['user']),checkIfUserBlocked,validate(userProfileEditSchema),(req:Request,res:Response)=>userController.editProfile(req,res))
+userRouter.post('/addprofilepic',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.addProfileImage(req,res))
+userRouter.post('/check-password',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.checkPassword(req,res))
+userRouter.put('/reset-password',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.resetPassword(req,res))
 export default userRouter

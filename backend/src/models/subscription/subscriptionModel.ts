@@ -1,6 +1,5 @@
 import mongoose,{Schema,Types} from "mongoose";
-import { IsubscriptionModel } from "./IsubscriptionModel";
-
+import { ISubscriptionDocument } from "../../interfaces/subscriptionInterfaces";
 const SubscriptionSchema:Schema =  new Schema(
     {
          planName:{type:String,required:true},
@@ -13,7 +12,7 @@ const SubscriptionSchema:Schema =  new Schema(
     {timestamps:true}
 );
 
-export const subscriptionModel = mongoose.model<IsubscriptionModel>(
+export const subscriptionModel = mongoose.model<ISubscriptionDocument>(
     'Subscription',
     SubscriptionSchema
 )

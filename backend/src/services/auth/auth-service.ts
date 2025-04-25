@@ -18,8 +18,8 @@ export class AuthService implements IAuthService{
     }
 
    async findUserOrTrainerByEmail(email: string): Promise<boolean> {
-        const existingUser =await this.userRepository.findUserByEmail(email)
-        const existingTrainer =await this.trainerRepository.findTrainerByEmail(email)
+        const existingUser =await this.userRepository.findOne({email:email})
+        const existingTrainer =await this.trainerRepository.findOne({email:email})
 
        if(existingTrainer||existingUser){
         return true
@@ -32,7 +32,7 @@ export class AuthService implements IAuthService{
         try {
             if(role === 'user'){
             
-                const user= await this.userRepository.findOne(googleId)
+                const user= await this.userRepository.findOne({googleId:googleId})
                 if(user){
                     
                     const accessToken = generateAccessToken(user?._id.toString() as string,role)
@@ -40,9 +40,9 @@ export class AuthService implements IAuthService{
                 return {user,accessToken,refreshToken}
                 }
                 if(!user){
-                    const user = await this.userRepository.findUserByEmail(email)
+                    const user = await this.userRepository.findOne({email})
                     if(user){
-                        await this.userRepository.saveGoogleId(email,googleId)
+                        await this.userRepository.findOneAndUpdate({email:email},{googleId:googleId},{new:true})
                         const accessToken = generateAccessToken(user?._id.toString() as string,'user')
                 const refreshToken = generateRefreshToken(user?._id.toString() as string,'user')
     
@@ -69,7 +69,7 @@ export class AuthService implements IAuthService{
     
     
             }else if(role === 'trainer'){
-                const trainer= await this.trainerRepository.findOne(googleId)
+                const trainer= await this.trainerRepository.findOne({googleId})
                 if(trainer){
                     
                     const accessToken = generateAccessToken(trainer?._id.toString() as string,'trainer')
@@ -78,9 +78,9 @@ export class AuthService implements IAuthService{
                 return {trainer,accessToken,refreshToken}
                 }
                 if(!trainer){
-                    const trainer = await this.trainerRepository.findTrainerByEmail(email)
+                    const trainer = await this.trainerRepository.findOne({email})
                     if(trainer){
-                        await this.trainerRepository.saveGoogleId(email,googleId)
+                        await this.trainerRepository.findOneAndUpdate({email},{googleId},{new:true})
                         const accessToken = generateAccessToken(trainer?._id.toString() as string,'trainer')
                 const refreshToken = generateRefreshToken(trainer?._id.toString() as string,'trainer')
     

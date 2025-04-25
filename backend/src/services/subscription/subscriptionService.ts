@@ -10,15 +10,15 @@ export class SubscriptionService implements ISubscriptionService{
     }
 async addSubscription(subscription: ISubscription): Promise<ISubscriptionDocument | null> {
     try {
-        const isSubscriptionNameExist = this.subscriptionRepo.checkSubscriptionNameExists(subscription.planName)
+        const isSubscriptionNameExist = this.subscriptionRepo.findOne({planName:subscription.planName})
         if(isSubscriptionNameExist !== null){
                throw new Error('Subscription name is already exists')
         }
-        const isSubscriptionExist = this.subscriptionRepo.checkSubscriptionExists(subscription.price,subscription.description,subscription.durationInMonth)
+        const isSubscriptionExist = this.subscriptionRepo.findOne({planName:subscription.price,description:subscription.description,durationInMonth:subscription.durationInMonth})
         if(isSubscriptionExist !== null){
             throw new Error('Subscription already Exists')
         }
-        const newSubscription = await this.subscriptionRepo.addSubscription(subscription)
+        const newSubscription = await this.subscriptionRepo.create(subscription)
         if(!newSubscription){
             throw new Error()
         }
@@ -32,7 +32,7 @@ async addSubscription(subscription: ISubscription): Promise<ISubscriptionDocumen
 }
 async getAllSubscriptions(): Promise<ISubscriptionDocument[] | null> {
     try {
-        const subscriptions = await this.subscriptionRepo.getAllSubscriptions()
+        const subscriptions = await this.subscriptionRepo.find({})
         if(!subscriptions){
            throw new Error()
         }
@@ -43,7 +43,7 @@ async getAllSubscriptions(): Promise<ISubscriptionDocument[] | null> {
 }
 async editSubscription(subscription: ISubscription,id:string): Promise<ISubscriptionDocument | null> {
     try {
-        const editedSubscription = await this.subscriptionRepo.editSubscription(subscription,id)
+        const editedSubscription = await this.subscriptionRepo.findByIdAndUpdate(id,subscription,{new:true})
         if(!editedSubscription){
             throw new Error()
         }
@@ -54,7 +54,7 @@ async editSubscription(subscription: ISubscription,id:string): Promise<ISubscrip
 }
 async getActiveSubscription(): Promise<ISubscriptionDocument[] | null> {
     try {
-        const activeSubscription = await this.subscriptionRepo.getActiveSubscription()
+        const activeSubscription = await this.subscriptionRepo.find({isActive:true})
         if(!activeSubscription){
             throw new Error()
         }

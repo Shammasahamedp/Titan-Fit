@@ -1,4 +1,3 @@
-import { ISubscriptionInput } from "@/interfaces/IsubscriptionInputs"
 import { axiosInstance } from "./axiosInstance"
 
 const API = import.meta.env.VITE_BASE_URL

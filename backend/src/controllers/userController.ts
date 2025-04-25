@@ -61,6 +61,9 @@ export class UserController {
     }
     async addProfileImage(req:Request,res:Response):Promise<void>{
         try {
+            console.log('this is url',req.body)
+            console.log('this is url',req.body.userProfileImage)
+
             const image = await this.userService.addProfilePic(res.locals.user?.userId,req.body.userProfileImage)
             if(image){
                 res.status(200).json({success:true,message:userMessages.ADD_PROFILE_IMAGE_SUCCESS,image})

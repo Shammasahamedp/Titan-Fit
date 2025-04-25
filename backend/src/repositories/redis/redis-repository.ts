@@ -22,14 +22,14 @@ export class RedisRepository implements IRedisRepository {
   async deleteOtp(email: string): Promise<void> {
       await this.redis.del(`otp:${email}`)
   }
-  async deleteToken(email: string): Promise<void> {
-      await this.redis.del(`token:${email}`)
+  async deleteToken(token: string): Promise<void> {
+      await this.redis.del(token)
   }
-  async getToken(email: string): Promise<string | null> {
-      return await this.redis?.get(`token:${email}`)
+  async getToken(token: string): Promise<string | null> {
+      return await this.redis?.get(token)
   }
   async saveToken(email: string, token: string, expiry: number): Promise<void> {
-      await this.redis?.setex(`token:${email}`,expiry,token)
+      await this.redis?.setex(token,expiry,email)
   } 
   
 }

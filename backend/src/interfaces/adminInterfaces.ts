@@ -1,14 +1,14 @@
 import { Document,Types } from "mongoose";
+import { IAdminModel } from "../models/admin/IAdminModel";
 
 export interface IAdminLogin{
     email:string;
     password:string
 }
 
-export interface IAdminDocument extends IAdminLogin, Document{
+export interface IAdminDocument extends IAdminModel, Document{
     _id:Types.ObjectId;
-    createdAt:Date;
-    updatedAt:Date
+  
 }
 
 export interface IAdminLoginResponse {

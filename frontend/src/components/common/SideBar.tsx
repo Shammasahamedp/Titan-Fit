@@ -24,12 +24,15 @@ const SideBar: React.FC<ISidebarProps> = ({ items,profilePicture,role,uploadProf
             console.log('this is url',uploadFileResponse.data.url)
            
            const response = await uploadProfilePicApi(uploadFileResponse.data.url)
-           console.log(response)
+           console.log('response',response)
            if(!response?.data.success){
             throw new Error()
            }
            showSuccessToast(response?.data.message)
-           setimgUrl(response.data.image)
+           setimgUrl(()=>{
+            console.log('this is setimageurl',response.data.image)
+            return response.data.image
+           })
           }
         }
        
@@ -41,6 +44,7 @@ const SideBar: React.FC<ISidebarProps> = ({ items,profilePicture,role,uploadProf
    
    useEffect(()=>{
     if(profilePicture){
+      console.log(profilePicture)
       setimgUrl(profilePicture)
     }
    },[profilePicture])
