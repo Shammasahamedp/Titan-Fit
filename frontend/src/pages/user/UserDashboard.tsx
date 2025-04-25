@@ -41,7 +41,7 @@ const UserDashboard: React.FC = () => {
       }
     } catch (error:any) {
       console.log(error)
-      showErrorToast(error.response.data.message)
+      showErrorToast(error)
     }
   }
   const resetUserPassword = async (password:string)=>{
@@ -52,7 +52,7 @@ const UserDashboard: React.FC = () => {
         setResetPasswordModal(false)
       }
     } catch (error) {
-      showErrorToast(userErrors.RESET_PASSWORD_ERROR)
+      showErrorToast(error)
     }
   }
  
@@ -76,7 +76,7 @@ const UserDashboard: React.FC = () => {
       }
     } catch (error) {
       console.log(error);
-      showErrorToast(userErrors.PROFILE_EDIT_ERROR);
+      showErrorToast(error);
     }
   };
   useEffect(() => {
@@ -87,7 +87,7 @@ const UserDashboard: React.FC = () => {
           setUserProfile(userProfileDetails);
         }
       } catch (error) {
-        showErrorToast(userErrors.PROFILE_ERROR);
+        showErrorToast(error);
       }
     };
     fetchUserProfile();

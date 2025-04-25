@@ -13,7 +13,6 @@ import { addSubscriptionPlan, getAllSubscriptions,editSubscriptionPlan } from "@
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { Button } from "@/components/ui/button";
 import { ToastContainer } from "react-toastify";
-import { subscriptionErrors } from "@/messages/subscription-errors";
 const AdminSubscriptionManagement = () => {
   const [subscriptions, setSubscriptions] = useState<(ISubscriptionInput&{_id:string})[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -32,7 +31,7 @@ reset
         setSubscriptions(response.data.subscriptions)
     }
     } catch (error) {
-        showErrorToast(subscriptionErrors.SUBSCRIPTION_GET_ERROR)
+        showErrorToast(error)
     }
   }
   useEffect(() => {
@@ -66,7 +65,7 @@ reset
         
     } catch (error) {
         console.log(error)
-        showErrorToast(subscriptionErrors.ADD_SUBSCRIPTION_ERROR)
+        showErrorToast(error)
     }
  }
 

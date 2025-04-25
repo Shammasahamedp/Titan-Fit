@@ -6,7 +6,6 @@ import { Button } from "../ui/button";
 import { useRef } from "react";
 import { uploadFile } from "@/api/file-upload";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
-import { userErrors } from "@/messages/userside-error";
 
 const SideBar: React.FC<ISidebarProps> = ({ items,profilePicture,role,uploadProfilePicApi }) => {
   const navigate = useNavigate();
@@ -37,8 +36,8 @@ const SideBar: React.FC<ISidebarProps> = ({ items,profilePicture,role,uploadProf
         }
        
       } catch (error) {
+        showErrorToast(error)
           console.log(error)
-          showErrorToast(userErrors.PROFILE_PIC_UPLOAD_ERROR)
       }
      }
    

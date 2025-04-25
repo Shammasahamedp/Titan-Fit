@@ -87,7 +87,7 @@ const Navbar:React.FC<INavebarProps> = ({logout,role}) => {
             
             <Button
               onClick={() => {
-                logout();
+                {logout?logout():''};
                 setIsOpen(false);
               }}
               className="bg-[#FFC436] text-black w-full hover:bg-black hover:text-[#FFC436]"

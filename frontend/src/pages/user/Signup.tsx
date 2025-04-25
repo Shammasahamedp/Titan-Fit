@@ -40,9 +40,8 @@ export default function Signup() {
       }
       setShowOtpModal(true);
     } catch (error: any) {
-      if (error.response) {
-        showErrorToast(error.response.data.message)
-      }
+      showErrorToast(error)
+     
     }
   };
   const resendOtp = async () => {
@@ -79,17 +78,13 @@ export default function Signup() {
         }
       }
      } catch (error:any) {
+      showErrorToast(error)
       console.log('error in ',error.response.data)
       if(error.response.data.validationError){
         console.log(error.response.data.errorResult)
-        showErrorToast(error.response.data.errorResult)
         return 
       }
-        if(error.response.data.message === 'Your otp is invalid , check again or resend after 30 seconds'){
-          showErrorToast(error.response.data.message)
-          return 
-        }
-        showErrorToast(error.response.data.errors)
+        
         setShowOtpModal(false)
      }
   };

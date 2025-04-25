@@ -46,9 +46,8 @@ export default function TrainerSignup() {
       }
       setShowOtpModal(true);
     } catch (error: any) {
-      if (error.response) {
-        showErrorToast(error.response.data.message);
-      }
+      showErrorToast(error)
+     
     }
   };
 
@@ -89,11 +88,10 @@ export default function TrainerSignup() {
         }
       }
     } catch (error:any) {
+      showErrorToast(error)
       if(error.response.data.message === 'Your otp is invalid , check again or resend after 30 seconds'){
-        showErrorToast(error.response.data.message)
         return 
       }
-      showErrorToast(error.response.data.message)
       setShowOtpModal(false)
     }finally{
       setIsLoading(false)

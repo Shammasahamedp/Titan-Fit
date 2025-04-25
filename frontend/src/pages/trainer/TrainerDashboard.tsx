@@ -63,7 +63,7 @@ const TrainerDashboard = () => {
           }
         } catch (error) {
             console.log(error)
-            showErrorToast(trainerErrors.CERTIFICATE_UPLOAD_ERROR)
+            showErrorToast(error)
         }
   }
  
@@ -76,7 +76,7 @@ const TrainerDashboard = () => {
       }
     } catch (error) {
       console.log(error)
-      showErrorToast(trainerErrors.CONFIRM_PASSWORD_ERROR)
+      showErrorToast(error)
     }
   }
   const resetTrainerPassword = async (password:string)=>{
@@ -87,7 +87,7 @@ const TrainerDashboard = () => {
         setResetPasswordModal(false)
       }
     } catch (error) {
-      showErrorToast(trainerErrors.RESET_PASSWORD_ERROR)
+      showErrorToast(error)
     }
   }
   const onSubmit = async (data: ITrainerEditProfile) => {
@@ -112,7 +112,7 @@ const TrainerDashboard = () => {
       }
     } catch (error) {
       console.log(error);
-      showErrorToast(trainerErrors.PROFILE_EDIT_ERROR);
+      showErrorToast(error);
     }
   };
   useEffect(() => {
@@ -125,7 +125,7 @@ const TrainerDashboard = () => {
           setCertificates(trainerProfileDetails.trainerProfile.trainerCertificate)
         }
       } catch (error) {
-        showErrorToast(trainerErrors.PROFILE_ERROR);
+        showErrorToast(error);
       }
     };
     fetchTrainerProfile();

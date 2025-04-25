@@ -27,8 +27,8 @@ const ForgotPassword = () => {
        }
        
         } catch (error:any) {
+          showErrorToast(error)
             console.log(error)
-            showErrorToast(error.message)
         }
     }
   return (

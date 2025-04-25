@@ -33,7 +33,7 @@ const AdminUserManagement: React.FC = () => {
                 )
             }
         } catch (error) {
-            showErrorToast('')
+            showErrorToast(error)
         }
     }
 

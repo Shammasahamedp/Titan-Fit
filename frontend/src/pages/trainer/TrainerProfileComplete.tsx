@@ -1,10 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import InputField from "@/components/common/InputField";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { SignupFormatInputs } from "@/interfaces/user/IsignUpFomatInput";
 import SelectField from "@/components/common/SelectField";
-import { findByEmail, signUp } from "@/api/auth";
 import { useState } from "react";
 import { showSuccessToast } from "@/utils/toast";
 import { showErrorToast } from "@/utils/toast";
@@ -48,9 +46,8 @@ export default function UserProfileComplete() {
         navigate("/trainer/dashboard");
       }
     } catch (error: any) {
-      if (error.response) {
-        showErrorToast(error.response.data.message);
-      }
+      showErrorToast(error)
+     
     }
   };
 

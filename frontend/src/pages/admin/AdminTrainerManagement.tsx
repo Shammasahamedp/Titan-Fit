@@ -30,7 +30,7 @@ const AdminTrainerManagement = () => {
                 )
             }
         } catch (error) {
-            showErrorToast('')
+            showErrorToast(error)
         }
     }
   return (

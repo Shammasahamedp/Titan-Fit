@@ -40,8 +40,8 @@ export default function AdminLogin() {
         }
         
      } catch (error:any) {
+      showErrorToast(error)
         dispatch(adminLoginFailure(error?.response.data.message))
-        showErrorToast(error?.response.data.message)
      }
    }
   return (

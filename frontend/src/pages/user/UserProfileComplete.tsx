@@ -13,10 +13,9 @@ import { userProfileEditSchema } from "@/schemas/user-profile-edit-schema";
 import { IUserEditProfile } from "@/interfaces/user-interfaces";
 import { useDispatch } from "react-redux";
 import { updateUserProfile } from "@/reduxStore/slices/user-slice";
-import { getAccessToken, removeProfileCompletionStatus } from "@/api/localStorage";
+import {  removeProfileCompletionStatus } from "@/api/localStorage";
 import { useEffect } from "react";
 import { getProfile } from "@/api/user-apicalls";
-import { userErrors } from "@/messages/userside-error";
 export default function UserProfileComplete() {
   const [userData, setUserData] = useState<IUserEditProfile | null>(null);
   const dispatch = useDispatch()
@@ -36,7 +35,7 @@ export default function UserProfileComplete() {
       if(response.success){
         console.log(response)
         showSuccessToast(response.message)
-        const {_id,name,email} = response.returnUserData
+        const {name} = response.returnUserData
        if(name){
         dispatch(
           updateUserProfile({
@@ -49,9 +48,8 @@ export default function UserProfileComplete() {
       }
       
     } catch (error: any) {
-      if (error.response) {
-        showErrorToast(error.response.data.message)
-      }
+      showErrorToast(error)
+     
     }
   };
  useEffect(() => {
@@ -62,7 +60,7 @@ export default function UserProfileComplete() {
            reset({email:userProfileDetails.email})
          }
        } catch (error) {
-         showErrorToast(userErrors.PROFILE_ERROR);
+         showErrorToast(error);
        }
      };
      fetchUserProfile();
