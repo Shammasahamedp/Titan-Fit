@@ -4,6 +4,7 @@ import { emailMessages } from "../../messages/mail-related";
 import { IRedisRepository } from "../../repositories/redis/IRedis-repository";
 import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
 import { IUserRepository } from "../../repositories/user/IuserRepository";
+import { AppError } from "../../utils/handleResponse";
 import { sendMail } from "../../utils/nodeMailer";
 import { hashPassword } from "../../utils/password";
 import { generateToken } from "../../utils/token";
@@ -27,7 +28,7 @@ export class ResetPasswordService implements IResetPasswordService{
         await sendMail(email,emailMessages.TOKEN_SUBJECT,`click the link http://localhost:5173/reset-password/${token}`)
         } catch (error) {
             console.log(error)
-            throw error
+            throw new AppError('something went wrong while send link to email',500)
         }
 
     }
@@ -39,7 +40,7 @@ export class ResetPasswordService implements IResetPasswordService{
            const existingEmail= await this.redisRepository.getToken(token)
            console.log('this is email',existingEmail)
            if(!existingEmail ){
-            throw new Error (commonErrors.INVALID_TOKEN)
+            throw new AppError (commonErrors.INVALID_TOKEN,401)
            }
            const hashedPassword = await hashPassword(password)
            const user = await this.userRepository.findOne({email:existingEmail})
@@ -54,10 +55,10 @@ export class ResetPasswordService implements IResetPasswordService{
             return 
            }
         } catch (error:any) {
-            if(error.message){
-                throw new Error(error.message)
+            if(error instanceof AppError){
+                throw error
             }
-            throw new Error (commonErrors.RESET_PASSWORD_ERROR)
+            throw new AppError (commonErrors.RESET_PASSWORD_ERROR,500)
         }
     }
 }

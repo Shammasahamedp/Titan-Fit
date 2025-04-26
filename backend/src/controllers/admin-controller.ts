@@ -1,6 +1,7 @@
 import { adminMessages } from "../messages/admin-related";
 import { AdminService } from "../services/admin/adminService";
 import { Request,Response } from "express";
+import { handleError } from "../utils/handleResponse";
 
 
 export class AdminController {
@@ -24,9 +25,11 @@ export class AdminController {
                 admin:loginResults?.admin,
                 accessToken:loginResults?.accessToken
             }
+            
             res.status(200).json({success:true,data,message:adminMessages.LOGIN_SUCCESS})
         } catch (error:any) {
-            res.status(401).json({success:false,message:error.message})
+           handleError(res,error)
+            // res.status(401).json({success:false,message:error.message})
         }
     }
 
@@ -35,7 +38,8 @@ export class AdminController {
             const users = await this.adminService.getUsers()
             res.status(200).json({success:true,message:adminMessages.GET_USERS_SUCCESS,users})
         } catch (error) {
-            res.status(400).json({success:false,message:adminMessages.GET_USERS_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:adminMessages.GET_USERS_FAILURE})
         }
     }
 
@@ -44,7 +48,8 @@ export class AdminController {
             const trainers = await this.adminService.getTrainers()
             res.status(200).json({success:true,message:adminMessages.GET_TRAINERS_SUCCESS,trainers})
         } catch (error) {
-            res.status(400).json({success:false,message:adminMessages.GET_TRAINERS_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:adminMessages.GET_TRAINERS_FAILURE})
         }
     }
 
@@ -55,7 +60,8 @@ export class AdminController {
             res.status(200).json({success:true,message:adminMessages.TOGGLE_TRAINER_SUCCESS,trainer})
            }
         } catch (error) {
-            res.status(400).json({success:false,message:adminMessages.TOGGLE_TRAINER_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:adminMessages.TOGGLE_TRAINER_FAILURE})
         }
     }
 
@@ -66,7 +72,8 @@ export class AdminController {
                 res.status(200).json({success:true,message:adminMessages.TOGGLE_USER_SUCCESS,user})
             }
         } catch (error) {
-            res.status(400).json({success:false,message:adminMessages.TOGGLE_USER_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:adminMessages.TOGGLE_USER_FAILURE})
         }
     }
      

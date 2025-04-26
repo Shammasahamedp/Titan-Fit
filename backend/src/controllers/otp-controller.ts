@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { IOtpService } from "../services/otp/IOtpService";
 import { emailMessages } from "../messages/mail-related";
 import { userMessages } from "../messages/userRelated";
+import { handleError } from "../utils/handleResponse";
 
 export class OtpController {
   private otpService: IOtpService;
@@ -11,6 +12,7 @@ export class OtpController {
   }
 
   async sendOtp(req: Request, res: Response): Promise<void> {
+   try {
     const { email } = req.body;
     if (!email)
       res
@@ -20,10 +22,14 @@ export class OtpController {
     res
       .status(200)
       .json({ success: true, message: emailMessages.OTP_SEND_SUCCESSFULL });
+   } catch (error) {
+    handleError(res,error)
+   }
   }
 
   async verifyOtp(req: Request, res: Response): Promise<void> {
-    console.log('this is verify otp')
+    try {
+      console.log('this is verify otp')
     const { email, otp } = req.body;
     if (!email || !otp){
         res
@@ -40,5 +46,8 @@ export class OtpController {
     }
     console.log(';success')
     res.status(200).json({ success: true, messages: emailMessages.SUCCESS_OTP });
+    } catch (error) {
+      handleError(res,error)
+    }
   }
 }

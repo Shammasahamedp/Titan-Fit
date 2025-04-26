@@ -1,5 +1,6 @@
 import { ISubscription, ISubscriptionDocument } from "../../interfaces/subscriptionInterfaces";
 import { ISubscriptionRepository } from "../../repositories/subscription/IsubscriptionRepository";
+import { AppError } from "../../utils/handleResponse";
 import { ISubscriptionService } from "./IsubscriptionService";
 
 export class SubscriptionService implements ISubscriptionService{
@@ -12,55 +13,64 @@ async addSubscription(subscription: ISubscription): Promise<ISubscriptionDocumen
     try {
         const isSubscriptionNameExist = this.subscriptionRepo.findOne({planName:subscription.planName})
         if(isSubscriptionNameExist !== null){
-               throw new Error('Subscription name is already exists')
+               throw new AppError('Subscription name is already exists',409)
         }
         const isSubscriptionExist = this.subscriptionRepo.findOne({planName:subscription.price,description:subscription.description,durationInMonth:subscription.durationInMonth})
         if(isSubscriptionExist !== null){
-            throw new Error('Subscription already Exists')
+            throw new AppError('Subscription already Exists',409)
         }
         const newSubscription = await this.subscriptionRepo.create(subscription)
         if(!newSubscription){
-            throw new Error()
+            throw new AppError('failed to create new subscription',400)
         }
         return newSubscription
     } catch (error:any) {
-        if(error.message === 'Subscription already Exists'){
-            throw new Error(error.message)
+        if(error instanceof AppError){
+            throw error
         }
-        throw new Error()
+        throw new AppError('something went wrong while adding subscription',500)
     }
 }
 async getAllSubscriptions(): Promise<ISubscriptionDocument[] | null> {
     try {
         const subscriptions = await this.subscriptionRepo.find({})
         if(!subscriptions){
-           throw new Error()
+           throw new AppError('subscriptions not found',404)
         }
         return subscriptions
     } catch (error) {
-        throw new Error()
+        if(error instanceof AppError){
+            throw error
+        }
+        throw new AppError('something went wrong while fetch subscriptions',500)
     }
 }
 async editSubscription(subscription: ISubscription,id:string): Promise<ISubscriptionDocument | null> {
     try {
         const editedSubscription = await this.subscriptionRepo.findByIdAndUpdate(id,subscription,{new:true})
         if(!editedSubscription){
-            throw new Error()
+            throw new AppError('failed to edit the subscription,not found the edited subscription',404)
         }
         return editedSubscription
     } catch (error) {
-        throw new Error()
+        if(error instanceof AppError){
+            throw error
+        }
+        throw new AppError('something went wrong while edit subscription',500)
     }
 }
 async getActiveSubscription(): Promise<ISubscriptionDocument[] | null> {
     try {
         const activeSubscription = await this.subscriptionRepo.find({isActive:true})
         if(!activeSubscription){
-            throw new Error()
+            throw new AppError('not found active subscription',404)
         }
         return activeSubscription
     } catch (error) {
-        throw new Error()
+        if(error instanceof AppError){
+            throw error
+        }
+        throw new AppError('something went wrong while fetching active subscription',500)
     }
 }
 }

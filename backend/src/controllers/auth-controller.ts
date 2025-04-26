@@ -2,6 +2,7 @@ import { commonMessages } from "../messages/common";
 import { commonErrors } from "../messages/common-errors";
 import { IAuthService } from "../services/auth/Iauth-service";
 import { Request,Response } from "express";
+import { handleError } from "../utils/handleResponse";
 
 export class AuthController {
     private authService:IAuthService
@@ -20,7 +21,8 @@ export class AuthController {
             }
 
         } catch (error) {
-            res.status(400).json({success:false,message:commonErrors.ERROR_EMAIL_CHECK})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:commonErrors.ERROR_EMAIL_CHECK})
         }
     }
 
@@ -46,7 +48,8 @@ export class AuthController {
             
             
         } catch (error) {
-            res.status(400).json({success:false,message:commonErrors.GOOGLE_LOGIN_FAILURE,error})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:commonErrors.GOOGLE_LOGIN_FAILURE,error})
         }
     }
 
@@ -59,7 +62,8 @@ export class AuthController {
             })
             res.status(200).json({success:true,message:commonMessages.LOGOUT_SUCCESS})
         } catch (error) {
-            res.status(400).json({success:false,message:commonErrors.LOGOUT_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:commonErrors.LOGOUT_FAILURE})
         }
     }
 }

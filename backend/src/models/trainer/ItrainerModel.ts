@@ -12,6 +12,7 @@ export interface ITrainerModel extends Document{
     trainerCertificate:string[];
     yearsOfExperience?:number;
     approved:boolean;
+    blocked:boolean
     availableSlots?:Types.ObjectId;
     priceForSession?:number;
     googleId?:string,

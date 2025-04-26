@@ -1,6 +1,7 @@
 import { subscriptionMessage } from "../messages/subscription-related";
 import { ISubscriptionService } from "../services/subscription/IsubscriptionService";
 import { Request,Response } from "express";
+import { handleError } from "../utils/handleResponse";
 export class SubscriptionController{
     private subscriptionService:ISubscriptionService
 
@@ -13,10 +14,8 @@ export class SubscriptionController{
               const newSubscription = await this.subscriptionService.addSubscription(req.body)
               res.status(201).json({success:true,message:subscriptionMessage.SUBSCRIPTION_ADD_SUCCESSFULL})
           } catch (error:any) {
-            if(error.message === 'Subscription already Exists'){
-                res.status(400).json({success:false,message:subscriptionMessage.SUBSCRIPTION_ALREADY_EXIST})
-            }
-            res.status(400).json({success:false,message:subscriptionMessage.SUBSCRIPTION_ADD_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:subscriptionMessage.SUBSCRIPTION_ADD_FAILURE})
           }
     }
 
@@ -25,7 +24,8 @@ export class SubscriptionController{
             const subscriptions = await this.subscriptionService.getAllSubscriptions()
             res.status(200).json({success:true,message:subscriptionMessage.SUBSCRIPTION_ADD_SUCCESSFULL,subscriptions})
         } catch (error) {
-            res.status(400).json({success:false,message:subscriptionMessage.SUBSCRIPTION_GET_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:subscriptionMessage.SUBSCRIPTION_GET_FAILURE})
         }
     }
 
@@ -34,7 +34,8 @@ export class SubscriptionController{
             const editedSubscription = await this.subscriptionService.editSubscription(req.body.toEditSubscription,req.body.id)
             res.status(200).json({success:true,message:subscriptionMessage.SUBSCRIPTION_EDIT_SUCCESSS})
         } catch (error) {
-            res.status(400).json({success:true,message:subscriptionMessage.SUBSCRIPTION_EDIT_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:true,message:subscriptionMessage.SUBSCRIPTION_EDIT_FAILURE})
         }
     }
 
@@ -43,7 +44,8 @@ export class SubscriptionController{
             const activeSubscriptions = await this.subscriptionService.getActiveSubscription()
             res.status(200).json({success:true,message:subscriptionMessage.SUBSCRIPTION_GET_SUCCESSFULL,activeSubscriptions})
         } catch (error) {
-            res.status(400).json({success:false,message:subscriptionMessage.SUBSCRIPTION_GET_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:subscriptionMessage.SUBSCRIPTION_GET_FAILURE})
         }
     }
 }

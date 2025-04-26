@@ -3,6 +3,7 @@ import { commonErrors } from "../messages/common-errors";
 import { userMessages } from "../messages/userRelated";
 import { IUserService } from "../services/user/IuserService";
 import { Request,Response } from "express";
+import { handleError } from "../utils/handleResponse";
 
 export class UserController {
     private userService:IUserService
@@ -16,7 +17,8 @@ export class UserController {
             const user = await this.userService.registerUser(req.body)
             res.status(201).json({success:true,data:user,message:userMessages.SIGNUP_SUCCESS})
         } catch (error:any) {
-            res.status(400).json({success:false,message:error.message})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:error.message})
         }
     }
 
@@ -35,7 +37,8 @@ export class UserController {
             }
             res.status(200).json({success:true,data,message:userMessages.LOGIN_SUCCESS})
         } catch (error:any) {
-            res.status(401).json({success:false,message:userMessages.LOGIN_FAILED})
+            handleError(res,error)
+            // res.status(401).json({success:false,message:userMessages.LOGIN_FAILED})
         }
     }
     async getProfile(req:Request,res:Response):Promise<void>{
@@ -46,7 +49,8 @@ export class UserController {
             }
 
         } catch (error:any) {
-            res.status(400).json({success:false,message:error.message})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:error.message})
         }
     }
     async editProfile(req:Request,res:Response):Promise<void>{
@@ -56,7 +60,8 @@ export class UserController {
                 res.status(200).json({success:true,message:userMessages.EDIT_PROFILE_SUCCESS,returnUserData})
             }
         } catch (error:any) {
-            res.status(400).json({success:false,message:userMessages.EDIT_PROFILE_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:userMessages.EDIT_PROFILE_FAILURE})
         }
     }
     async addProfileImage(req:Request,res:Response):Promise<void>{
@@ -69,7 +74,8 @@ export class UserController {
                 res.status(200).json({success:true,message:userMessages.ADD_PROFILE_IMAGE_SUCCESS,image})
             }
         } catch (error:any) {
-              res.status(400).json({success:false,message:userMessages.ADD_PROFILE_IMAGE_FAILURE})
+            handleError(res,error)
+            //   res.status(400).json({success:false,message:userMessages.ADD_PROFILE_IMAGE_FAILURE})
         }
     }
     async checkPassword(req:Request,res:Response):Promise<void>{
@@ -81,7 +87,8 @@ export class UserController {
             }
             res.status(200).json({success:true,message:userMessages.PASSWORD_CHECK_SUCCESS})
         } catch (error) {
-            res.status(400).json({success:false,message:userMessages.PASSWORD_CHECK_ERROR})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:userMessages.PASSWORD_CHECK_ERROR})
         }
     }
     async resetPassword(req:Request,res:Response):Promise<void>{
@@ -93,7 +100,8 @@ export class UserController {
             }
             res.status(201).json({success:true,message:commonMessages.PASSWORD_UPDATE_SUCCESS})
         } catch (error) {
-            res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
 
         }
     }

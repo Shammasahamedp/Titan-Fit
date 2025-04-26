@@ -3,6 +3,7 @@ import { commonErrors } from "../messages/common-errors";
 import { emailMessages } from "../messages/mail-related";
 import { IResetPasswordService } from "../services/reset-password/IResetPasswordService";
 import { Request,Response } from "express";
+import { handleError } from "../utils/handleResponse";
 
 export class ResetPasswordController{
    private resetPasswordService:IResetPasswordService
@@ -17,7 +18,8 @@ export class ResetPasswordController{
        res.status(200).json({success:true,message:emailMessages.TOKEN_SEND_SUCCESSFULL})
       } catch (error:any) {
          console.log(error)
-        res.status(400).json({success:false,message:emailMessages.TOKEN_SEND_FAILURE})
+         handleError(res,error)
+      //   res.status(400).json({success:false,message:emailMessages.TOKEN_SEND_FAILURE})
       }
    }
 
@@ -26,11 +28,8 @@ export class ResetPasswordController{
          await this.resetPasswordService.verifyLink(req.body.password,req.body.token)
          res.status(200).json({success:true,message:commonMessages.PASSWORD_UPDATE_SUCCESS})
       } catch (error:any) {
-         if(error.message){
-            res.status(400).json({success:false,message:error.message})
-            return
-         }
-         res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
+        handleError(res,error)
+         // res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
       }
    }
 }

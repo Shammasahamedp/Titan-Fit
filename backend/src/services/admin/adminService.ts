@@ -4,6 +4,7 @@ import { IUserDocument } from "../../interfaces/userInterfaces";
 import { AdminRepository } from "../../repositories/admin/adminRepository";
 import { TrainerRepository } from "../../repositories/trainer/trainerRepository";
 import { UserRepository } from "../../repositories/user/userRepository";
+import { AppError } from "../../utils/handleResponse";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { IAdminService } from "./IadminService";
 
@@ -20,7 +21,7 @@ export class AdminService implements IAdminService{
    async loginAdmin(data: IAdminLogin): Promise<IAdminLoginResponse> {
         const admin = await this.adminRepository.findOne({email:data.email})
         if(!admin){
-            throw new Error ('invalide credentials')
+            throw new AppError ('invalide credentials,not autherised',401)
         }
        
         const accessToken = generateAccessToken(admin._id.toString(),'admin')
@@ -32,22 +33,28 @@ export class AdminService implements IAdminService{
         try {
             const users = await this.userRepository.find({})
             if(!users){
-                throw new Error()
+                throw new AppError('users not found',404)
             }
             return users
         } catch (error) {
-            throw new Error()
+            if(error instanceof AppError){
+                throw error
+            }
+            throw new AppError('something went wrong while fetch users',500)
         }
     }
    async getTrainers(): Promise<ITrainerDocument[]> {
         try {
             const trainers = await this.trainerRepository.find({})
             if(!trainers){
-                throw new Error()
+                throw new AppError('trainers not found',404)
             }
             return trainers
         } catch (error) {
-            throw new Error()
+            if(error instanceof AppError){
+                throw error
+            }
+            throw new AppError('something went wrong while fetching trainers',500)
         }
     }
    
@@ -55,12 +62,15 @@ export class AdminService implements IAdminService{
         try {
            const trainer= await this.trainerRepository.findByIdAndUpdate(trainerId,{approved:!approved},{new:true})
            if(!trainer){
-            throw new Error()
+            throw new AppError('trainer not found',404)
            }
            return trainer
         } catch (error) {
+            if(error instanceof AppError){
+                throw error
+            }
             console.log(error)
-            throw new Error()
+            throw new AppError('something went wrong while trainer approval',500)
         }
     }
 
@@ -68,12 +78,15 @@ export class AdminService implements IAdminService{
         try {
             const user = await this.userRepository.findByIdAndUpdate(userId,{blocked:!blocked},{new:true})
             if(!user){
-                throw new Error()
+                throw new AppError('user not found',404)
             }
             return user
         } catch (error) {
+            if(error instanceof AppError){
+                throw error
+            }
             console.log(error)
-            throw new Error()
+            throw new AppError('something went wrong while user toggle',500)
         }
     }
     

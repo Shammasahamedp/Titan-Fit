@@ -23,6 +23,7 @@ export const showErrorToast = (error:unknown)=>{
     }else{
         message = 'Something went wrong..'
     }
+    console.log('this is message',message)
     toast.error(message,{
         position: "top-right",
         autoClose: 3000,

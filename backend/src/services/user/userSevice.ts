@@ -11,6 +11,7 @@ import { hashPassword, comparePassword } from "../../utils/password";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
 import { userMessages } from "../../messages/userRelated";
+import { AppError } from "../../utils/handleResponse";
 
 export class UserService implements IUserService {
   private userRepository: IUserRepository;
@@ -36,24 +37,35 @@ export class UserService implements IUserService {
   }
 
   async loginUser(data: IUserLogin): Promise<ILoginResponse> {
-    const user = await this.userRepository.findOne({email:data.email});
+    try {
+      const user = await this.userRepository.findOne({email:data.email});
+    console.log('thi sis user',user)
     if (!user) {
-      throw new Error("User not found");
+      throw new AppError("User not found",404);
+    }else if(user.blocked){
+      console.log('inside blocked')
+      throw new AppError('User is blocked , contact admin',403)
     }
     const isValid = comparePassword(data.password, user.password);
     if (!isValid) {
-      throw new Error("Invalid credentials");
+      throw new AppError("Invalid credentials",401);
     }
     const accessToken = generateAccessToken(user._id.toString(),'user');
     const refreshToken = generateRefreshToken(user._id.toString(),'user');
 
     return { user, accessToken, refreshToken };
+    } catch (error) {
+      if(error instanceof AppError){
+        throw error
+      }
+      throw new AppError('something went wrong while login user',500)
+    }
   }
   async getUserProfile(userId: string): Promise<IUserProfile | null> {
     try {
       const user = await this.userRepository.findById(userId);
       if (!user) {
-        throw new Error(userMessages.USER_NOT_FOUND);
+        throw new AppError(userMessages.USER_NOT_FOUND,404);
         
       }
       const {
@@ -83,7 +95,10 @@ export class UserService implements IUserService {
       };
       return userProfile
     } catch (error) {
-         throw new Error(userMessages.ERROR_GET_PROFILE)
+      if(error instanceof AppError){
+        throw error
+      }
+         throw new AppError(userMessages.ERROR_GET_PROFILE,500)
     }
   }
 
@@ -91,11 +106,14 @@ export class UserService implements IUserService {
       try {
           const editedProfileData = await this.userRepository.findByIdAndUpdate(userId,userProfileData,{new:true})
           if(!editedProfileData){
-            throw new Error(userMessages.EDIT_PROFILE_FAILURE)
+            throw new AppError('failed to edit user data , new edited user not found',404)
           }
           return editedProfileData
       } catch (error) {
-          throw new Error(userMessages.EDIT_PROFILE_FAILURE)
+        if(error instanceof AppError){
+          throw error
+        }
+          throw new AppError(userMessages.EDIT_PROFILE_FAILURE,500)
       }
   }
   async addProfilePic(userId: string, userProfilePic: string): Promise<string | null> {
@@ -104,12 +122,15 @@ export class UserService implements IUserService {
         const userData = await this.userRepository.findByIdAndUpdate(userId,{profilePicture:userProfilePic},{new:true})
         console.log('this is userdata',userData)
          if(!userData){
-            throw new Error()
+            throw new AppError('user not found',404)
          }
          return userData?.profilePicture as string
       } catch (error) {
+        if(error instanceof AppError){
+          throw error
+        }
         console.log(error)
-        throw new Error(userMessages.ADD_PROFILE_IMAGE_FAILURE)
+        throw new AppError(userMessages.ADD_PROFILE_IMAGE_FAILURE,500)
       }
   }
   async checkPassword(userId: string, password: string): Promise<boolean> {
@@ -124,7 +145,7 @@ export class UserService implements IUserService {
         }
         return true
       } catch (error) {
-        throw new Error()
+        throw new AppError('something went wrong while cheking password',500)
       }
   }
   async resetPassword(userId: string, password: string): Promise<IUserDocument | null> {
@@ -132,11 +153,14 @@ export class UserService implements IUserService {
         const hashedPassword = await hashPassword(password)
         const user = await this.userRepository.findByIdAndUpdate(userId,{password:hashedPassword},{new:true})
         if(!user){
-          throw new Error()
+          throw new AppError('user not found',404)
         }
         return user
       } catch (error) {
-        throw new Error()
+        if(error instanceof AppError){
+          throw error
+        }
+        throw new AppError('something went wrong while reseting password',500)
       }
   }
 }

@@ -2,6 +2,7 @@ import { ITrainerDocument, ITrainerLogin, ITrainerLoginResponse, ITrainerProfile
 import { trainerMessages } from "../../messages/trainerRelated";
 import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
 import { IUserRepository } from "../../repositories/user/IuserRepository";
+import { AppError } from "../../utils/handleResponse";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { comparePassword, hashPassword } from "../../utils/password";
 import { ITrainerService } from "./ItrainerService";
@@ -18,11 +19,13 @@ export class TrainerService implements ITrainerService{
     async loginTrainer(data: ITrainerLogin): Promise<ITrainerLoginResponse | null> {
         const trainer = await this.trainerRepository.findOne({email:data.email})
         if(!trainer){
-            throw new Error(trainerMessages.LOGIN_FAILED)
+            throw new AppError(trainerMessages.LOGIN_FAILED,401)
+        }else if(trainer.blocked){
+            throw new AppError('Trainer is blocked by admin, contact admin',403)
         }
         const isValid = comparePassword(data.password,trainer.password as string)
         if(!isValid){
-            throw new Error(trainerMessages.LOGIN_FAILED)
+            throw new AppError(trainerMessages.LOGIN_FAILED,401)
         }
         const accessToken = generateAccessToken(trainer._id.toString(),'trainer')
         const refreshToken = generateRefreshToken(trainer._id.toString(),'trainer')
@@ -30,14 +33,21 @@ export class TrainerService implements ITrainerService{
         return {trainer,accessToken,refreshToken}
     }
     async registerTrainer(data: ITrainerSignUp): Promise<ITrainerDocument | null> {
+       try {
         const existingTrainer = await this.trainerRepository.findOne({email:data.email})
         const existingUser = await this.userRepository.findOne({email:data.email})
         if(existingTrainer || existingUser){
-            throw new Error(trainerMessages.EMAIL_ALREADY_EXIST)
+            throw new AppError(trainerMessages.EMAIL_ALREADY_EXIST,409)
         }
         data.password = await hashPassword(data.password)
         console.log('this is data inside register',data)
         return await this.trainerRepository.create(data)
+       } catch (error) {
+          if(error instanceof AppError){
+            throw error
+          }
+          throw new AppError('something went wrong while register trainer',500)
+       }
     }
   async  getTrainerProfile(trainerId: string): Promise<ITrainerProfile | null> {
         try {
@@ -68,20 +78,26 @@ export class TrainerService implements ITrainerService{
                 }
                 return trainerProfile as ITrainerProfile
             }
-            throw new Error(trainerMessages.TRAINER_NOT_FOUND)
+            throw new AppError(trainerMessages.TRAINER_NOT_FOUND,404)
         } catch (error) {
-            throw new Error (trainerMessages.ERROR_GET_PROFILE)
+            if(error instanceof AppError){
+                throw error
+            }
+            throw new AppError (trainerMessages.ERROR_GET_PROFILE,500)
         }
     }
     async editTrainerProfile(trainerId: string, trainerProfileData: ITrainerProfile): Promise<ITrainerDocument | null> {
         try {
             const editedTrainerProfile = await this.trainerRepository.findByIdAndUpdate(trainerId,trainerProfileData,{new:true})
             if(!editedTrainerProfile){
-                throw new Error(trainerMessages.EDIT_TRAINER_PROFILE_ERROR)
+                throw new AppError('failed to edit trainer, edited trainer not found',404)
             }
             return editedTrainerProfile
         } catch (error) {
-            throw new Error(trainerMessages.EDIT_TRAINER_PROFILE_ERROR)
+            if(error instanceof AppError){
+                throw error
+            }
+            throw new AppError(trainerMessages.EDIT_TRAINER_PROFILE_ERROR,500)
         }
     }
 
@@ -89,23 +105,29 @@ export class TrainerService implements ITrainerService{
         try {
             const trainerData = await this.trainerRepository.findByIdAndUpdate(trainerId,{profilePicture:trainerProfilePic},{new:true})
             if(!trainerData){
-                throw new Error(trainerMessages.TRAINER_NOT_FOUND)
+                throw new AppError(trainerMessages.TRAINER_NOT_FOUND,404)
             }
             return trainerData?.profilePicture as string
         } catch (error) {
-            throw new Error(trainerMessages.ADD_PROFILE_IMAGE_ERROR)
+            if(error instanceof AppError){
+                throw error
+            }
+            throw new AppError(trainerMessages.ADD_PROFILE_IMAGE_ERROR,500)
         }
     }
    async addCertificate(trainerId: string, trainerCertificate: string): Promise<string[]> {
         try {
            const trainerData= await this.trainerRepository.addCertificate(trainerId,trainerCertificate)
            if(!trainerData){
-            throw new Error(trainerMessages.TRAINER_NOT_FOUND)
+            throw new AppError(trainerMessages.TRAINER_NOT_FOUND,404)
            }
            return trainerData.trainerCertificate as string[]
         } catch (error) {
+            if(error instanceof AppError){
+                throw error
+            }
             console.log(error)
-            throw new Error()
+            throw new AppError('something went wrong while add trainer certificate',500)
         }
     }
 
@@ -122,7 +144,7 @@ export class TrainerService implements ITrainerService{
             }
             return true
         } catch (error) {
-            throw new Error()
+            throw new AppError('something went wrong while check password',500)
         }
     }
     async resetPassword(trainerId: string, password: string): Promise<ITrainerDocument | null> {
@@ -132,9 +154,12 @@ export class TrainerService implements ITrainerService{
             if(trainer){
                 return trainer
             }
-            throw new Error()
+            throw new AppError(trainerMessages.TRAINER_NOT_FOUND,404)
         } catch (error) {
-            throw new Error()
+            if(error instanceof AppError){
+                throw error
+            }
+            throw new AppError('something went wrong while reset password',500)
         }
     }
 }

@@ -7,14 +7,20 @@ import { IUsers } from "@/interfaces/user-interfaces";
 import NewTable from "@/components/common/NewTable";
 import { toggleUser } from "@/api/admin-apicalls";
 import { showErrorToast } from "@/utils/toast";
+import { ToastContainer } from "react-toastify";
 const AdminUserManagement: React.FC = () => {
  const [users,setUsers] = useState<IUsers[]>([])
     useEffect(()=>{
        const getUsers = async()=>{
-       const response = await fetchUsers()
+       try {
+         const response = await fetchUsers()
        console.log(response)
        if(response){
         setUsers(response.data.users)
+       }
+       } catch (error) {
+         console.log('erro reached',error)
+         showErrorToast(error)
        }
        }
        getUsers()
@@ -63,6 +69,7 @@ const AdminUserManagement: React.FC = () => {
              )}/>
           </div>
         </div>
+        <ToastContainer/>
      </div>
   );
 };

@@ -9,7 +9,7 @@ export const fetchUsers = async ()=>{
             return response
         }
     } catch (error) {
-        console.log(error)
+        console.log('error',error)
         throw error
     }
 }

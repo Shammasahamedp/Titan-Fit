@@ -3,6 +3,7 @@ import { commonErrors } from "../messages/common-errors";
 import { trainerMessages } from "../messages/trainerRelated";
 import { ITrainerService } from "../services/trainer/ItrainerService";
 import { Request,Response } from "express";
+import { handleError } from "../utils/handleResponse";
 
 export class TrainerController {
     private trainerService:ITrainerService
@@ -17,7 +18,8 @@ export class TrainerController {
             const trainer = await this.trainerService.registerTrainer(req.body)
             res.status(201).json({success:true,data:trainer,message:trainerMessages.SIGNUP_SUCCESS})
         } catch (error:any) {
-            res.status(400).json({success:false,message:error.message})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:error.message})
         }
     }
 
@@ -36,7 +38,8 @@ export class TrainerController {
             }
             res.status(200).json({success:true,data,message:trainerMessages.LOGIN_SUCCESS})
         } catch (error:any) {
-            res.status(401).json({success:false,message:trainerMessages.LOGIN_FAILED})
+            handleError(res,error)
+            // res.status(401).json({success:false,message:trainerMessages.LOGIN_FAILED})
         }
     }
 
@@ -45,7 +48,8 @@ export class TrainerController {
             const trainerProfile = await this.trainerService.getTrainerProfile(res.locals.user?.userId)
             res.status(200).json({success:true,message:trainerMessages.GET_TRAINER_PROFILE_SUCCESS,trainerProfile})
         } catch (error:any) {
-            res.status(400).json({success:false,message:trainerMessages.GET_TRAINER_PROFILE_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:trainerMessages.GET_TRAINER_PROFILE_FAILURE})
         }
     }
     async editTrainerProfile(req:Request,res:Response):Promise<void>{
@@ -54,7 +58,8 @@ export class TrainerController {
             const updatedTrainerProfile = await this.trainerService.editTrainerProfile(res.locals?.user.userId,req.body)
             res.status(200).json({success:true,message:trainerMessages.TRAINER_EDIT_PROFILE_SUCCESS,returnedTrainerProfile:updatedTrainerProfile})
         } catch (error) {
-            res.status(400).json({success:false,message:trainerMessages.EDIT_TRAINER_PROFILE_ERROR})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:trainerMessages.EDIT_TRAINER_PROFILE_ERROR})
         }
     }
     async addTrainerProfilImage(req:Request,res:Response):Promise<void>{
@@ -62,7 +67,8 @@ export class TrainerController {
             const image = await this.trainerService.addTrainerProfilePic(res.locals.user?.userId,req.body.trainerProfileImage)
             res.status(200).json({success:true,message:trainerMessages.ADD_PROFILE_IMAGE_SUCCESS,image})
         } catch (error) {
-            res.status(400).json({success:false,message:trainerMessages.ADD_PROFILE_IMAGE_ERROR})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:trainerMessages.ADD_PROFILE_IMAGE_ERROR})
         }
     }
     async addCertificate(req:Request,res:Response):Promise<void>{
@@ -70,8 +76,10 @@ export class TrainerController {
              const trainerCertificate= await this.trainerService.addCertificate(res.locals.user?.userId,req.body.trainerCertificate)
                  res.status(201).json({success:true,message:trainerMessages.TRAINER_CERTIFICATE_ADD_SUCCESS,trainerCertificate})
         } catch (error) {
+        
             console.log(error)
-            res.status(400).json({success:false,message:trainerMessages.TRAINER_CERTIFICATE_ADD_FAILURE})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:trainerMessages.TRAINER_CERTIFICATE_ADD_FAILURE})
         }
     }
 
@@ -84,7 +92,8 @@ export class TrainerController {
             }
             res.status(403).json({success:false,message:trainerMessages.PASSWORD_CHECK_FAILURE})
         } catch (error) {
-            res.status(400).json({success:false,message:trainerMessages.PASSWORD_CHECK_ERROR})
+            handleError(res,error)
+            // res.status(400).json({success:false,message:trainerMessages.PASSWORD_CHECK_ERROR})
         }
     }
     async resetPassword(req:Request,res:Response):Promise<void>{
@@ -92,7 +101,8 @@ export class TrainerController {
             const trainer = await this.trainerService.resetPassword(res.locals.user.userId,req.body.password)
             if(trainer) res.status(201).json({success:true,message:commonMessages.PASSWORD_UPDATE_SUCCESS})
         } catch (error) {
-            res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
+    handleError(res,error)
+            // res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
         }
     }
    

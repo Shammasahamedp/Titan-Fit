@@ -15,6 +15,7 @@ const TrainerSchema: Schema = new Schema(
     trainerCertificate: { type: [String] },
     yearsOfExperience: { type: Number },
     approved: { type: Boolean, default: false },
+    blocked:{type:Boolean,default:false},
     availableSlots: { type: Types.ObjectId },
     priceForSession: { type: Number },
     googleId:{type:String},

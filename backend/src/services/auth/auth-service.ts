@@ -4,6 +4,7 @@ import { trainerModel } from "../../models/trainer/trainerModel";
 import { userModel } from "../../models/user/userModel";
 import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
 import { IUserRepository } from "../../repositories/user/IuserRepository";
+import { AppError } from "../../utils/handleResponse";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { IAuthService } from "./Iauth-service";
 
@@ -34,14 +35,20 @@ export class AuthService implements IAuthService{
             
                 const user= await this.userRepository.findOne({googleId:googleId})
                 if(user){
-                    
+                    if(user.blocked){
+                        throw new AppError('User is blocked,contact admin',403)
+                    }
                     const accessToken = generateAccessToken(user?._id.toString() as string,role)
                 const refreshToken = generateRefreshToken(user?._id.toString() as string,role)
                 return {user,accessToken,refreshToken}
                 }
                 if(!user){
+                    
                     const user = await this.userRepository.findOne({email})
                     if(user){
+                        if(user.blocked){
+                            throw new AppError('User is blocked,contact admin',403)
+                        }
                         await this.userRepository.findOneAndUpdate({email:email},{googleId:googleId},{new:true})
                         const accessToken = generateAccessToken(user?._id.toString() as string,'user')
                 const refreshToken = generateRefreshToken(user?._id.toString() as string,'user')
@@ -71,6 +78,9 @@ export class AuthService implements IAuthService{
             }else if(role === 'trainer'){
                 const trainer= await this.trainerRepository.findOne({googleId})
                 if(trainer){
+                    if(trainer.blocked){
+                        throw new AppError('Trainer is blocked,contact admin',403)
+                    }
                     
                     const accessToken = generateAccessToken(trainer?._id.toString() as string,'trainer')
                 const refreshToken = generateRefreshToken(trainer?._id.toString() as string,'trainer')
@@ -80,6 +90,9 @@ export class AuthService implements IAuthService{
                 if(!trainer){
                     const trainer = await this.trainerRepository.findOne({email})
                     if(trainer){
+                        if(trainer.blocked){
+                            throw new AppError('Trainer is blocked,contact admin',403)
+                        }
                         await this.trainerRepository.findOneAndUpdate({email},{googleId},{new:true})
                         const accessToken = generateAccessToken(trainer?._id.toString() as string,'trainer')
                 const refreshToken = generateRefreshToken(trainer?._id.toString() as string,'trainer')
@@ -101,7 +114,12 @@ export class AuthService implements IAuthService{
                 
             }
         } catch (error) {
+            if(error instanceof AppError){
+                throw error
+            }
             console.log(error)
+            throw new AppError('something went wrong while google login',500)
+            
         }
     }
 }
