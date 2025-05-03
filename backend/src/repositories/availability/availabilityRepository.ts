@@ -11,10 +11,11 @@ export class AvailabilityRepository extends BaseRepository<IAvailabilityDocument
     }
 
     async updateAvailability(trainerId: string, availableDate: IAvailableDate): Promise<IAvailabilityDocument | null> {
-        return await availabilityModel.findOneAndUpdate({trainerId:trainerId},{$push:{availability:availableDate}},{new:true,upsert:true})
+      return await availabilityModel.findOneAndUpdate({trainerId:trainerId},{$push:{availability:availableDate}},{new:true,upsert:true})
     }
     
     async isDateExist(trainerId: string, date: string): Promise<boolean|null> {
+        console.log(trainerId,'id','date',date)
         return   await availabilityModel.findOne({
             trainerId: trainerId,
             availability: {
@@ -27,8 +28,8 @@ export class AvailabilityRepository extends BaseRepository<IAvailabilityDocument
           });
     }
 
-    async updateExistingDateAvailability(trainerId: string, availableDate: IAvailableDate): Promise<any | null> {
-        return await availabilityModel.updateOne({trainerId:trainerId,'availability.date':availableDate.date},{$set:{'availability.$.timeSlots':availableDate.timeSlots}},{new:true})
+    async updateExistingDateAvailability(trainerId: string, availableDate: IAvailableDate): Promise<IAvailabilityDocument | null> {
+        return await availabilityModel.findOneAndUpdate({trainerId:trainerId,'availability.date':availableDate.date},{$set:{'availability.$.timeSlots':availableDate.timeSlots}},{new:true})
     }
 
 }

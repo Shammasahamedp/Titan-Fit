@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { availabilityMessages } from "../../messages/availability-related";
 import { availabilityModel } from "../../models/availability/availabilityModel";
 import { IAvailabilityDocument } from "../../models/availability/IavailabilityModel";
@@ -13,10 +14,19 @@ export class AvailabilityService  implements IAvailabilityService{
     async getAvailability(trainerId:string): Promise<IAvailabilityDocument | null> {
         try {
             const availability = await this.availabilityRepo.findOne({trainerId:trainerId})
+            let newAvailability 
             if(!availability){
-                throw new AppError(availabilityMessages.AVAILABILITY_NOT_FOUND,404)
+                const newTrainerId = new mongoose.Types.ObjectId(trainerId)
+                newAvailability= await this.availabilityRepo.create(
+                    {
+                        trainerId:newTrainerId,availability:[]
+                    }
+                )
+                // throw new AppError(availabilityMessages.AVAILABILITY_NOT_FOUND,404)
+            }else{
+                newAvailability = availability
             }
-            return availability
+            return newAvailability
         } catch (error) {
             if(error instanceof AppError){
                 throw error

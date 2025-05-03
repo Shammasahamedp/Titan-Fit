@@ -35,7 +35,7 @@ const TrainerAvailability: React.FC = () => {
   useEffect(()=>{
      
      fetchAvailability()
-  },[fetchAvailability])
+  },[])
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
@@ -68,6 +68,7 @@ const TrainerAvailability: React.FC = () => {
       return 
     }
     try {
+
      const response = await uploadAvailability({date:selectedDate,slots:selectedSlots  })
      showSuccessToast(response?.data.message)
       console.log(selectedDate, selectedSlots);

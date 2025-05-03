@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ITrainerDocument, ITrainerLogin, ITrainerLoginResponse, ITrainerProfile, ITrainerSignUp } from "../../interfaces/trainerInterfaces";
 import { availabilityMessages } from "../../messages/availability-related";
 import { trainerMessages } from "../../messages/trainerRelated";
@@ -167,26 +168,23 @@ export class TrainerService implements ITrainerService{
             throw new AppError('something went wrong while reset password',500)
         }
     }
-    async updateAvailability(trainerId: string, availability:{date:string,slots:string[]}): Promise<IAvailabilityDocument | null|boolean> {
+    async updateAvailability(trainerId: string, availability:{date:string,slots:string[]}): Promise<IAvailabilityDocument | null> {
         try {
             const trainer = await this.trainerRepository.findById(trainerId)
             if(!trainer) {
                 throw new AppError(trainerMessages.TRAINER_NOT_FOUND,404)
+              
             }
          let  transformedSlots= availability.slots.map((value)=>{
                 return {startTime:value,isBooked:false}
             })
-            console.log('this is availability',transformedSlots)
-            const isDateExist = this.availabilityRepo.isDateExist(trainerId,availability.date)
+            const isDateExist =await this.availabilityRepo.isDateExist(trainerId,availability.date)
             if(!isDateExist){
                 return await this.availabilityRepo.updateAvailability(trainerId,{date:availability.date,timeSlots:transformedSlots,isCompleted:false})
             }
-              console.log('existed')
-             const success= await this.availabilityRepo.updateExistingDateAvailability(trainerId,{date:availability.date,timeSlots:transformedSlots,isCompleted:false})
-             if(success){
-                return true
-             }
-            throw new Error()
+             
+              return await this.availabilityRepo.updateExistingDateAvailability(trainerId,{date:availability.date,timeSlots:transformedSlots,isCompleted:false})
+             
         } catch (error) {
             console.log(error)
             if(error instanceof AppError){
