@@ -15,7 +15,7 @@ const UserSchema: Schema = new Schema(
     gender: { type: String , },
     fitnessGoal: { type: String },
     fitnessLevel: { type: String },
-    subscriptionId: { type: Types.ObjectId },
+    subscription: {},
     blocked:{type:Boolean,default:false},
     mealPlanId: { type: Types.ObjectId },
     testimonialId: { type: Types.ObjectId },

@@ -23,8 +23,11 @@ import adminRoute from "./routes/admin-route"
 import authRoute from "./routes/common-routes/auth-route"
 import resetPasswordRoute from "./routes/common-routes/reset-password.route"
 import subscriptionRoute from "./routes/subscription-route"
+import paymentRoute from "./routes/common-routes/payment-route"
+import availabilityRouter from "./routes/common-routes/availability-route"
 
 const app = express()
+
 app.use(cors({
     origin:'http://localhost:5173',
     credentials:true,
@@ -33,6 +36,7 @@ app.use(cors({
 connectDB()
 app.use(cookieParser())
 
+app.use('/payment',paymentRoute)
 app.use(express.json())
 app.use('/user',userRouter)
 app.use('/trainer',trainerRoute)
@@ -43,6 +47,7 @@ app.use('/token',tokenRoute)
 app.use('/auth',authRoute)
 app.use('/reset-password',resetPasswordRoute)
 app.use('/subscription',subscriptionRoute)
+app.use('/availability',availabilityRouter)
 app.listen(3000,"0.0.0.0",async()=>{
     console.log("server is running on http://localhost:3000")
     

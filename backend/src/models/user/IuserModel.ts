@@ -1,4 +1,14 @@
 import { Types ,Document } from "mongoose";
+
+export interface ISubscriptionDetails{
+    subscriptionId:Types.ObjectId|string,
+    paymentId:Types.ObjectId|string,
+    startDate:Date,
+    endDate:Date,
+    creditsRemaining:number,
+    status:'active'|'completed'
+}
+
 export interface IuserModel extends Document {
     name:string;
     email:string;
@@ -7,7 +17,7 @@ export interface IuserModel extends Document {
     age:number;
     fitnessGoal:string;
     fitnessLevel:string;
-    subscriptionId?:Types.ObjectId;
+    subscription?:ISubscriptionDetails;
     phone?:number;
     profilePicture?:string;
     weight?:number;

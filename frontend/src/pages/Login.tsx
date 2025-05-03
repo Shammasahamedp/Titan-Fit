@@ -156,17 +156,14 @@ export default function Login() {
         console.log('error')
         if(!error.response){
           dispatch(loginFailure(commonErrors.NETWORK_ISSUE))
-          // showErrorToast(commonErrors.NETWORK_ISSUE)
          }
          dispatch(loginFailure(error?.response.data.message))
        }else if(role === 'trainer'){
         if(!error.response){
           dispatch(trainerLoginFailure(commonErrors.NETWORK_ISSUE))
-          // showErrorToast(commonErrors.NETWORK_ISSUE)
          }
          dispatch(trainerLoginFailure(error?.response.data.message))
        }
-      //  showErrorToast(error?.response.data.message)
     }
   }
   const handleSendResetLink = async (email:string)=>{
@@ -186,7 +183,6 @@ export default function Login() {
     } catch (error:any) {
       showErrorToast(error)
      return
-      // showErrorToast(commonErrors.SEND_RESET_PASSWORD_ERROR)
     }
   }
   

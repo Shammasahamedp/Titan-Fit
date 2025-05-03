@@ -1,18 +1,31 @@
 import { Button } from '../ui/button';
 import SubscriptionModal from "@/modal/SubscriptionModal";
 import { useState } from 'react';
+import { makeStripeSession } from '@/api/payment-apicalls';
+import { showErrorToast } from '@/utils/toast';
+import { ToastContainer } from 'react-toastify';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/reduxStore/store';
 const Services = () => {
   const [isSubscriptionModalOpen,setSubscriptionModal] = useState(false)
-
+   const user=useSelector((state:RootState)=>state.user.user)
+   
    const handleSubscription = async(subscriptionId:string)=>{
       try {
+        if(user === null){
+          throw new Error('Not logged in')
+         }
+        const response = await makeStripeSession (subscriptionId)
+        window.location.href = response?.data.url
         console.log(subscriptionId)
       } catch (error) {
+        showErrorToast(error)
         console.log(error)
       }
     }
 
   return (
+    <>
     <section className="w-full py-16 px-4 md:px-8" style={{backgroundImage:"url('/white-bg.jpg')"}}>
          <div className="max-w-4xl mx-auto text-center mb-12">
         <h2 className="text-4xl font-bold text-black">Take Your Fitness to the Next Level</h2>
@@ -63,6 +76,9 @@ const Services = () => {
         <SubscriptionModal  isOpen={isSubscriptionModalOpen}  onClose={()=>setSubscriptionModal(false)} onSubscribe={handleSubscription}/>
       }
     </section>
+    <ToastContainer/>
+    </>
+    
   );
 };
 

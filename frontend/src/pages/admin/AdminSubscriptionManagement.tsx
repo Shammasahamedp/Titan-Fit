@@ -23,7 +23,21 @@ formState:{errors},
 handleSubmit,
 reset
   } = useForm<ISubscriptionInput>({resolver:yupResolver(subscriptionSchema)})
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const subscriptionPerPage = 3;
+  const indexOfLastSubscription = currentPage * subscriptionPerPage;
+  const indexOfFirstSubscription = indexOfLastSubscription - subscriptionPerPage;
+  const currentSubscription = subscriptions.slice(indexOfFirstSubscription, indexOfLastSubscription);
+
+  const totalPages = Math.ceil(subscriptions.length / subscriptionPerPage);
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
   const fetchSubscriptions = async()=>{
     try {
         const response = await getAllSubscriptions()
@@ -89,7 +103,7 @@ reset
           <div className="flex justify-between items-center mb-6">
             <h2 onClick={()=>setShowModal(false)} className="text-3xl font-bold">Subscription Management</h2>
             <button
-              className="bg-yellow-500 text-black px-4 py-2  rounded hover:bg-yellow-600"
+              className="bg-[#FFC436] text-black px-4 py-2 mt-3  rounded hover:bg-black hover:text-[#FFC436]"
               onClick={()=>setShowModal(true)}
             >
               Add Subscription
@@ -176,7 +190,7 @@ reset
            </>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {subscriptions.map((sub, index) => (
+            {currentSubscription.map((sub, index) => (
               <div
                 key={index}
                 className="bg-white text-black rounded-lg shadow-lg p-4 flex flex-col justify-between"
@@ -202,6 +216,25 @@ reset
               </div>
             ))}
           </div>
+          <div className="flex justify-center mt-4">
+        <button
+          onClick={prevPage}
+          className="px-4 py-2 bg-[#FFC436] hover:bg-black hover:text-[#FFC436] text-black rounded mr-2"
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="px-4 py-2 bg-[#FFC436] hover:bg-black hover:text-[#FFC436] text-black rounded">
+          {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={nextPage}
+          className="px-4 py-2 bg-[#FFC436] hover:bg-black hover:text-[#FFC436] text-black rounded ml-2"
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
 
          
         </div>

@@ -1,4 +1,4 @@
-import { ITrainerEditProfile } from "@/interfaces/trainer-interfaces"
+import { ITrainerAvailableSlots, ITrainerEditProfile } from "@/interfaces/trainer-interfaces"
 import { axiosInstance } from "./axiosInstance"
 
 const API = import.meta.env.VITE_BASE_URL
@@ -66,6 +66,28 @@ export const checkPasswordMatching = async(password:string)=>{
 export const resetPassword = async (password:string)=>{
     try {
         const response = await axiosInstance.put(`${API}/trainer/reset-password`,{password})
+        if(response.data){
+            return response
+        }
+    } catch (error) {
+        throw error
+    }
+}
+
+export const uploadAvailability = async (availableSlots:ITrainerAvailableSlots)=>{
+    try {
+        const response = await axiosInstance.put(`${API}/trainer/update-availability`,availableSlots)
+        if(response.data){
+            return response
+        }
+    } catch (error) {
+        throw error
+    }
+}
+
+export const getTrainerAvailability = async ()=>{
+    try {
+        const response = await axiosInstance.get(`${API}/get-availability`)
         if(response.data){
             return response
         }

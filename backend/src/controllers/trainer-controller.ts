@@ -4,6 +4,7 @@ import { trainerMessages } from "../messages/trainerRelated";
 import { ITrainerService } from "../services/trainer/ItrainerService";
 import { Request,Response } from "express";
 import { handleError } from "../utils/handleResponse";
+import { availabilityMessages } from "../messages/availability-related";
 
 export class TrainerController {
     private trainerService:ITrainerService
@@ -103,6 +104,18 @@ export class TrainerController {
         } catch (error) {
     handleError(res,error)
             // res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
+        }
+    }
+
+    async updateAvailability(req:Request,res:Response):Promise<void>{
+        try {
+            console.log('req',req.body)
+            const availability = await this.trainerService.updateAvailability(res.locals.user?.userId,req.body)
+            
+            res.status(201).json({success:true,message:availabilityMessages.AVAILABILITY_UPDATE_SUCCESS,availability})
+        } catch (error) {
+            console.log(error)
+            handleError(res,error)
         }
     }
    

@@ -21,7 +21,7 @@ const storage = new CloudinaryStorage({
         format:file.mimetype.split("/")[1],
         public_id:Date.now()+"-"+file.originalname,
         resource_type:isPdf?'raw':'auto',
-        type:'upload'
+        type:'authenticated'
         }
 
     

@@ -104,7 +104,7 @@ export class UserService implements IUserService {
 
  async editUserProfile(userId:string,userProfileData: IUserProfile): Promise<IUserProfile | null> {
       try {
-          const editedProfileData = await this.userRepository.findByIdAndUpdate(userId,userProfileData,{new:true})
+          const editedProfileData = await this.userRepository.editUserProfile(userId,userProfileData)
           if(!editedProfileData){
             throw new AppError('failed to edit user data , new edited user not found',404)
           }
@@ -119,7 +119,7 @@ export class UserService implements IUserService {
   async addProfilePic(userId: string, userProfilePic: string): Promise<string | null> {
       try {
         console.log('this isserviceurl',userProfilePic)
-        const userData = await this.userRepository.findByIdAndUpdate(userId,{profilePicture:userProfilePic},{new:true})
+        const userData = await this.userRepository.addProfilePic(userId,userProfilePic)
         console.log('this is userdata',userData)
          if(!userData){
             throw new AppError('user not found',404)
@@ -151,7 +151,7 @@ export class UserService implements IUserService {
   async resetPassword(userId: string, password: string): Promise<IUserDocument | null> {
       try {
         const hashedPassword = await hashPassword(password)
-        const user = await this.userRepository.findByIdAndUpdate(userId,{password:hashedPassword},{new:true})
+        const user = await this.userRepository.updatePassword(userId,hashedPassword)
         if(!user){
           throw new AppError('user not found',404)
         }

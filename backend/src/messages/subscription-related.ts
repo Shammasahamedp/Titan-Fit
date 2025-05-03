@@ -5,5 +5,6 @@ export const subscriptionMessage={
     SUBSCRIPTION_GET_FAILURE:'Error occured during fetch subscriptions',
     SUBSCRIPTION_EDIT_SUCCESSS:'Subscription has edited successfully',
     SUBSCRIPTION_EDIT_FAILURE:'Error occured during subscription edit',
-    SUBSCRIPTION_ALREADY_EXIST:'This subscription plan is already exists'
+    SUBSCRIPTION_ALREADY_EXIST:'This subscription plan is already exists',
+    SUBSCRIPTION_NOT_FOUND:'Subscription not found'
 }

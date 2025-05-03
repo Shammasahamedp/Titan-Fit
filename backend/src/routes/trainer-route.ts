@@ -9,11 +9,13 @@ import { loginSchema } from "../schema/validation-schema"
 import { jwtTokenVerify } from "../middlewares/jwt-token-validation"
 import { trainerProfileSchema, trainerSignupSchema } from "../schema/trainer-validation-schema"
 import { checkIfTrainerBlocked } from "../middlewares/check-if-user-blocked"
+import { AvailabilityRepository } from "../repositories/availability/availabilityRepository"
 const trainerRoute = express.Router()
 
 const trainerRepository = new TrainerRepository()
 const userRepository = new UserRepository()
-const trainerService = new TrainerService(trainerRepository,userRepository)
+const availabilityRepo = new AvailabilityRepository()
+const trainerService = new TrainerService(trainerRepository,userRepository,availabilityRepo)
 const trainerContrller = new TrainerController(trainerService)
 
 trainerRoute.post('/auth/signup',validate(trainerSignupSchema),(req:Request,res:Response)=>trainerContrller.registerTrainer(req,res))
@@ -24,4 +26,5 @@ trainerRoute.post('/addprofilepic',jwtTokenVerify(['trainer']),checkIfTrainerBlo
 trainerRoute.post('/addcertificate',jwtTokenVerify(['trainer']),checkIfTrainerBlocked,(req:Request,res:Response)=>trainerContrller.addCertificate(req,res))
 trainerRoute.post('/check-password',jwtTokenVerify(['trainer']),checkIfTrainerBlocked,(req:Request,res:Response)=>trainerContrller.checkPassword(req,res))
 trainerRoute.put('/reset-password',jwtTokenVerify(['trainer']),checkIfTrainerBlocked,(req:Request,res:Response)=>trainerContrller.resetPassword(req,res))
+trainerRoute.put('/update-availability',jwtTokenVerify(['trainer']),checkIfTrainerBlocked,(req:Request,res:Response)=>trainerContrller.updateAvailability(req,res))
 export default trainerRoute

@@ -1,5 +1,6 @@
-import { getActiveSubscription, getAllSubscriptions } from '@/api/subscription-apicalls';
+import { getActiveSubscription } from '@/api/subscription-apicalls';
 import { ISubscriptionInput } from '@/interfaces/IsubscriptionInputs';
+import { showErrorToast } from '@/utils/toast';
 import { useEffect, useState } from 'react';
 
 
@@ -9,7 +10,6 @@ type Props = {
   onClose: () => void;
   onSubscribe: (planId: string) => void;
 };
-
 const SubscriptionModal = ({ isOpen, onClose, onSubscribe }: Props) => {
   const [plans, setPlans] = useState<(ISubscriptionInput&{_id:string})[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,6 +28,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }: Props) => {
         setPlans(res.data.activeSubscriptions);
       }
     } catch (error) {
+      showErrorToast(error)
       console.error('Failed to fetch subscriptions:', error);
     } finally {
       setLoading(false);

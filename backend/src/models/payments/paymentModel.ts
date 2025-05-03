@@ -1,7 +1,7 @@
 import mongoose, { Schema, Types } from "mongoose";
 import { IPayment } from "./IpaymentModel";
-
-const paymentSchema = new Schema<IPayment>(
+import { IPaymentDocument } from "../../interfaces/paymentInterfaces";
+const paymentSchema = new Schema<IPaymentDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -47,4 +47,4 @@ const paymentSchema = new Schema<IPayment>(
   }
 );
 
-export const Payment = mongoose.model<IPayment>("Payment", paymentSchema);
+export const Payment = mongoose.model<IPaymentDocument>("Payment", paymentSchema);

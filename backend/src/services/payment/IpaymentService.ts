@@ -1,14 +1,14 @@
 
-export interface ICreatePaymentDTO {
+export interface ICreatePaymentSessionDTO {
     userId: string;
-    amount: number;
     subscriptionId?: string; // if user is subscribing
     trainerId?: string;      // if admin pays trainer
-    purpose: 'subscription' | 'trainer';
+    type: 'subscription' | 'trainer';
   }
   
   export interface IPaymentService {
-    createPaymentIntent(data: ICreatePaymentDTO): Promise<{ clientSecret: string }>;
-    handleWebhook(event: any): Promise<void>;
+    createCheckoutSession(planId: string,userId:string): Promise<string|undefined>;
+    handleWebhook(eventData: any,signature:string): Promise<void>;
+    getPaymentSessionDetails(sessionId:string):Promise<void>
   }
   

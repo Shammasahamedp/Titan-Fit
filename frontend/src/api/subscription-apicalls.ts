@@ -47,3 +47,4 @@ export const editSubscriptionPlan = async (toEditSubscription:ISubscriptionInput
         throw error
     }
 }
+

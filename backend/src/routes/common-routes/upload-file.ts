@@ -7,7 +7,6 @@ import { commonErrors } from "../../messages/common-errors"
 const uploadRoute = express.Router()
 
 uploadRoute.post('/:field',(req:Request,res:Response,next:NextFunction)=>{
-    console.log('just before upload.single')
     upload.single(req.params.field)(req,res,(err:any)=>{
         if(err){
             console.log(err)

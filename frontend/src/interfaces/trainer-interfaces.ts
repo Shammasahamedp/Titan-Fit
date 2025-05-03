@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface ITrainerProfile{
     name:string;
     email:string;
@@ -33,4 +35,27 @@ export interface ITrainers{
     trainerCertificate:string[];
     yearsOfExperience:number;
     approved:boolean
+}
+
+export interface ITrainerProfileContextType  {
+    trainerProfile:ITrainerProfile |null;
+    setTrainerProfile:React.Dispatch<React.SetStateAction<ITrainerProfile|null>>
+    setPasswordModal:React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export interface ITrainerAvailableSlots{
+    date:Date;
+    slots:string[],
+    
+}
+
+export interface IAvailability{
+    date:Date,
+    timeSlots:[{
+        startTime:string,
+        isBooked:boolean
+    }],
+    isCompleted:boolean
+
+
 }

@@ -11,11 +11,12 @@ export class SubscriptionService implements ISubscriptionService{
     }
 async addSubscription(subscription: ISubscription): Promise<ISubscriptionDocument | null> {
     try {
-        const isSubscriptionNameExist = this.subscriptionRepo.findOne({planName:subscription.planName})
+        const isSubscriptionNameExist =await this.subscriptionRepo.findOne({planName:subscription.planName})
+        console.log(isSubscriptionNameExist,'sadf')
         if(isSubscriptionNameExist !== null){
                throw new AppError('Subscription name is already exists',409)
         }
-        const isSubscriptionExist = this.subscriptionRepo.findOne({planName:subscription.price,description:subscription.description,durationInMonth:subscription.durationInMonth})
+        const isSubscriptionExist =await this.subscriptionRepo.findOne({planName:subscription.price,description:subscription.description,durationInMonth:subscription.durationInMonth})
         if(isSubscriptionExist !== null){
             throw new AppError('Subscription already Exists',409)
         }
