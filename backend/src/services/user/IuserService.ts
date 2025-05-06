@@ -1,3 +1,4 @@
+import { ITrainerDocument } from "../../interfaces/trainerInterfaces";
 import { IUserSignUp,IUserDocument, IUserLogin, ILoginResponse ,IUserProfile} from "../../interfaces/userInterfaces";
 
 
@@ -9,4 +10,5 @@ export interface IUserService{
     addProfilePic(userId:string,userProfilePic:string):Promise<string|null>
     checkPassword(userId:string,password:string):Promise<boolean>
     resetPassword(userId:string,password:string):Promise<IUserDocument|null>
+    getApprovedTrainers():Promise<ITrainerDocument[]|null>
 }

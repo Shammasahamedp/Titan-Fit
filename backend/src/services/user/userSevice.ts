@@ -12,6 +12,8 @@ import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
 import { userMessages } from "../../messages/userRelated";
 import { AppError } from "../../utils/handleResponse";
+import { ITrainerDocument } from "../../interfaces/trainerInterfaces";
+import { trainerMessages } from "../../messages/trainerRelated";
 
 export class UserService implements IUserService {
   private userRepository: IUserRepository;
@@ -161,6 +163,20 @@ export class UserService implements IUserService {
           throw error
         }
         throw new AppError('something went wrong while reseting password',500)
+      }
+  }
+  async getApprovedTrainers(): Promise<ITrainerDocument[] | null> {
+      try {
+        const approvedTrainers = await this.trainerRepository.find({approved:true})
+        if(!approvedTrainers){
+          throw new AppError(trainerMessages.APPROVED_TRAINERS_NOT_FOUND,404)
+        }
+        return approvedTrainers
+      } catch (error) {
+        if(error instanceof AppError){
+          throw error
+        }
+        throw new AppError('something went wrong while fetching trainers',500)
       }
   }
 }

@@ -12,7 +12,7 @@ const PublicRoute = () => {
     return userNew === 'true' ? (
       <Navigate to="/user/profile-complete" />
     ) : (
-      <Navigate to="/user/home" />
+      <Navigate to="/home" />
     );
   }
 
@@ -20,7 +20,7 @@ const PublicRoute = () => {
     return userNew === 'true' ? (
       <Navigate to="/trainer/profile-complete" />
     ) : (
-      <Navigate to="/trainer/dashboard" />
+      <Navigate to="/trainer/profile" />
     );
   }
 

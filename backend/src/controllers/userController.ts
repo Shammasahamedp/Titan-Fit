@@ -4,6 +4,7 @@ import { userMessages } from "../messages/userRelated";
 import { IUserService } from "../services/user/IuserService";
 import { Request,Response } from "express";
 import { handleError } from "../utils/handleResponse";
+import { trainerMessages } from "../messages/trainerRelated";
 
 export class UserController {
     private userService:IUserService
@@ -103,6 +104,15 @@ export class UserController {
             handleError(res,error)
             // res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
 
+        }
+    }
+
+    async getApprovedTrainers(req:Request,res:Response):Promise<void>{
+        try {
+            const approvedTrainers = await this.userService.getApprovedTrainers()
+            res.status(200).json({success:true,message:trainerMessages.GET_APPROVED_TRAINERS_SUCCESS,approvedTrainers})
+        } catch (error) {
+            handleError(res,error)
         }
     }
 }

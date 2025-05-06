@@ -6,10 +6,11 @@ import { showErrorToast } from '@/utils/toast';
 import { ToastContainer } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/reduxStore/store';
+import { useNavigate } from 'react-router-dom';
 const Services = () => {
   const [isSubscriptionModalOpen,setSubscriptionModal] = useState(false)
    const user=useSelector((state:RootState)=>state.user.user)
-   
+   const navigate = useNavigate()
    const handleSubscription = async(subscriptionId:string)=>{
       try {
         if(user === null){
@@ -37,7 +38,7 @@ const Services = () => {
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
         
         {/* Personal Trainer Section */}
-        <div 
+        <div onClick={()=>navigate('/trainers')} 
           className="relative group h-80 rounded-lg overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105"
         >
           <img 

@@ -51,7 +51,7 @@ export default function Login() {
           );
   
           showSuccessToast(response.data.message);
-          navigate('/user/home')
+          navigate('/home')
         }
       }else if(data.role === 'trainer'){
         
@@ -76,19 +76,16 @@ export default function Login() {
       if(data.role === 'user'){
         if(!error.response){
           dispatch(loginFailure(commonErrors.NETWORK_ISSUE))
-          // showErrorToast(commonErrors.NETWORK_ISSUE)
         }
         console.log('this is error',error)
         dispatch(loginFailure(error?.response.data.message))
       }else if(data.role === 'trainer'){
         if(!error.response){
           dispatch(trainerLoginFailure(commonErrors.NETWORK_ISSUE))
-          // showErrorToast(commonErrors.NETWORK_ISSUE)
           showErrorToast(error)
         }
         dispatch(trainerLoginFailure(error?.response.data.message))
       }
-      // showErrorToast(error?.response.data.message);
       showErrorToast(error)
     }
   };
@@ -108,7 +105,7 @@ export default function Login() {
     const tokenResponse= await googleLogin(idToken,role)
     console.log(tokenResponse)
     if(role === 'user'){
-      dispatch(logingStart())
+      dispatch(logingStart())  
       if(tokenResponse?.data.success){
         const {_id,name,email} = tokenResponse.data.data.user
         console.log(_id,name,tokenResponse.data.data.message)
@@ -121,7 +118,7 @@ export default function Login() {
             navigate('/user/profile-complete')
             return 
         }else{
-          navigate('/user/home')
+          navigate('/home')
         }
        
         
@@ -140,7 +137,7 @@ export default function Login() {
              navigate('/trainer/profile-complete')
              return 
         }else{
-        navigate('/trainer/dashboard')
+        navigate('/trainer/profile')
         }
         
       }

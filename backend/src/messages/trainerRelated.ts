@@ -16,6 +16,7 @@ export const trainerMessages = {
     TRAINER_CERTIFICATE_ADD_FAILURE:'Error occured during certificate upload',
     PASSWORD_CHECK_SUCCESS:'Password verification is successfull',
     PASSWORD_CHECK_FAILURE:'Password verification is failure',
-    PASSWORD_CHECK_ERROR:'Error occured during password verification'
-
+    PASSWORD_CHECK_ERROR:'Error occured during password verification',
+    APPROVED_TRAINERS_NOT_FOUND:'Approved Trainers are not found',
+    GET_APPROVED_TRAINERS_SUCCESS:'Successfully fetch approved trainers'
 }

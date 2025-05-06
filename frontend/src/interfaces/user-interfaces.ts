@@ -1,3 +1,4 @@
+import React from "react";
 
 
 export interface SignupFormatInputs{
@@ -49,6 +50,12 @@ export interface IUsers{
     fitnessGoal:string;
     fitnessLevel:string;
     blocked:boolean
+}
+
+export interface IUserProfileContextType{
+    userProfile:IUserProfile|null,
+    setConfirmPasswordModal:React.Dispatch<React.SetStateAction<boolean>>,
+    setUserProfile:React.Dispatch<React.SetStateAction<IUserProfile|null>>
 }
 
 

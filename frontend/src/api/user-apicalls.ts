@@ -62,3 +62,15 @@ export const resetPassword = async (password:string)=>{
         throw error
     }
 }
+
+export const getApprovedTrainers = async()=>{
+  try {
+    const response = await axiosInstance.get(`${API}/user/get-trainers`)
+    if(response.data){
+      console.log(response)
+      return response
+    }
+  } catch (error) {
+    throw error
+  }
+}

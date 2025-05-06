@@ -20,6 +20,8 @@ import AdminSubscriptionManagement from "./pages/admin/AdminSubscriptionManageme
 import PaymentSuccess from "./pages/user/PaymentSuccess";
 import TrainerAvailability from "./pages/trainer/TrainerAvailability";
 import TrainerProfile from "./pages/trainer/TrainerProfile";
+import UserProfile from "./pages/user/UserProfile";
+import UserTrainerPage from "./pages/user/UserTrainerPage";
 function App() {
   return (
     <Router>
@@ -46,8 +48,12 @@ function App() {
 
         {/* protected routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/user/home" element={<LandingPage />} />
-          <Route path="/user/profile" element={<UserDashboard />} />
+          <Route path="/home" element={<LandingPage />} />
+          <Route path="/user" element={<UserDashboard />}>
+              <Route path="profile" element={<UserProfile />} />
+            </Route>
+            <Route path="/trainers" element={<UserTrainerPage />}/>
+
           <Route path="/user/profile-complete" element={<UserDashboard />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
         </Route>

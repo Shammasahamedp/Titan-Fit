@@ -24,4 +24,5 @@ userRouter.put('/editprofile',jwtTokenVerify(['user']),checkIfUserBlocked,valida
 userRouter.post('/addprofilepic',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.addProfileImage(req,res))
 userRouter.post('/check-password',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.checkPassword(req,res))
 userRouter.put('/reset-password',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.resetPassword(req,res))
+userRouter.get('/get-trainers',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.getApprovedTrainers(req,res))
 export default userRouter

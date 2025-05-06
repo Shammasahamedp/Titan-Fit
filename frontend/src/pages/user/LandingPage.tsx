@@ -13,13 +13,7 @@ const LandingPage = () => {
     dispatch(logout())
     authLogout()
   }
-   const handleSubscription = async(subscriptionId:string)=>{
-      try {
-        console.log(subscriptionId)
-      } catch (error) {
-        console.log(error)
-      }
-    }
+   
   return(
     <div>
        {user ? <Navbar logout={userLogout} role='user' /> : <Navbar  role=""  />}
