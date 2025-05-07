@@ -1,5 +1,6 @@
 import { ITrainerDocument } from "../../interfaces/trainerInterfaces";
 import { IUserSignUp,IUserDocument, IUserLogin, ILoginResponse ,IUserProfile} from "../../interfaces/userInterfaces";
+import { IAvailabilityDocument } from "../../models/availability/IavailabilityModel";
 
 
 export interface IUserService{
@@ -10,5 +11,7 @@ export interface IUserService{
     addProfilePic(userId:string,userProfilePic:string):Promise<string|null>
     checkPassword(userId:string,password:string):Promise<boolean>
     resetPassword(userId:string,password:string):Promise<IUserDocument|null>
-    getApprovedTrainers():Promise<ITrainerDocument[]|null>
+    getApprovedTrainers(page:number,limit:number):Promise<{trainers:ITrainerDocument[],total:number}|null>
+    getSingleApprovedTrainer(trainerId:string):Promise<{trainer:ITrainerDocument,availability:IAvailabilityDocument}>
+    bookASessionWithTrainer(trainerId:string,userId:string,date:string,startTime:string):Promise<boolean>
 }

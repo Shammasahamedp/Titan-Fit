@@ -1,5 +1,6 @@
 import { FilterQuery,UpdateQuery,QueryOptions } from "mongoose";
 
+
 export interface IBaseRepository<T>{
     find(filter:FilterQuery<T>):Promise<T[]|null>
     findOne(filter:FilterQuery<T>):Promise<T|null>
@@ -20,6 +21,7 @@ export interface IBaseRepository<T>{
     deleteMany(filter:FilterQuery<T>,options?:QueryOptions):Promise<{deletedCount?:number}>
     findByIdAndDelete(id:string,options?:QueryOptions):Promise<T|null>
     findOneAndDelete(filter:FilterQuery<T>,options?:QueryOptions):Promise<T|null>
-
+      
+    countDocuments(filter:FilterQuery<T>):Promise<number|null>
     
 }

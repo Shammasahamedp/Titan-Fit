@@ -63,11 +63,36 @@ export const resetPassword = async (password:string)=>{
     }
 }
 
-export const getApprovedTrainers = async()=>{
+
+
+export const getApprovedTrainers = async (page: number, limit: number) => {
   try {
-    const response = await axiosInstance.get(`${API}/user/get-trainers`)
+    const response = await axiosInstance.get(`${API}/user/get-trainers?page=${page}&limit=${limit}`);
+    if (response.data) {
+      return response;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getApprovedSingleTrainer = async (trainerId:string)=>{
+  try {
+    const response = await axiosInstance.get(`${API}/user/get-single-trainer/${trainerId}`)
     if(response.data){
-      console.log(response)
+      return response
+    }
+  } catch (error) {
+    throw error
+  }
+}
+
+export const bookATrainingSession = async (trainerId:string,date:string,startTime:string)=>{
+  try {
+    const response = await axiosInstance.put(`${API}/user/book-session`,{trainerId,date,startTime})
+
+    if(response.data){
+      console.log(response.data)
       return response
     }
   } catch (error) {

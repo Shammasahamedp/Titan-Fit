@@ -8,12 +8,14 @@ import { loginSchema, signUpSchema,userProfileEditSchema } from "../schema/valid
 import { TrainerRepository } from "../repositories/trainer/trainerRepository"
 import { jwtTokenVerify } from "../middlewares/jwt-token-validation"
 import { checkIfUserBlocked } from "../middlewares/check-if-user-blocked"
+import { AvailabilityRepository } from "../repositories/availability/availabilityRepository"
 
 const userRouter = express.Router()
 
 const userRepository = new UserRepository()
 const trainerRepository = new TrainerRepository()
-const userService = new UserService(userRepository,trainerRepository)
+const availabilityRepository = new AvailabilityRepository()
+const userService = new UserService(userRepository,trainerRepository,availabilityRepository)
 const userController = new UserController(userService)
 
 
@@ -25,4 +27,6 @@ userRouter.post('/addprofilepic',jwtTokenVerify(['user']),checkIfUserBlocked,(re
 userRouter.post('/check-password',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.checkPassword(req,res))
 userRouter.put('/reset-password',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.resetPassword(req,res))
 userRouter.get('/get-trainers',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.getApprovedTrainers(req,res))
+userRouter.get('/get-single-trainer/:id',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.getSingleApprovedTrainer(req,res))
+userRouter.put('/book-session',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.bookATrainingSession(req,res))
 export default userRouter

@@ -14,16 +14,23 @@ import { userMessages } from "../../messages/userRelated";
 import { AppError } from "../../utils/handleResponse";
 import { ITrainerDocument } from "../../interfaces/trainerInterfaces";
 import { trainerMessages } from "../../messages/trainerRelated";
-
+import { IAvailabilityDocument } from "../../models/availability/IavailabilityModel";
+import { IAvailabilityRepository } from "../../repositories/availability/IavailabilityRepository";
+import { availabilityMessages } from "../../messages/availability-related";
+import { Types } from "mongoose";
+import { number } from "zod";
 export class UserService implements IUserService {
   private userRepository: IUserRepository;
   private trainerRepository: ITrainerRepository;
+  private trainerAvailability : IAvailabilityRepository
   constructor(
     userRepository: IUserRepository,
-    trainerRepository: ITrainerRepository
+    trainerRepository: ITrainerRepository,
+    trainerAvailability:IAvailabilityRepository
   ) {
     this.userRepository = userRepository;
     this.trainerRepository = trainerRepository;
+    this.trainerAvailability = trainerAvailability
   }
 
   async registerUser(data: IUserSignUp): Promise<IUserDocument|null> {
@@ -165,18 +172,80 @@ export class UserService implements IUserService {
         throw new AppError('something went wrong while reseting password',500)
       }
   }
-  async getApprovedTrainers(): Promise<ITrainerDocument[] | null> {
+  async getApprovedTrainers(page:number,limit:number): Promise<{trainers:ITrainerDocument[],total:number} | null> {
       try {
-        const approvedTrainers = await this.trainerRepository.find({approved:true})
-        if(!approvedTrainers){
+        const skip = (page -1) * limit
+        // const approvedTrainers = await this.trainerRepository.find({approved:true})
+        const [trainers, total] = await Promise.all([
+          this.trainerRepository.getApprovedTrainers(skip),
+          this.trainerRepository.countDocuments({ approved: true }),
+        ]);
+        if(!trainers){
           throw new AppError(trainerMessages.APPROVED_TRAINERS_NOT_FOUND,404)
         }
-        return approvedTrainers
+        if(typeof total === 'number'){
+          return {trainers,total }
+        }
+        throw new AppError('total document not found',404)
       } catch (error) {
         if(error instanceof AppError){
           throw error
         }
         throw new AppError('something went wrong while fetching trainers',500)
+      }
+  }
+  async getSingleApprovedTrainer(trainerId: string): Promise<{ trainer: ITrainerDocument; availability: IAvailabilityDocument; }> {
+      try {
+        const trainer = await this.trainerRepository.getApprovedTrainer(trainerId)
+        if(!trainer){
+          throw new AppError(trainerMessages.APPROVED_TRAINERS_NOT_FOUND,404)
+        }
+       let newTrainerId = new Types.ObjectId(trainerId)
+        const availability = await this.trainerAvailability.findOne({trainerId:newTrainerId})
+        let newAvailability
+        if(!availability){
+          newAvailability= await this.trainerAvailability.create(
+            {
+                trainerId:newTrainerId,availability:[]
+            })
+
+            if(newAvailability){
+        
+              return {trainer,availability:newAvailability }
+             }else{
+              throw new AppError(availabilityMessages.AVAILABILITY_NOT_FOUND,404)
+             }
+          
+        }
+        return {trainer,availability}
+      
+      } catch (error) {
+        if(error instanceof AppError){
+          throw error
+        }
+        throw new AppError('something went wrong while fetching trainer details',500)
+      }
+  }
+
+  async bookASessionWithTrainer(trainerId: string,userId:string, date: string, startTime: string): Promise<boolean> {
+      try {
+         const trainerRefId = new Types.ObjectId(trainerId)
+         const userRefId = new Types.ObjectId(userId)
+         const user = await this.userRepository.findById(userId)
+         if(user?.subscription?.status !== 'active'){
+          throw new AppError(userMessages.SUBSCRIPTION_INACTIVE,403)
+         }
+         const availability = await this.trainerAvailability.bookASession(trainerRefId,userRefId,date,startTime)
+         if(!availability){
+            throw new AppError(availabilityMessages.AVAILABILITY_NOT_FOUND,404)
+         }
+         return true
+      } catch (error) {
+        if(error instanceof AppError){
+          throw error
+        }
+
+        throw new AppError('something went wrong while booking a training session',500)
       }
   }
 }

@@ -2,45 +2,70 @@ import { getApprovedTrainers } from "@/api/user-apicalls";
 import { ITrainers } from "@/interfaces/trainer-interfaces";
 import { showErrorToast } from "@/utils/toast";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 const Trainers = () => {
-    const [approvedTrainers,setApprovedTrainers] = useState<ITrainers[]>([])
-   
+  const [approvedTrainers, setApprovedTrainers] = useState<ITrainers[]>([]);
+  const [page, setPage] = useState(1); // To manage pagination
+  const [hasMore, setHasMore] = useState(true); // To check if more trainers are available
+  const limit = 2; // Set a limit for trainers per page
+  const fetchApprovedTrainers = async () => {
+    try {
+      const response = await getApprovedTrainers(page, limit);
+      console.log(response?.data)
+      if (page === 1) {
+        setApprovedTrainers(response?.data.approvedTrainers); // Reset for the first page
+      } else {
+        setApprovedTrainers((prev) => [...prev, ...response?.data.approvedTrainers]); // Append for other pages
+      }
+      const totalTrainers = response?.data.totalTrainers
+      const currentOffset = (page - 1)*limit + response?.data.approvedTrainers.length 
+      console.log(currentOffset,totalTrainers)
+      // Check if there are more trainers to fetch
+      setHasMore((currentOffset)<totalTrainers);
+    } catch (error) {
+      showErrorToast(error);
+    }
+  };
+  useEffect(() => {
+    
 
-      useEffect(()=>{
-        const fetchApprovedTrainers = async()=>{
-            try {
-                const response = await getApprovedTrainers()
-                setApprovedTrainers(response?.data.approvedTrainers)
-            } catch (error) {
-                showErrorToast(error)
-            }
+    fetchApprovedTrainers();
+  }, [page]);
 
-        }
-        fetchApprovedTrainers()
-      },[])
-      
-    return (
-      <section
-        className="w-full py-16 px-4 md:px-8"
-        style={{ backgroundImage: "url('/white-bg.jpg')" }}
-      >
-        <div className="max-w-4xl mx-auto text-center mb-12">
-          <h2 className="text-4xl font-bold text-black">
-            Meet Our Professional Trainers
-          </h2>
-          <p className="mt-2 text-lg text-gray-700">
-            Find the perfect trainer to help you reach your fitness goals.
-          </p>
-        </div>
-  
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {approvedTrainers.map((trainer) => (
-            <div
-              key={trainer._id}
-              className="bg-white rounded-xl shadow-md overflow-hidden transform transition-transform hover:scale-105"
-            >
+  const nextPage = () => {
+    console.log('clicked')
+
+    if (hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  const prevPage = () => {
+    console.log('clicked')
+    if (page > 1) {
+      console.log(page)
+      setPage((prev) => prev - 1);
+    }
+  };
+  console.log(hasMore)
+  return (
+    <section
+      className="w-full py-16 px-4 md:px-8"
+      style={{ backgroundImage: "url('/white-bg.jpg')" }}
+    >
+      <div className="max-w-4xl mx-auto text-center mb-12">
+        <h2 className="text-4xl font-bold text-black">Meet Our Professional Trainers</h2>
+        <p className="mt-2 text-lg text-gray-700">
+          Find the perfect trainer to help you reach your fitness goals.
+        </p>
+      </div>
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {approvedTrainers.map((trainer) => (
+          <Link key={trainer._id} to={`/trainers/single-trainer/${trainer._id}`}>
+            <div className="bg-white rounded-xl shadow-md overflow-hidden transform transition-transform hover:scale-105">
               <img
                 src={trainer.profilePicture}
                 alt={trainer.name}
@@ -56,7 +81,6 @@ const Trainers = () => {
                     <svg
                       key={i}
                       xmlns="http://www.w3.org/2000/svg"
-                    //   className={`h-5 w-5 ${i < Math.floor(trainer.rating) ? '' : 'text-gray-300'}`}
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -67,12 +91,23 @@ const Trainers = () => {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-        <ToastContainer/>
-      </section>
-    );
-  };
-  
-  export default Trainers;
-  
+          </Link>
+        ))}
+      </div>
+
+      <div className="pagination mt-8 flex justify-center">
+        <button onClick={()=>prevPage()} disabled={page === 1} className="px-4 py-2 bg-gray-500 text-white rounded-md">
+          Previous
+        </button>
+        <span className="mx-4">{`Page ${page}`}</span>
+        <button onClick={()=>nextPage()} disabled={!hasMore} className="px-4 py-2 bg-gray-500 text-white rounded-md">
+          Next
+        </button>
+      </div>
+
+      <ToastContainer />
+    </section>
+  );
+};
+
+export default Trainers;

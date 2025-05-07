@@ -10,7 +10,8 @@ const AvailabilitySchema:Schema = new Schema(
                 date:{type:Date,required:true},
                 timeSlots:[{
                     startTime:{type:String},
-                    isBooked:{type:Boolean,default:false}
+                    isBooked:{type:Boolean,default:false},
+                    userId:{type:Types.ObjectId}
                 }],
                 isCompleted:{type:Boolean,default:false}
             }

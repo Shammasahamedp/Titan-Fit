@@ -46,6 +46,13 @@ export class TrainerRepository extends BaseRepository<ITrainerDocument> implemen
             {new:true}
         )
     }
+    async getApprovedTrainer(trainerId: string): Promise<ITrainerDocument | null> {
+        return await trainerModel.findOne({_id:trainerId,approved:true})
+    }
+    async getApprovedTrainers(skip:number): Promise<ITrainerDocument[] | null> {
+        console.log(skip,'skip')
+        return await trainerModel.find({approved:true}).skip(skip).limit(2).exec()
+    }
     // async getTrainers(): Promise<ITrainerDocument[] | null> {
     //     return await trainerModel.find().select('-password -createdAt -updatedAt -__v -googleId')
     // }

@@ -2,7 +2,8 @@ import { Types,Document } from "mongoose";
 
 export interface ISlot{
     startTime:string,
-    isBooked:boolean
+    isBooked:boolean,
+    userId?:string
 }
 
 export interface IAvailableDate{

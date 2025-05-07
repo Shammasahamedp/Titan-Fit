@@ -12,6 +12,8 @@ export interface ITrainerRepository extends IBaseRepository<ITrainerDocument>{
     // addProfilePic(trainerId:string,profilePic:string):Promise<ITrainerDocument|null>
     // updatePassword(id:string,password:string):Promise<ITrainerDocument|null>
     addCertificate(trainerId:string,trainerCertificate:string):Promise<ITrainerDocument|null>
+    getApprovedTrainer(trainerId:string):Promise<ITrainerDocument|null>
+    getApprovedTrainers(skip:number):Promise<ITrainerDocument[]|null>
     // getTrainers():Promise<ITrainerDocument[]|null>
     // changeApproval(trainerId:string,approved:boolean):Promise<ITrainerDocument|null>
 }

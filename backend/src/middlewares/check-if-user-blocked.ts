@@ -34,7 +34,6 @@ export const checkIfUserBlocked = async(req:Request,res:Response,next:NextFuncti
 export const checkIfTrainerBlocked = async(req:Request,res:Response,next:NextFunction)=>{
     try {
        const {userId} = res.locals.user
-       console.log(res.locals.user)
        if(!userId){
          res.status(401).json({success:false,message:'trainer id not found'})
          return

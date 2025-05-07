@@ -22,12 +22,14 @@ import TrainerAvailability from "./pages/trainer/TrainerAvailability";
 import TrainerProfile from "./pages/trainer/TrainerProfile";
 import UserProfile from "./pages/user/UserProfile";
 import UserTrainerPage from "./pages/user/UserTrainerPage";
+import UserSingleTrainer from "./pages/user/UserSingleTrainer";
 function App() {
   return (
     <Router>
       <Routes>
         {/* Public routes */}
         <Route path="/reset-password/:token" element={<ForgotPassword />} />
+
         <Route
           path="/user/profile-complete"
           element={<UserProfileComplete />}
@@ -50,10 +52,13 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<LandingPage />} />
           <Route path="/user" element={<UserDashboard />}>
-              <Route path="profile" element={<UserProfile />} />
-            </Route>
-            <Route path="/trainers" element={<UserTrainerPage />}/>
-
+            <Route path="profile" element={<UserProfile />} />
+          </Route>
+          <Route path="/trainers" element={<UserTrainerPage />} />
+          <Route
+            path="/trainers/single-trainer/:id"
+            element={<UserSingleTrainer />}
+          />
           <Route path="/user/profile-complete" element={<UserDashboard />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
         </Route>
@@ -86,16 +91,13 @@ function App() {
 
           </Route> */}
         {/* <Routes> */}
-          <Route element={<TrainerProtectedRoute />}>
-            <Route path="/trainer" element={<TrainerDashboard />}>
-              <Route path="profile" element={<TrainerProfile />} />
-              <Route path="availability" element={<TrainerAvailability />} />
-            </Route>
-            <Route
-              path="profile-complete"
-              element={<TrainerProfileComplete />}
-            />
+        <Route element={<TrainerProtectedRoute />}>
+          <Route path="/trainer" element={<TrainerDashboard />}>
+            <Route path="profile" element={<TrainerProfile />} />
+            <Route path="availability" element={<TrainerAvailability />} />
           </Route>
+          <Route path="profile-complete" element={<TrainerProfileComplete />} />
+        </Route>
         {/* </Routes> */}
       </Routes>
     </Router>

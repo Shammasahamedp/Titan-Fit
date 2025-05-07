@@ -1,5 +1,5 @@
 import { IBaseRepository } from "./IbaseRepository";
-import { Model,Document } from "mongoose";
+import { Model,Document, FilterQuery } from "mongoose";
 export class BaseRepository<T extends Document> implements IBaseRepository<T>{
     
     protected model:Model<T>
@@ -18,7 +18,7 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T>{
         return await this.model.deleteOne(filter)
     }
 
-    async find(filter: any): Promise<T[] | null> {
+    async find(filter: any): Promise<T[] > {
         return await this.model.find(filter)
     }
 
@@ -67,4 +67,9 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T>{
     async updateOne(filter: any, update: any): Promise<{ acknowledged: boolean; modifiedCount: number; }> {
         return await this.model.updateOne(filter,update)
     }
+
+    async countDocuments(filter: FilterQuery<T>): Promise<number| null> {
+        return await this.model.countDocuments(filter)
+    }
+    
 }

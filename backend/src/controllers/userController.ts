@@ -5,6 +5,7 @@ import { IUserService } from "../services/user/IuserService";
 import { Request,Response } from "express";
 import { handleError } from "../utils/handleResponse";
 import { trainerMessages } from "../messages/trainerRelated";
+import { availabilityMessages } from "../messages/availability-related";
 
 export class UserController {
     private userService:IUserService
@@ -109,8 +110,34 @@ export class UserController {
 
     async getApprovedTrainers(req:Request,res:Response):Promise<void>{
         try {
-            const approvedTrainers = await this.userService.getApprovedTrainers()
-            res.status(200).json({success:true,message:trainerMessages.GET_APPROVED_TRAINERS_SUCCESS,approvedTrainers})
+            const page = parseInt(req.query.page as string) || 1
+            const limit = parseInt(req.query.limit as string) || 2
+            console.log('thsi is apge',page,limit)
+            const response = await this.userService.getApprovedTrainers(page,limit)
+            console.log('response',response)
+            res.status(200).json({success:true,message:trainerMessages.GET_APPROVED_TRAINERS_SUCCESS,approvedTrainers:response?.trainers,totalTrainers:response?.total,currentPage:page,totalPages:Math.ceil(response?.total as number/limit)})
+        } catch (error) {
+            handleError(res,error)
+        }
+    }
+
+    async getSingleApprovedTrainer(req:Request,res:Response):Promise<void>{
+        try {
+            const {trainer,availability} = await this.userService.getSingleApprovedTrainer(req.params.id)
+            res.status(200).json({success:true,message:trainerMessages.GET_APPROVED_TRAINERS_SUCCESS,trainer,availability})
+        } catch (error) {
+            handleError(res,error)
+        }
+    }
+
+    async bookATrainingSession(req:Request,res:Response):Promise<void>{
+        try {
+            const {trainerId,date,startTime} = req.body
+            const success = await this.userService.bookASessionWithTrainer(trainerId,res.locals.user.userId,date,startTime)
+            if(success){
+                console.log('suc',success)
+                res.status(201).json({success:true,message:availabilityMessages.SESSION_BOOKED_SUCCESSFULL})
+            }
         } catch (error) {
             handleError(res,error)
         }
