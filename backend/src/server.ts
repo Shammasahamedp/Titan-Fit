@@ -25,7 +25,7 @@ import resetPasswordRoute from "./routes/common-routes/reset-password.route"
 import subscriptionRoute from "./routes/subscription-route"
 import paymentRoute from "./routes/common-routes/payment-route"
 import availabilityRouter from "./routes/common-routes/availability-route"
-
+import './utils/subscription-status'
 const app = express()
 
 app.use(cors({

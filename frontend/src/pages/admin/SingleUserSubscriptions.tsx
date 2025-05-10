@@ -1,0 +1,34 @@
+import { getSingleUserSubscriptions } from "@/api/admin-apicalls"
+import NewTable from "@/components/common/NewTable"
+import { ISingleUserSubscriptions } from "@/interfaces/user-interfaces"
+import { showErrorToast } from "@/utils/toast"
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+const SingleUserSubscriptions = () => {
+  const [subsriptions,setSubscriptions] = useState<ISingleUserSubscriptions[]|[]>([])
+  const {userId}  = useParams()
+  const getSubscriptionOfUser = async(userId:string)=>{
+    try {
+       const response = await getSingleUserSubscriptions(userId)
+       if(response?.data.subscriptions){
+        setSubscriptions(response.data.subscriptions)
+       }
+
+    } catch (error) {
+      showErrorToast(error)
+    }
+  }
+  useEffect(()=>{
+     getSubscriptionOfUser(userId as string)
+  },[])
+  return (
+    <div className="flex-1  p-6 pt-16 md:ml-64 overflow-x-auto">
+    <h2 className="text-3xl font-bold mb-4 o hover:cursor-pointer">
+       Subscription History
+    </h2>
+    <NewTable columns={['planName','subscriptionId','paymentId','startDate','endDate','totalCredits','creditsRemaining','status']} tableDatas={subsriptions} filterKeys={['planName']}  />
+ </div>
+  )
+}
+
+export default SingleUserSubscriptions

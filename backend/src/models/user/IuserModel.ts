@@ -1,11 +1,13 @@
 import { Types ,Document } from "mongoose";
 
 export interface ISubscriptionDetails{
+    planName:string,
     subscriptionId:Types.ObjectId|string,
     paymentId:Types.ObjectId|string,
     startDate:Date,
     endDate:Date,
     creditsRemaining:number,
+    totalCredits:number
     status:'active'|'completed'
 }
 
@@ -17,7 +19,7 @@ export interface IuserModel extends Document {
     age:number;
     fitnessGoal:string;
     fitnessLevel:string;
-    subscription?:ISubscriptionDetails;
+    subscription?:ISubscriptionDetails[];
     phone?:number;
     profilePicture?:string;
     weight?:number;

@@ -22,4 +22,7 @@ adminRoute.get('/get-users',jwtTokenVerify(['admin']),(req:Request,res:Response)
 adminRoute.get('/get-trainers',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getTrainers(req,res))
 adminRoute.put('/change-approval',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.changeTrainerApproval(req,res))
 adminRoute.put('/user-toggle',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.userToggle(req,res))
+adminRoute.get('/get-subscribers',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getSubscribers(req,res))
+adminRoute.get('/get-subscribers/:id',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getSingleUserSubscriptions(req,res))
+
 export default adminRoute

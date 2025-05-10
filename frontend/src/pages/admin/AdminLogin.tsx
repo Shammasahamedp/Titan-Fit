@@ -31,10 +31,7 @@ export default function AdminLogin() {
               admin:response.data.data.admin,
               token:response.data.data.accessToken
             })
-            //  dispatch(loginSuccess({
-            //             user:{_id,name,email,role:'user'},
-            //             token:tokenResponse.data.data.accessToken
-            //         }))
+           
           )
           showSuccessToast(response?.data.message)
         }

@@ -18,3 +18,23 @@ export interface IStripePlan{
     title:string;
     price:number;
 }
+
+export interface ISubscriptionTableData{
+    id:string,
+    name:string,
+                    planName:string
+                    status:string
+                    totalCredits:number,
+                    creditsRemaining:number
+}
+
+export interface ISingleUserSubscriptions{
+    planName:string,
+        subscriptionId: Types.ObjectId|string,
+        paymentId: Types.ObjectId|string,
+        startDate: Date,
+        endDate: Date,
+        creditsRemaining:number,
+        totalCredits:number,
+        status:'active'|'completed',
+}

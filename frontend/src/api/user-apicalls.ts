@@ -4,7 +4,6 @@ import { axiosInstance } from "./axiosInstance"
 const API = import.meta.env.VITE_BASE_URL
 
 export const getProfile = async()=>{
-  console.log('hello this si')
   try {
       const response = await axiosInstance.get(`${API}/user/profile`)
       if(response.data){
@@ -18,7 +17,7 @@ export const getProfile = async()=>{
 
 export const editUserProfile = async(userProfileData:IUserEditProfile)=>{
   try {
-    const response = await axiosInstance.put(`${API}/user/editprofile`,userProfileData)
+    const response = await axiosInstance.put(`${API}/user/profile`,userProfileData)
     if(response.data){
       return response.data
     }
@@ -65,9 +64,10 @@ export const resetPassword = async (password:string)=>{
 
 
 
-export const getApprovedTrainers = async (page: number, limit: number) => {
+export const getApprovedTrainers = async (page: number, limit: number,search:string,date:string) => {
   try {
-    const response = await axiosInstance.get(`${API}/user/get-trainers?page=${page}&limit=${limit}`);
+    console.log(date,'date')
+    const response = await axiosInstance.get(`${API}/user/get-trainers?page=${page}&limit=${limit}&search=${search}&date=${date}`);
     if (response.data) {
       return response;
     }
@@ -78,7 +78,7 @@ export const getApprovedTrainers = async (page: number, limit: number) => {
 
 export const getApprovedSingleTrainer = async (trainerId:string)=>{
   try {
-    const response = await axiosInstance.get(`${API}/user/get-single-trainer/${trainerId}`)
+    const response = await axiosInstance.get(`${API}/user/get-trainers/${trainerId}`)
     if(response.data){
       return response
     }
@@ -92,10 +92,12 @@ export const bookATrainingSession = async (trainerId:string,date:string,startTim
     const response = await axiosInstance.put(`${API}/user/book-session`,{trainerId,date,startTime})
 
     if(response.data){
-      console.log(response.data)
       return response
     }
   } catch (error) {
     throw error
   }
 }
+
+
+

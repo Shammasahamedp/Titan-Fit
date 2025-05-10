@@ -23,7 +23,7 @@ const TrainerSchema: Schema = new Schema(
   },
   { timestamps: true }
 );
-
+TrainerSchema.index({name:'text'})
 export const trainerModel = mongoose.model<ITrainerDocument>(
   "Trainer",
   TrainerSchema

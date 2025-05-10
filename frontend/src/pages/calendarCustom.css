@@ -8,6 +8,11 @@
     padding: 10px;
     font-family: sans-serif;
   }
+  .all-booked {
+  background-color: #f87171 !important; /* red-400 */
+  color: white;
+  border-radius: 6px;
+}
   @media(min-width:768px){
     .react-calendar-custom{
       width: auto;
@@ -28,7 +33,7 @@
     border-radius: 6px;
   }
   .booked-date{
-    background: #FFC436 ;
+    background: #7dc2ed ;
     color:black;
     border-radius:50%
   }

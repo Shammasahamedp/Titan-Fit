@@ -18,7 +18,6 @@ import { IAvailabilityDocument } from "../../models/availability/IavailabilityMo
 import { IAvailabilityRepository } from "../../repositories/availability/IavailabilityRepository";
 import { availabilityMessages } from "../../messages/availability-related";
 import { Types } from "mongoose";
-import { number } from "zod";
 export class UserService implements IUserService {
   private userRepository: IUserRepository;
   private trainerRepository: ITrainerRepository;
@@ -88,6 +87,7 @@ export class UserService implements IUserService {
         profilePicture,
         weight,
         height,
+        subscription
       } = user;
 
       const userProfile = {
@@ -101,6 +101,7 @@ export class UserService implements IUserService {
         profilePicture,
         weight,
         height,
+        subscription
       };
       return userProfile
     } catch (error) {
@@ -172,12 +173,11 @@ export class UserService implements IUserService {
         throw new AppError('something went wrong while reseting password',500)
       }
   }
-  async getApprovedTrainers(page:number,limit:number): Promise<{trainers:ITrainerDocument[],total:number} | null> {
+  async getApprovedTrainers(page:number,limit:number,search:string,date:string): Promise<{trainers:ITrainerDocument[],total:number} | null> {
       try {
         const skip = (page -1) * limit
-        // const approvedTrainers = await this.trainerRepository.find({approved:true})
         const [trainers, total] = await Promise.all([
-          this.trainerRepository.getApprovedTrainers(skip),
+          this.trainerRepository.getApprovedAvailableTrainers(skip,search,date),
           this.trainerRepository.countDocuments({ approved: true }),
         ]);
         if(!trainers){
@@ -188,6 +188,7 @@ export class UserService implements IUserService {
         }
         throw new AppError('total document not found',404)
       } catch (error) {
+        console.log(error)
         if(error instanceof AppError){
           throw error
         }
@@ -232,13 +233,18 @@ export class UserService implements IUserService {
          const trainerRefId = new Types.ObjectId(trainerId)
          const userRefId = new Types.ObjectId(userId)
          const user = await this.userRepository.findById(userId)
-         if(user?.subscription?.status !== 'active'){
-          throw new AppError(userMessages.SUBSCRIPTION_INACTIVE,403)
-         }
-         const availability = await this.trainerAvailability.bookASession(trainerRefId,userRefId,date,startTime)
-         if(!availability){
-            throw new AppError(availabilityMessages.AVAILABILITY_NOT_FOUND,404)
-         }
+          let lastIndex = 0
+          if(user?.subscription){
+            lastIndex = user.subscription.length-1
+            if(user?.subscription[lastIndex]?.status !== 'active'){
+              throw new AppError(userMessages.SUBSCRIPTION_INACTIVE,403)
+             }
+             const availability = await this.trainerAvailability.bookASession(trainerRefId,userRefId,date,startTime)
+             if(!availability){
+                throw new AppError(availabilityMessages.AVAILABILITY_NOT_FOUND,404)
+             }
+          }
+        
          return true
       } catch (error) {
         if(error instanceof AppError){
@@ -246,6 +252,34 @@ export class UserService implements IUserService {
         }
 
         throw new AppError('something went wrong while booking a training session',500)
+      }
+  }
+  async updateExpiredSubscription(): Promise<void> {
+      try {
+          const activeSubscribedUsers = await this.userRepository.find({'subscription.status':'active'})
+          console.log(activeSubscribedUsers)
+          const today = new Date()
+        if(activeSubscribedUsers){
+          for(let user of activeSubscribedUsers){
+              let updated = false
+              if(user.subscription && Array.isArray(user.subscription)){
+                  user.subscription.forEach((sub)=>{
+                    if((sub.status === 'active' && sub.endDate <today) || sub.creditsRemaining ===0 ){
+                      sub.status = 'completed'
+                      updated = true
+                    }
+                  })
+              }
+              if(updated){
+                await user.save()
+              }
+          }
+        }
+      } catch (error) {
+        if(error instanceof AppError){
+          throw error
+        }
+        throw new AppError('something went wrong while updating the subscription status',500)
       }
   }
 }

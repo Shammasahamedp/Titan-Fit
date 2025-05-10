@@ -1,5 +1,5 @@
 import { Document,Types } from "mongoose";
-import { IuserModel } from "../models/user/IuserModel";
+import { ISubscriptionDetails, IuserModel } from "../models/user/IuserModel";
 export interface IUserSignUp{
     name:string;
     email:string;
@@ -37,5 +37,6 @@ export interface  IUserProfile {
     profilePicture?:string;
     weight?:number;
     height?:number;
+    subscription?:ISubscriptionDetails[]
 }
 

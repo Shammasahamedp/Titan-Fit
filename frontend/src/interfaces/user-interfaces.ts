@@ -12,6 +12,17 @@ export interface SignupFormatInputs{
     fitnessLevel:string
 }
 
+export interface ISubscriptionDetails{
+    planName:string,
+    subscriptionId:string,
+    paymentId:string,
+    startDate:Date,
+    endDate:Date,
+    creditsRemaining:number,
+    totalCredits:number
+    status:'active'|'completed'
+}
+
 export interface IUserProfile{
     name:string;
     email:string;
@@ -23,6 +34,7 @@ export interface IUserProfile{
     gender:string;
     fitnessGoal:string;
     fitnessLevel:string;
+    subscription?:ISubscriptionDetails[]
 }
 
 export interface IUserEditProfile{
@@ -58,5 +70,24 @@ export interface IUserProfileContextType{
     setUserProfile:React.Dispatch<React.SetStateAction<IUserProfile|null>>
 }
 
+export interface ISubscribersTableData{
+    id:string,
+    name:string,
+    planName:string,
+    status:string,
+    totalCredits:number,
+    creditsRemaining:number
+}
+
+export interface ISingleUserSubscriptions{
+    planName:string,
+        subscriptionId: string,
+        paymentId: string,
+        startDate: string,
+        endDate: string,
+        creditsRemaining:number,
+        totalCredits:number,
+        status:'active'|'completed',
+}
 
 

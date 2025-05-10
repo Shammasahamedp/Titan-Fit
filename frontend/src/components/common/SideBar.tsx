@@ -52,7 +52,7 @@ const SideBar: React.FC<ISidebarProps> = ({ items,profilePicture,role,uploadProf
       {/* Hamburger Button (Only Visible on Small Screens) */}
       <button
         onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-50 md:hidden bg-[#FFC436] text-black p-2 rounded"
+        className="fixed top-4 left-4 z-50 md:hidden bg-[#FFC436] text-black p-2 rounded overflow-y-auto "
       >
         <Menu size={24} />
       </button>
@@ -62,9 +62,9 @@ const SideBar: React.FC<ISidebarProps> = ({ items,profilePicture,role,uploadProf
 
       {/* Sidebar */}
       <div
-  className={`fixed top-0 left-0  h-full  w-64 bg-black border-r border-[#FFC436] p-4 transition-transform z-50 ${
+  className={`fixed top-0 left-0 h-full w-64 bg-black border-r border-[#FFC436] p-4 transition-transform z-50 overflow-y-auto ${
     isOpen ? "translate-x-0" : "-translate-x-full"
-  }   md:translate-x-0`}
+  } md:translate-x-0`}
 >
         {/* Close Button for Mobile */}
         <button

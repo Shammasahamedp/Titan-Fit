@@ -11,7 +11,8 @@ export interface IUserService{
     addProfilePic(userId:string,userProfilePic:string):Promise<string|null>
     checkPassword(userId:string,password:string):Promise<boolean>
     resetPassword(userId:string,password:string):Promise<IUserDocument|null>
-    getApprovedTrainers(page:number,limit:number):Promise<{trainers:ITrainerDocument[],total:number}|null>
+    getApprovedTrainers(page:number,limit:number,search:string,date:string):Promise<{trainers:ITrainerDocument[],total:number}|null>
     getSingleApprovedTrainer(trainerId:string):Promise<{trainer:ITrainerDocument,availability:IAvailabilityDocument}>
     bookASessionWithTrainer(trainerId:string,userId:string,date:string,startTime:string):Promise<boolean>
+    updateExpiredSubscription():Promise<void>
 }

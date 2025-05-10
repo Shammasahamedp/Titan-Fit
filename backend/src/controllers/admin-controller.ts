@@ -1,14 +1,14 @@
 import { adminMessages } from "../messages/admin-related";
-import { AdminService } from "../services/admin/adminService";
 import { Request,Response } from "express";
 import { handleError } from "../utils/handleResponse";
-
+import { IAdminService } from "../services/admin/IadminService";
+import { subscriptionMessage } from "../messages/subscription-related";
+import { userMessages } from "../messages/userRelated";
 
 export class AdminController {
-    private adminService:AdminService
+    private adminService:IAdminService
 
-    constructor(adminService:AdminService){
-        console.log('this is adminService',adminService)
+    constructor(adminService:IAdminService){
         this.adminService=adminService
     }
 
@@ -74,6 +74,24 @@ export class AdminController {
         } catch (error) {
             handleError(res,error)
             // res.status(400).json({success:false,message:adminMessages.TOGGLE_USER_FAILURE})
+        }
+    }
+
+    async getSubscribers(req:Request,res:Response):Promise<void>{
+        try {
+            const subscribers = await this.adminService.getSubscribers()
+            res.status(200).json({success:true,message:subscriptionMessage.SUBSCRIBERS_GET_SUCCESSFULL,subscribers})
+        } catch (error) {
+            handleError(res,error)
+        }
+    }
+
+    async getSingleUserSubscriptions(req:Request,res:Response):Promise<void>{
+        try {
+            const subscriptions = await this.adminService.getSingleUserSubscriptions(req.params.id)
+            res.status(200).json({success:true,message:userMessages.SUBSCRIPTION_GET_SUCCESS,subscriptions})
+        } catch (error) {
+            handleError(res,error)
         }
     }
      

@@ -1,8 +1,5 @@
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/userComponents/Navbar";
-import SideBar from "@/components/common/SideBar";
-import { logoutAdmin } from "@/api/auth";
 import { ISubscriptionInput } from "@/interfaces/IsubscriptionInputs";
 import InputField from "@/components/common/InputField";
 import { useForm } from "react-hook-form";
@@ -87,17 +84,7 @@ reset
 
   return (
     <>
-    <div className="flex flex-col bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-      <Navbar logout={logoutAdmin} role="trainer" />
-      <div className="flex flex-1 text-white">
-        <SideBar
-          role="admin"
-          items={[
-            ["User management", "usermanagement"],
-            ["Trainer management", "trainermanagement"],
-            ["Subscription management", "subscriptionmanagement"],
-          ]}
-        />
+   
 
         <div className="flex-1 p-6 pt-16 md:ml-64">
           <div className="flex justify-between items-center mb-6">
@@ -238,10 +225,9 @@ reset
 
          
         </div>
-      </div>
-    </div>
+   
     <ToastContainer/>
-    </>
+     </>
   );
 };
 

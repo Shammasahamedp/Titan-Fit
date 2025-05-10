@@ -68,8 +68,7 @@ export class UserController {
     }
     async addProfileImage(req:Request,res:Response):Promise<void>{
         try {
-            console.log('this is url',req.body)
-            console.log('this is url',req.body.userProfileImage)
+           
 
             const image = await this.userService.addProfilePic(res.locals.user?.userId,req.body.userProfileImage)
             if(image){
@@ -113,8 +112,7 @@ export class UserController {
             const page = parseInt(req.query.page as string) || 1
             const limit = parseInt(req.query.limit as string) || 2
             console.log('thsi is apge',page,limit)
-            const response = await this.userService.getApprovedTrainers(page,limit)
-            console.log('response',response)
+            const response = await this.userService.getApprovedTrainers(page,limit,req.query.search as string,req.query.date as string)
             res.status(200).json({success:true,message:trainerMessages.GET_APPROVED_TRAINERS_SUCCESS,approvedTrainers:response?.trainers,totalTrainers:response?.total,currentPage:page,totalPages:Math.ceil(response?.total as number/limit)})
         } catch (error) {
             handleError(res,error)

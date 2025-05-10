@@ -1,19 +1,21 @@
 import { IAdminLogin, IAdminLoginResponse } from "../../interfaces/adminInterfaces";
 import { ITrainerDocument } from "../../interfaces/trainerInterfaces";
 import { IUserDocument } from "../../interfaces/userInterfaces";
-import { AdminRepository } from "../../repositories/admin/adminRepository";
-import { TrainerRepository } from "../../repositories/trainer/trainerRepository";
-import { UserRepository } from "../../repositories/user/userRepository";
 import { AppError } from "../../utils/handleResponse";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { IAdminService } from "./IadminService";
-
-
+import { IUserRepository } from "../../repositories/user/IuserRepository";
+import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepository";
+import { AdminRepository } from "../../repositories/admin/adminRepository";
+import { subscriptionMessage } from "../../messages/subscription-related";
+import { ISingleUserSubscriptions, ISubscriptionTableData } from "../../interfaces/subscriptionInterfaces";
+import { string } from "zod";
+import { userMessages } from "../../messages/userRelated";
 export class AdminService implements IAdminService{
     private adminRepository : AdminRepository
-    private userRepository : UserRepository
-    private trainerRepository:TrainerRepository
-    constructor(adminRepository:AdminRepository,userRepository:UserRepository,trainerRepository:TrainerRepository){
+    private userRepository : IUserRepository
+    private trainerRepository:ITrainerRepository
+    constructor(adminRepository:AdminRepository,userRepository:IUserRepository,trainerRepository:ITrainerRepository){
         this.adminRepository = adminRepository
         this.userRepository = userRepository
         this.trainerRepository = trainerRepository
@@ -87,6 +89,55 @@ export class AdminService implements IAdminService{
             }
             console.log(error)
             throw new AppError('something went wrong while user toggle',500)
+        }
+    }
+
+    async getSubscribers(): Promise<ISubscriptionTableData[] | null[]> {
+        try {
+            const subscribers = await this.userRepository.getSubscribers()
+            const subscribersTableData = subscribers.map((user)=>{
+                const {name,subscription,_id} = user
+                 console.log('user',user,'sadf',subscription)
+               if(subscription?.length){
+                return {
+                    id:String(_id),
+                    name,
+                    planName:subscription[subscription?.length-1]?.planName as string,
+                    status:subscription[subscription.length-1]?.status as string,
+                    totalCredits:subscription[subscription.length-1]?.totalCredits as number,
+                    creditsRemaining:subscription[subscription.length-1]?.creditsRemaining as number
+                }
+               }else{
+                return null
+               }
+            }).filter((item): item is ISubscriptionTableData => item !== null);
+            console.log('table data',subscribersTableData)
+            if(!subscribersTableData){
+                throw new AppError(subscriptionMessage.SUBSCRIBERS_NOT_FOUND,404)
+            }
+            return subscribersTableData
+        } catch (error) {
+            if(error instanceof AppError){
+                throw error
+            }
+            throw new AppError('something went wrong while fetching subscribers',500)
+        }
+    }
+    async getSingleUserSubscriptions(userId: string): Promise<ISingleUserSubscriptions[]> {
+        try {
+            const user = await this.userRepository.findById(userId)
+            if(!user){
+                throw new AppError(userMessages.USER_NOT_FOUND,404)
+            }
+            if( user.subscription){
+                return user.subscription
+            }
+            throw new AppError(userMessages.SUBSCRIPTION_NOT_FOUND,404)
+        } catch (error) {
+            if(error instanceof AppError){
+                throw error
+            }
+            throw new AppError('something went wrong while fetch subscriptions of the user',500)
         }
     }
     

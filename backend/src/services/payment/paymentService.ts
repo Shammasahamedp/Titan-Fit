@@ -1,13 +1,11 @@
-import { number } from "zod";
 import stripe from "../../config/stripe";
 import { subscriptionMessage } from "../../messages/subscription-related";
 import { IPaymentRepository } from "../../repositories/payment/IpaymentRepository";
 import { ISubscriptionRepository } from "../../repositories/subscription/IsubscriptionRepository";
-import { ICreatePaymentSessionDTO, IPaymentService } from "./IpaymentService";
+import {  IPaymentService } from "./IpaymentService";
 import Stripe from "stripe";
 import { paymentMessages } from "../../messages/payment-related";
 import { generateTransactionId } from "../../utils/transaction";
-import { IPayment } from "../../models/payments/IpaymentModel";
 import { IPaymentDocument } from "../../interfaces/paymentInterfaces";
 import { IUserRepository } from "../../repositories/user/IuserRepository";
 import { ISubscriptionDetails } from "../../models/user/IuserModel";
@@ -68,7 +66,6 @@ export class PaymentService implements IPaymentService{
         try {
             console.log('webhook hit')
              let event = stripe.webhooks.constructEvent(eventData,signature,process.env.WEBHOOK_SECRET_KEY as string)
-            //  console.log('this is event',event)
              if(!event){
                 throw new Error(paymentMessages.WEBHOOK_VERIFICATION_FAILED)
              }
@@ -90,36 +87,22 @@ export class PaymentService implements IPaymentService{
                     if(payment){
                         const subscription = await this.subscriptionRepo.findById(payementIntent.metadata.subscriptionId)
                         const subscriptionDetails:ISubscriptionDetails={
+                            planName:subscription?.planName as string,
                             creditsRemaining:subscription?.credits as number,
                             paymentId:payment._id,
                             status:"active",
+                            totalCredits:subscription?.credits as number,
                             subscriptionId:subscription?._id as Types.ObjectId,
                             startDate:new Date(Date.now()),
                             endDate:getEndDate(subscription?.durationInMonth as number)
                         }
-                        this.userRepo.findByIdAndUpdate(payementIntent.metadata.userId,{subscription:subscriptionDetails})
+                        this.userRepo.addSubscription(payementIntent.metadata.userId,subscriptionDetails)
                     }
                 }
                 
 
              }
-            //  switch(event.type){
-            //     case 'checkout.session.completed':
-            //         const session = event.data.object
-            //         await this.processSuccessfulPayment(paymentIntent)
-            //         console.log('thisis session completed',session)
-            //         break;
-            //     case 'payment_intent.succeeded':
-            //         const success = event.data.object;
-            //         await this.processFailedPayment(failedPayment)
-            //         console.log('success',success)
-            //         break;
-            //     case 'payment_intent.payment_failed':
-            //         const failedPayment = event.data.object
-            //         console.log('failed payment',failedPayment)
-            //         default:
-            //            console.log('unexpected event')
-            //  }
+           
         } catch (error) {
             console.log(error)
             throw error
@@ -134,7 +117,6 @@ export class PaymentService implements IPaymentService{
             }
             return sessionDetails
         } catch (error) {
-            console.log('this is errrrrrrrrrror',error)
             throw error
         }
     }

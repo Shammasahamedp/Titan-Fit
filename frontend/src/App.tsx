@@ -23,7 +23,11 @@ import TrainerProfile from "./pages/trainer/TrainerProfile";
 import UserProfile from "./pages/user/UserProfile";
 import UserTrainerPage from "./pages/user/UserTrainerPage";
 import UserSingleTrainer from "./pages/user/UserSingleTrainer";
+import UserSubscriptionPage from "./pages/user/UserSubscriptionPage";
+import AdminSubscribedUsers from "./pages/admin/AdminSubscribedUsers";
+import SingleUserSubscriptions from "./pages/admin/SingleUserSubscriptions";
 function App() {
+  
   return (
     <Router>
       <Routes>
@@ -53,6 +57,7 @@ function App() {
           <Route path="/home" element={<LandingPage />} />
           <Route path="/user" element={<UserDashboard />}>
             <Route path="profile" element={<UserProfile />} />
+            <Route path="subscription" element={<UserSubscriptionPage />} />
           </Route>
           <Route path="/trainers" element={<UserTrainerPage />} />
           <Route
@@ -64,33 +69,31 @@ function App() {
         </Route>
 
         <Route element={<AdminProtectedRoute />}>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route
-            path="/admin/usermanagement"
-            element={<AdminUserManagement />}
-          />
-          <Route
-            path="/admin/trainermanagement"
-            element={<AdminTrainerManagement />}
-          />
-          <Route
-            path="/admin/subscriptionmanagement"
-            element={<AdminSubscriptionManagement />}
-          />
+          <Route path="/admin" element={<AdminDashboard />}>
+            <Route
+              path="usermanagement"
+              element={<AdminUserManagement />}
+            />
+            <Route
+              path="trainermanagement"
+              element={<AdminTrainerManagement />}
+            />
+            <Route
+              path="subscriptionmanagement"
+              element={<AdminSubscriptionManagement />}
+            />
+            <Route
+              path="subscribedusers"
+              element={<AdminSubscribedUsers />}
+            />
+            <Route
+              path="subscribedusers/:userId"
+              element={<SingleUserSubscriptions />}
+            />
+          </Route>
         </Route>
 
-        {/* <Route element={<TrainerProtectedRoute/>}>
-            <Route path='/trainer/dashboard' element={<TrainerDashboard/>}/>
-            <Route path='availability' element={<TrainerAvailability/>}/>
-            <Route path='profile' element={<TrainerProfile/>}/>
-
-            </Route >
-
-
-            <Route path="/trainer/profile-complete" element={<UserDashboard/>}/>
-
-          </Route> */}
-        {/* <Routes> */}
+      
         <Route element={<TrainerProtectedRoute />}>
           <Route path="/trainer" element={<TrainerDashboard />}>
             <Route path="profile" element={<TrainerProfile />} />

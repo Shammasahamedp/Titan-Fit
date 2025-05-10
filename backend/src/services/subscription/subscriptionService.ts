@@ -63,6 +63,7 @@ async editSubscription(subscription: ISubscription,id:string): Promise<ISubscrip
 async getActiveSubscription(): Promise<ISubscriptionDocument[] | null> {
     try {
         const activeSubscription = await this.subscriptionRepo.find({isActive:true})
+        
         if(!activeSubscription){
             throw new AppError('not found active subscription',404)
         }

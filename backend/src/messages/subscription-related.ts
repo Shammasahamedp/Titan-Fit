@@ -7,5 +7,6 @@ export const subscriptionMessage={
     SUBSCRIPTION_EDIT_FAILURE:'Error occured during subscription edit',
     SUBSCRIPTION_ALREADY_EXIST:'This subscription plan is already exists',
     SUBSCRIPTION_NOT_FOUND:'Subscription not found',
-    
+    SUBSCRIBERS_NOT_FOUND:'No subscribers found',
+    SUBSCRIBERS_GET_SUCCESSFULL:'Fetch subsribers successfully'
 }

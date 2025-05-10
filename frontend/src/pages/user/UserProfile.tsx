@@ -69,7 +69,7 @@ const UserProfile = () => {
           }
       }, [isEditing, reset]);
   return (
-    <div className="flex-1  p-6 pt-16 md:ml-64">
+    <div className="flex-1  p-6 pt-16  md:ml-64">
     <h2
       className="text-3xl font-bold mb-4 o hover:cursor-pointer"
       onClick={() => setIsEditing(false)}

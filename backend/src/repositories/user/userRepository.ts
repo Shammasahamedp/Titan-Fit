@@ -1,4 +1,5 @@
 import { IUserSignUp, IUserDocument, IUserProfile } from "../../interfaces/userInterfaces";
+import { ISubscriptionDetails } from "../../models/user/IuserModel";
 import { userModel } from "../../models/user/userModel";
 import { BaseRepository } from "../baseRepository";
 import { IUserRepository } from "./IuserRepository";
@@ -39,6 +40,18 @@ export class UserRepository extends BaseRepository<IUserDocument> implements IUs
             {$set:{password:password}},
             {new:true}
         )
+    }
+    async addSubscription(userId: string, subscriptionDetails: ISubscriptionDetails): Promise<void> {
+        const result=await userModel.findByIdAndUpdate(userId,{
+            $push:{
+                subscription:subscriptionDetails
+            }
+        })
+    }
+
+    async getSubscribers(): Promise<IUserDocument[]> {
+        const subscribers = await userModel.find({subscription:{$exists:true,$ne:[]}})
+        return subscribers
     }
     // async getUsers(): Promise<IUserDocument[] | null> {
     //     return await userModel.find().select('-password -createdAt -updatedAt -__v -googleId')

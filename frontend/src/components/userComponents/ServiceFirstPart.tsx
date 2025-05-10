@@ -54,7 +54,6 @@ const Services = () => {
           </div>
         </div>
 
-        {/* Meal Plan Section */}
         <div 
           className="relative group h-80 rounded-lg overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105"
         >

@@ -50,3 +50,25 @@ export const toggleUser = async(userId:string,blocked:boolean)=>{
     }
 }
 
+export const getSubscribedUsers = async ()=>{
+    try {
+      const response = await axiosInstance.get(`${API}/admin/get-subscribers`)
+      if(response.data){
+        return response
+      }
+    } catch (error) {
+      throw error
+    }  
+  }
+
+  export const getSingleUserSubscriptions = async (userId:string)=>{
+    try {
+        const response = await axiosInstance.get(`${API}/admin/get-subscribers/${userId}`)
+        if(response.data){
+            return response
+        }
+    } catch (error) {
+        throw error
+    }
+  }
+

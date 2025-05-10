@@ -1,6 +1,4 @@
-import Navbar from "@/components/userComponents/Navbar"
-import SideBar from "@/components/common/SideBar"
-import { logoutAdmin } from "@/api/auth"
+
 import NewTable from "@/components/common/NewTable"
 import { useEffect, useState } from "react"
 import { ITrainers } from "@/interfaces/trainer-interfaces"
@@ -34,14 +32,7 @@ const AdminTrainerManagement = () => {
         }
     }
   return (
-    <div className="flex flex-col bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-        <Navbar logout={logoutAdmin} role="trainer"/>
-        <div className="flex flex-1 text-white">
-          <SideBar role="admin"  items={[
-            ['User management','usermanagement'],
-            ['Trainer management','trainermanagement'],
-            ['Subscription management','subscriptionmanagement']
-          ]}/>
+   
           <div className="flex-1  p-6 pt-16 md:ml-64 overflow-x-auto">
              <h2 className="text-3xl font-bold mb-4 o hover:cursor-pointer">
                 Trainer Management
@@ -57,8 +48,7 @@ const AdminTrainerManagement = () => {
               </button>
              )} />
           </div>
-        </div>
-     </div>
+      
   )
 }
 

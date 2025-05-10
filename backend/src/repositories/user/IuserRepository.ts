@@ -1,4 +1,5 @@
 import { IUserSignUp,IUserDocument, IUserProfile } from "../../interfaces/userInterfaces";
+import { ISubscriptionDetails } from "../../models/user/IuserModel";
 import { IBaseRepository } from "../IbaseRepository";
 
 export interface IUserRepository extends IBaseRepository<IUserDocument>{
@@ -10,6 +11,8 @@ export interface IUserRepository extends IBaseRepository<IUserDocument>{
     editUserProfile(userId:string,profileData:IUserProfile):Promise<IUserDocument|null>
     addProfilePic(userId:string,profilePic:string):Promise<IUserDocument|null>
     updatePassword(id:string,password:string):Promise<IUserDocument|null>
+    addSubscription(userId:string,subscriptionDetails:ISubscriptionDetails):Promise<void>
+    getSubscribers():Promise<IUserDocument[]>
     // getUsers():Promise<IUserDocument[]|null>
     // userToggle(userId:string,blocked:boolean):Promise<IUserDocument|null>
 }

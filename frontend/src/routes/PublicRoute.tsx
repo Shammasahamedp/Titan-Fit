@@ -24,7 +24,7 @@ const PublicRoute = () => {
     );
   }
 
-  if (admin) return <Navigate to="/admin/dashboard" />;
+  if (admin) return <Navigate to="/admin" />;
 
   return <Outlet />;
 };

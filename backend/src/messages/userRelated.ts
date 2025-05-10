@@ -13,5 +13,7 @@ export const userMessages = {
     PASSWORD_CHECK_FAILURE:'Failed password verification',
     PASSWORD_CHECK_SUCCESS:'Password verification is successfull',
     PASSWORD_CHECK_ERROR:'Error occured during password verification',
-    SUBSCRIPTION_INACTIVE :'You dont have active subscription plan. subscribe now'
+    SUBSCRIPTION_INACTIVE :'You dont have active subscription plan. subscribe now',
+    SUBSCRIPTION_NOT_FOUND:'User doesnt have subscriptions yet',
+    SUBSCRIPTION_GET_SUCCESS:'User subscriptions has fetch successfully'
 }

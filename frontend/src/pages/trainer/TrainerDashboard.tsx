@@ -69,7 +69,7 @@ const TrainerDashboard = () => {
         {/* Main Content */}
         {/* <Outlet context={{trainerProfile,setTrainerProfile,setPasswordModal}}/>
          */}
-         <div className="flex-1 ml-0 md:ml-64 p-4">
+         <div className="flex-1 ml-0 p-4">
   <Outlet context={{trainerProfile,setTrainerProfile,setPasswordModal}} />
 </div>
 
