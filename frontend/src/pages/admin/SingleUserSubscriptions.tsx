@@ -4,7 +4,10 @@ import { ISingleUserSubscriptions } from "@/interfaces/user-interfaces"
 import { showErrorToast } from "@/utils/toast"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
+import { ArrowLeft } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 const SingleUserSubscriptions = () => {
+  const navigate = useNavigate()
   const [subsriptions,setSubscriptions] = useState<ISingleUserSubscriptions[]|[]>([])
   const {userId}  = useParams()
   const getSubscriptionOfUser = async(userId:string)=>{
@@ -26,6 +29,9 @@ const SingleUserSubscriptions = () => {
     <h2 className="text-3xl font-bold mb-4 o hover:cursor-pointer">
        Subscription History
     </h2>
+      <button onClick={()=>navigate('/admin/subscribedusers')}>
+               <ArrowLeft/>
+          </button>
     <NewTable columns={['planName','subscriptionId','paymentId','startDate','endDate','totalCredits','creditsRemaining','status']} tableDatas={subsriptions} filterKeys={['planName']}  />
  </div>
   )

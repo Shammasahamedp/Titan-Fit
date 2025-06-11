@@ -73,8 +73,7 @@ export class PaymentService implements IPaymentService{
              const paymentIntentId = session.payment_intent
              const payementIntent = await stripe.paymentIntents.retrieve(paymentIntentId as string)
              if(payementIntent.status === 'succeeded'){
-                console.log('metadata',payementIntent.metadata)
-                console.log('payemetn successful')
+               
                 let paymentData:Partial<IPaymentDocument> = {
                     ...payementIntent.metadata,
                     status:'completed',
@@ -96,6 +95,7 @@ export class PaymentService implements IPaymentService{
                             startDate:new Date(Date.now()),
                             endDate:getEndDate(subscription?.durationInMonth as number)
                         }
+                        console.log('subscriptiondetails',subscriptionDetails)
                         this.userRepo.addSubscription(payementIntent.metadata.userId,subscriptionDetails)
                     }
                 }

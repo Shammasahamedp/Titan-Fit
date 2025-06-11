@@ -3,6 +3,7 @@ import { getProfile } from "@/api/user-apicalls";
 import { ISubscriptionInput } from "@/interfaces/IsubscriptionInputs";
 import { showErrorToast } from "@/utils/toast";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   isOpen: boolean;
@@ -10,6 +11,7 @@ type Props = {
   onSubscribe: (planId: string) => void;
 };
 const SubscriptionModal = ({ isOpen, onClose, onSubscribe }: Props) => {
+  const navigate = useNavigate()
   const [plans, setPlans] = useState<(ISubscriptionInput & { _id: string })[]>(
     []
   );
@@ -17,6 +19,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }: Props) => {
   const [hasSubscriptionAlready,setHasSubscription] = useState(false)
   useEffect(() => {
     if (isOpen) {
+      
       fetchPlans();
     }
   }, [isOpen]);
@@ -60,8 +63,8 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }: Props) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 overflow-y-auto px-4 py-30">
-      <div className="bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat rounded-lg p-6 max-w-4xl w-full max-h-[90vh] relative">
+    <div className="fixed inset-0 bg-black/80 bg-opacity-40 flex items-center justify-center z-50 overflow-y-auto px-4 py-30">
+      <div className="rounded-lg p-6 max-w-4xl w-full max-h-[90vh] relative">
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
           onClick={onClose}
@@ -81,6 +84,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }: Props) => {
           </p>
           <div className="flex justify-center">
             <button
+            onClick={()=>navigate('/user/subscription')}
               className="bg-[#FFC436] font-medium text-black px-6 py-3 rounded-lg hover:bg-[#0f0f0f] hover:text-[#FFC436]"
             >
               Go to my plan
@@ -90,7 +94,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }: Props) => {
         
 
         ):(
-          <div className="flex flex-wrap justify-center gap-6 text-white">
+          <div className="flex flex-wrap justify-center gap-6 bg-black/20 text-white">
             {plans.map((plan) => (
               <div
                 key={plan._id}

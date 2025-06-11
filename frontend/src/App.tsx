@@ -26,8 +26,28 @@ import UserSingleTrainer from "./pages/user/UserSingleTrainer";
 import UserSubscriptionPage from "./pages/user/UserSubscriptionPage";
 import AdminSubscribedUsers from "./pages/admin/AdminSubscribedUsers";
 import SingleUserSubscriptions from "./pages/admin/SingleUserSubscriptions";
+import TrainerBookedSession from "./pages/trainer/TrainerBookedSessions";
+import UserBookings from "./pages/user/UserBookings";
+import AdminSingleTrainer from "./pages/admin/AdminSingleTrainer";
+import AdminSingleUser from "./pages/admin/AdminSingleUser";
+import { useEffect } from "react";
+import { socket } from "./utils/socket";
 function App() {
-  
+  useEffect(() => {
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("Socket connected with ID:", socket.id);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
   return (
     <Router>
       <Routes>
@@ -58,8 +78,10 @@ function App() {
           <Route path="/user" element={<UserDashboard />}>
             <Route path="profile" element={<UserProfile />} />
             <Route path="subscription" element={<UserSubscriptionPage />} />
+            <Route path="my-bookings" element={<UserBookings />} />
           </Route>
           <Route path="/trainers" element={<UserTrainerPage />} />
+
           <Route
             path="/trainers/single-trainer/:id"
             element={<UserSingleTrainer />}
@@ -70,22 +92,22 @@ function App() {
 
         <Route element={<AdminProtectedRoute />}>
           <Route path="/admin" element={<AdminDashboard />}>
-            <Route
-              path="usermanagement"
-              element={<AdminUserManagement />}
-            />
+            <Route path="usermanagement" element={<AdminUserManagement />} />
+            <Route path="usermanagement/:userId" element={<AdminSingleUser />} />
+
             <Route
               path="trainermanagement"
               element={<AdminTrainerManagement />}
             />
             <Route
+              path="trainermanagement/:trainerId"
+              element={<AdminSingleTrainer />}
+            />
+            <Route
               path="subscriptionmanagement"
               element={<AdminSubscriptionManagement />}
             />
-            <Route
-              path="subscribedusers"
-              element={<AdminSubscribedUsers />}
-            />
+            <Route path="subscribedusers" element={<AdminSubscribedUsers />} />
             <Route
               path="subscribedusers/:userId"
               element={<SingleUserSubscriptions />}
@@ -93,17 +115,16 @@ function App() {
           </Route>
         </Route>
 
-      
         <Route element={<TrainerProtectedRoute />}>
           <Route path="/trainer" element={<TrainerDashboard />}>
             <Route path="profile" element={<TrainerProfile />} />
             <Route path="availability" element={<TrainerAvailability />} />
+            <Route path="bookedsessions" element={<TrainerBookedSession />} />
           </Route>
-          <Route path="profile-complete" element={<TrainerProfileComplete />} />
         </Route>
         {/* </Routes> */}
       </Routes>
-    </Router>
+    </Router>   
   );
 }
 

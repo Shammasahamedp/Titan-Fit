@@ -57,9 +57,10 @@ export default function Login() {
         
         dispatch(trainerLoginStart());
         const response = await login(data);
-        console.log(response);
         if (response?.data.success) {
+          console.log('successfully loged')
           const {_id,name,email} = response.data.data.trainer
+          console.log(response.data.data)
           dispatch(
             trainerLoginSuccess({
               trainer: {_id,name,email,role:'trainer'},
@@ -72,12 +73,12 @@ export default function Login() {
       }
      
     } catch (error: any) {
+      console.log(error)
      showErrorToast(error)
       if(data.role === 'user'){
         if(!error.response){
           dispatch(loginFailure(commonErrors.NETWORK_ISSUE))
         }
-        console.log('this is error',error)
         dispatch(loginFailure(error?.response.data.message))
       }else if(data.role === 'trainer'){
         if(!error.response){
@@ -85,8 +86,10 @@ export default function Login() {
           showErrorToast(error)
         }
         dispatch(trainerLoginFailure(error?.response.data.message))
+      }else{
+          showErrorToast(error)
       }
-      showErrorToast(error)
+      
     }
   };
   const handleGoogleSignin = async (response:CredentialResponse)=>{
@@ -132,8 +135,10 @@ export default function Login() {
           token:tokenResponse.data.data.accessToken
         }))
         showSuccessToast(tokenResponse.data.data.message)
-
+         console.log('dddddddddata',tokenResponse.data.data)
         if(tokenResponse.data.data.trainerNew){
+          console.log('inside',tokenResponse.data.data.trainerNew)
+          console.log('inside ')
              navigate('/trainer/profile-complete')
              return 
         }else{

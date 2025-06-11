@@ -15,7 +15,6 @@ export class SubscriptionController{
               res.status(201).json({success:true,message:subscriptionMessage.SUBSCRIPTION_ADD_SUCCESSFULL})
           } catch (error:any) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:subscriptionMessage.SUBSCRIPTION_ADD_FAILURE})
           }
     }
 
@@ -25,7 +24,6 @@ export class SubscriptionController{
             res.status(200).json({success:true,message:subscriptionMessage.SUBSCRIPTION_ADD_SUCCESSFULL,subscriptions})
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:subscriptionMessage.SUBSCRIPTION_GET_FAILURE})
         }
     }
 
@@ -35,17 +33,15 @@ export class SubscriptionController{
             res.status(200).json({success:true,message:subscriptionMessage.SUBSCRIPTION_EDIT_SUCCESSS})
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:true,message:subscriptionMessage.SUBSCRIPTION_EDIT_FAILURE})
         }
     }
-
+ 
     async getActiveSubscription(req:Request,res:Response):Promise<void>{
         try {
             const activeSubscriptions = await this.subscriptionService.getActiveSubscription()
             res.status(200).json({success:true,message:subscriptionMessage.SUBSCRIPTION_GET_SUCCESSFULL,activeSubscriptions})
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:subscriptionMessage.SUBSCRIPTION_GET_FAILURE})
         }
     }
 }

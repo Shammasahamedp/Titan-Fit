@@ -22,7 +22,6 @@ export class AuthController {
 
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:commonErrors.ERROR_EMAIL_CHECK})
         }
     }
 
@@ -49,7 +48,6 @@ export class AuthController {
             
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:commonErrors.GOOGLE_LOGIN_FAILURE,error})
         }
     }
 
@@ -63,7 +61,6 @@ export class AuthController {
             res.status(200).json({success:true,message:commonMessages.LOGOUT_SUCCESS})
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:commonErrors.LOGOUT_FAILURE})
         }
     }
 }

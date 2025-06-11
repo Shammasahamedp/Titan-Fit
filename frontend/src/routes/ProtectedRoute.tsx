@@ -8,7 +8,6 @@ const ProtectedRoute = () => {
   const location = useLocation()
     const user = useSelector((state:RootState)=>state.user.user)
     const userNew = getProfileCompletionStatus()
-    console.log('th',userNew)
     if(user&&userNew === 'true') {
       return <Navigate to = '/user/profile-complete'/>
        

@@ -1,18 +1,17 @@
-import React from "react";
-import Navbar from "@/components/userComponents/Navbar";
-import SideBar from "@/components/common/SideBar";
+import React, { useEffect } from "react";
 import { useState } from "react";
-
 import { ToastContainer } from "react-toastify";
 import {   logoutUser } from "@/api/auth";
 import ConfirmPasswordModal from "@/modal/ConfirmPasswordModal";
-import { checkPasswordMatching } from "@/api/user-apicalls";
+import { checkPasswordMatching, getProfile } from "@/api/user-apicalls";
 import { resetPassword } from "@/api/user-apicalls";
 import ResetPasswordModal from "@/modal/ResetPasswordModal";
 import { Outlet } from "react-router-dom";
 import { showErrorToast,showSuccessToast } from "@/utils/toast";
 import { IUserProfile } from "@/interfaces/user-interfaces";
 import { uploadUserProfileImage } from "@/api/user-apicalls";
+import NewNavbar from "@/components/userComponents/NewNavbar";
+import NewSidebar from "@/components/userComponents/NewSidebar";
 const UserDashboard: React.FC = () => {
       const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
  
@@ -44,34 +43,48 @@ const UserDashboard: React.FC = () => {
     }
   }
  
+  useEffect(()=>{
+    console.log('sdf',userProfile)
+    if(userProfile === null){ 
+      (async()=>{
+        try {
+          console.log('asdf')
+          const data = await getProfile()
+           
+          if(data){
+            console.log('data',data)
+            setUserProfile(data)
+          }
+        } catch (error) {
+          showErrorToast(error)
+        }
+      })()
+    }
+  },[userProfile])
   
 
 
   
   return (
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-      <Navbar logout={logoutUser}  role='user'/>
+      <NewNavbar role="user" logout={logoutUser}/>
       <div className="flex flex-1   text-white">
-        {/* Sidebar */}
 
-        <SideBar
-        profilePicture={userProfile?.profilePicture}
+      <NewSidebar profilePicture={userProfile?.profilePicture}
         uploadProfilePicApi={uploadUserProfileImage}
         role="user"
           items={[
-            ["my bookings",'bookings'],
-            ["my meal plan",'mealplan'],
+            ["my profile",'profile'],
+            ["my bookings",'my-bookings'],
             ["my subscription",'subscription'],
-          ]}
-        />
 
-        {/* Main Content */}
-        <div className="flex-1 ml-0  p-4">
-  <Outlet context={{userProfile,setUserProfile,setConfirmPasswordModal}} />
+          ]}/>
+        <div className="flex-1 ml-0  pt-10 p-4">
+  <Outlet context={{setConfirmPasswordModal}} />
 </div>
         
       </div>
-      {isModalOpen&&
+      {isModalOpen&&  
         <ConfirmPasswordModal onClose={()=>setConfirmPasswordModal(false)} onSubmit={confirmPassword}/>
       }
       {

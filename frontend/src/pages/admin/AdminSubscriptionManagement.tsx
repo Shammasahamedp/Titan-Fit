@@ -99,7 +99,7 @@ reset
           {showModal && (
              <>
              <div className="flex justify-center mb-6">
-               <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
+               <div className="bg-black/30 z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
                <button
         onClick={() => {
           setEditSubscription(null)
@@ -109,7 +109,7 @@ reset
       >
         &times;
       </button>
-                 <h2 className="text-2xl font-bold text-center text-black">
+                 <h2 className="text-2xl font-bold text-center text-white">
                    Subscription
                  </h2>
                  <p className="text-center text-sm text-black mt-4"></p>
@@ -167,7 +167,7 @@ reset
                  <div className="flex justify-center">
                    <button
                      onClick={handleSubmit(onSubmit)}
-                     className="w-1/3  bg-black text-white py-2 mt-6 rounded-lg hover:bg-gray-700 transition"
+                     className="w-1/3   text-black py-2 mt-6 rounded-lg bg-[#FFC436] hover:text-[#FFC436] hover:bg-black transition"
                    >
                     { editSubscription ? 'Edit':'Add'}
                    </button>
@@ -176,11 +176,13 @@ reset
              </div>
            </>
           )}
+          {!showModal &&
+          <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {currentSubscription.map((sub, index) => (
               <div
                 key={index}
-                className="bg-white text-black rounded-lg shadow-lg p-4 flex flex-col justify-between"
+                className="bg-black/50 text-white rounded-lg border border-gray-700 shadow-lg p-4 flex flex-col justify-between"
               >
                 <div>
                   <h3 className="text-xl font-bold mb-2">{sub.planName}</h3>
@@ -190,8 +192,9 @@ reset
                   <p><strong>Credits:</strong> {sub.credits}</p>
                   <p><strong>Status:</strong> {sub.isActive ? "Active" : "Inactive"}</p>
                 </div>
-                <Button
-                  className="mt-4 bg-[#FFC436] text-black hover:bg-black hover:text-[#FFC436]"
+                <div className="flex justify-center">
+                  <Button
+                  className="mt-4 w-1/4 bg-[#FFC436] text-black hover:bg-black hover:text-[#FFC436]"
                   onClick={() =>
                     {
                       setEditSubscription(sub)
@@ -200,6 +203,7 @@ reset
                 >
                   Edit
                 </Button>
+                </div>
               </div>
             ))}
           </div>
@@ -222,6 +226,8 @@ reset
           Next
         </button>
       </div>
+          </>
+          }
 
          
         </div>

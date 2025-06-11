@@ -8,7 +8,6 @@ export interface IBaseRepository<T>{
     findByIdAndUpdate(id:string,update:UpdateQuery<T>,options?:{new?:boolean}):Promise<T|null>
     findOneAndUpdate(filter:FilterQuery<T>,update:UpdateQuery<T>,options?:{new:boolean}):Promise<T|null>
     
-
     create(data:Partial<T>):Promise<T|null>;
     insertMany(docs:Partial<T[]>):Promise<T[]>
     save(doc:T):Promise<T>

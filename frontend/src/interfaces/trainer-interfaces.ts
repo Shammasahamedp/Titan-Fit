@@ -10,7 +10,8 @@ export interface ITrainerProfile{
     profilePicture?:string;
     trainerCertificate:string[];
     yearsOfExperience:number;
-    
+    approved?:boolean;
+        rejectedDate:string;
 }
 
 export interface ITrainerEditProfile{
@@ -49,15 +50,19 @@ export interface ITrainerAvailableSlots{
     
 }
 
-export interface IAvailability{
+export interface IAvailability {
     date:Date,
-    timeSlots:[{
+   timeSlots:ISlot[]
+    isCompleted?:boolean
+
+
+}
+
+export interface ISlot{
         startTime:string,
         isBooked:boolean
-    }],
-    isCompleted:boolean
-
-
+        userId?:string
+    
 }
 
 

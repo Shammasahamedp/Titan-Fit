@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 export const signupSchema = yup.object().shape({
-  name: yup.string().required("Name is required"),
+  name: yup.string().trim().min(4,'name cannot be empty or below 4 character').required("Name is required"),
   email: yup
     .string()
     .email("Invalid email format")

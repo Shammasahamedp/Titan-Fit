@@ -3,17 +3,17 @@ import InputField from "@/components/common/InputField";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import SelectField from "@/components/common/SelectField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { showSuccessToast } from "@/utils/toast";
 import { showErrorToast } from "@/utils/toast";
 import { ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
 import { ITrainerEditProfile } from "@/interfaces/trainer-interfaces";
-import { editTrainerProfile } from "@/api/trainer-apicalls";
+import { editTrainerProfile, getTrainerProfile } from "@/api/trainer-apicalls";
 import { trainerProfileEditSchema } from "@/schemas/trainer-profile-edit";
 import { useDispatch } from "react-redux";
 import { trainerLoginSuccess } from "@/reduxStore/slices/trainer-slice";
-import { getAccessToken } from "@/api/localStorage";
+import { getAccessToken, removeProfileCompletionStatus } from "@/api/localStorage";
 
 export default function UserProfileComplete() {
   const [trainerData, setTrainerData] = useState<ITrainerEditProfile | null>(
@@ -24,18 +24,25 @@ export default function UserProfileComplete() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ITrainerEditProfile>({
     resolver: yupResolver(trainerProfileEditSchema),
   });
   const onSubmit = async (data: ITrainerEditProfile) => {
-    console.log(errors);
+    console.log('d'
+      
+    )
+    console.log(errors)
     try {
+      
+      console.log('onsubmit')
       setTrainerData(data);
       const response = await editTrainerProfile(data);
       if (response.success) {
         showSuccessToast(response.message);
-        const {_id,name,email} = response.trainer
+        console.log(response.returnedTrainerProfile)
+        const {_id,name,email} = response.returnedTrainerProfile
         dispatch(
           trainerLoginSuccess({
             trainer:{_id,name,email},
@@ -43,14 +50,32 @@ export default function UserProfileComplete() {
             token:getAccessToken() as string
           })
         )
-        navigate("/trainer/dashboard");
+        removeProfileCompletionStatus()
+        navigate("/trainer/profile");
       }
     } catch (error: any) {
       showErrorToast(error)
      
     }
   };
+  useEffect(() => {
+  console.log("Errors changed:", errors);
+}, [errors]);
 
+
+  useEffect(()=>{
+    const fetchTrainerDetails = async()=>{
+      try {
+         const response = await getTrainerProfile()
+         if(response){
+          reset({email:response.trainerProfile.email})
+         }
+      } catch (error) {
+        showErrorToast(error)
+      }
+    }
+    fetchTrainerDetails()
+  },[])    
   return (
     <motion.div
       initial={{ opacity: 1, scale: 1 }}
@@ -65,8 +90,9 @@ export default function UserProfileComplete() {
           className="absolute top-6 left-6 w-24 h-auto z-10"
         />
         <div className="absolute inset-0 bg-black/60"></div>
-
-        <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
+<div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
+<form  onSubmit={handleSubmit(onSubmit)}>
+          {/* <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl"> */}
           <h2 className="text-2xl font-bold text-center text-black">Profile Data</h2>
           
           <div className="grid grid-cols-2 gap-4">
@@ -84,9 +110,10 @@ export default function UserProfileComplete() {
             <InputField
               label="Email"
               type="email"
-              disabled
-              placeholder="Enter Your Email"
-              register={register("email")}
+              //  value={trainerData?.email}
+              disabled = {true}
+             
+              register={register("email")}   
               error={errors.email?.message}
             />
 
@@ -105,10 +132,17 @@ export default function UserProfileComplete() {
             {/* age */}
             <InputField
               label="Age"
-              type="number"
+              type="number"  
               placeholder="Enter Your Age"
               register={register("age", { valueAsNumber: true })}
               error={errors.age?.message}
+            />
+           <InputField
+              label="Phone"
+              type="string"
+              placeholder="Enter Your Phone number"
+              register={register('phone')}
+              error={errors.phone?.message}
             />
 
             {/*  Years of experience */}
@@ -131,13 +165,16 @@ export default function UserProfileComplete() {
 
           <div className="flex justify-center">
             <button
-              onClick={handleSubmit(onSubmit)}
+type="submit"             
               className="w-1/3  bg-black text-white py-2 mt-6 rounded-lg hover:bg-gray-700 transition"
             >
               Update profile
             </button>
           </div>
-        </div>
+        {/* </div> */}
+        </form>
+</div>
+        
       </div>
 
       <ToastContainer />

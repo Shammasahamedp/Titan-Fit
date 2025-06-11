@@ -1,12 +1,9 @@
 import {
   ITrainerDocument,
-  ITrainerProfile,
   ITrainersAvailabilityDocument,
-  ITrainerSignUp,
 } from "../../interfaces/trainerInterfaces";
 import { ITrainerRepository } from "./ItrainerRepository";
 import { trainerModel } from "../../models/trainer/trainerModel";
-import { IUserDocument } from "../../interfaces/userInterfaces";
 import { BaseRepository } from "../baseRepository";
 
 export class TrainerRepository
@@ -69,9 +66,6 @@ export class TrainerRepository
   ): Promise<ITrainersAvailabilityDocument[] | null> {
     console.log("d", skip, "d", search, "d", date);
     const pipeline: any[] = [];
-    console.log(typeof date,'type')
-    console.log(date)
-    console.log(new Date(new Date(date).getTime()+86400000))
     const matchStage: any = { approved: true };
     if (search) {
       matchStage.$text = { $search: search };
@@ -115,55 +109,12 @@ export class TrainerRepository
     });
 
     pipeline.push({ $skip: skip });
-    pipeline.push({ $limit: 2 });
+    pipeline.push({ $limit: 3});
 
     const result = await trainerModel.aggregate(pipeline);
-        console.log(result)
     return result
 
-    //   let something=await trainerModel.aggregate([
-    //     {
-    //       $match: {
-    //         approved: true,
-    //         $text: { $search: search||''},
-    //       },
-    //     },
-    //     {
-    //       $lookup: {
-    //         from: "availabilities",
-    //         localField: "_id",
-    //         foreignField: "trainerId",
-    //         as: "availability",
-    //       },
-    //     },
-    //     {
-    //       $unwind: {
-    //         path: "$availability",
-    //         preserveNullAndEmptyArrays: true,
-    //       },
-    //     },
-    //     {
-    //       $match: {
-    //         "availability.availability.date": date||'',
-    //       },
-    //     },
-    //     {
-    //       $project: {
-    //         _id: 1,
-    //         name: 1,
-    //         profilePicture: 1,
-    //         availability: 1,
-    //       },
-    //     },
-    //     {
-    //       $skip: skip,
-    //     },
-    //     {
-    //       $limit: 2,
-    //     },
-    //   ]);
-    //   console.log(something)
-    //   return something
+    
   }
 
   // async getTrainers(): Promise<ITrainerDocument[] | null> {

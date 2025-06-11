@@ -22,6 +22,7 @@ export default function TrainerSignup() {
 
   const [isLoading,setIsLoading] = useState(false)
   const [showOtpModal, setShowOtpModal] = useState(false);
+  const [showPassword,setShowPassword] = useState(false)
   const navigate = useNavigate()
   const {
     register,
@@ -92,7 +93,7 @@ export default function TrainerSignup() {
       if(error.response.data.message === 'Your otp is invalid , check again or resend after 30 seconds'){
         return 
       }
-      setShowOtpModal(false)
+      // setShowOtpModal(false)
     }finally{
       setIsLoading(false)
     }
@@ -116,12 +117,11 @@ export default function TrainerSignup() {
         <div className="relative z-10">
           <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
             <h2 className="text-2xl font-bold text-center text-black">
-              Sign Up
+              Trainer Sign Up
             </h2>
             <p className="text-center text-sm text-black mt-4">
               <Link to="/signup" className="text-black hover:underline">
-                I am a user
-              </Link>
+go to user signup              </Link>
             </p>
             <div className="grid grid-cols-2 gap-4">
               {/* Name Input */}
@@ -145,7 +145,7 @@ export default function TrainerSignup() {
               {/* Password Input */}
               <InputField
                 label="Password"
-                type="password"
+                type={showPassword? 'text':'password'}
                 placeholder="Enter Your Password"
                 register={register("password")}
                 error={errors.password?.message}

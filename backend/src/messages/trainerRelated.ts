@@ -18,5 +18,6 @@ export const trainerMessages = {
     PASSWORD_CHECK_FAILURE:'Password verification is failure',
     PASSWORD_CHECK_ERROR:'Error occured during password verification',
     APPROVED_TRAINERS_NOT_FOUND:'Approved Trainers are not found',
-    GET_APPROVED_TRAINERS_SUCCESS:'Successfully fetch approved trainers'
+    GET_APPROVED_TRAINERS_SUCCESS:'Successfully fetch approved trainers',
+    
 }

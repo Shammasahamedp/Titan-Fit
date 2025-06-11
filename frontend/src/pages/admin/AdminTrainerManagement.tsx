@@ -2,35 +2,26 @@
 import NewTable from "@/components/common/NewTable"
 import { useEffect, useState } from "react"
 import { ITrainers } from "@/interfaces/trainer-interfaces"
-import { fetchTrainers, toggleTrainer } from "@/api/admin-apicalls"
+import { fetchTrainers  } from "@/api/admin-apicalls"
+import { useNavigate } from "react-router-dom"
 import { showErrorToast } from "@/utils/toast"
 const AdminTrainerManagement = () => {
     const [trainers,setTrainers] = useState<ITrainers[]>([])
+    const navigate = useNavigate()
     useEffect(()=>{
           const getTrainers = async()=>{
-             const response = await fetchTrainers()
+            try {
+                const response = await fetchTrainers()
              if(response?.data.trainers){
                 setTrainers(response.data.trainers)
              }
+            } catch (error) {
+               showErrorToast(error)
+            }
           }
           getTrainers()
     },[])
-    const handleToggleApprove = async(trainerId : string,approved:boolean)=>{
-        try {
-            const response = await toggleTrainer(trainerId,approved)
-            if(response?.data.success){
-                setTrainers((prev)=>
-                  prev.map((trainer)=>
-                       trainer._id === response.data.trainer._id
-                       ?{...trainer,approved:response.data.trainer.approved}
-                       :trainer
-                  )
-                )
-            }
-        } catch (error) {
-            showErrorToast(error)
-        }
-    }
+   
   return (
    
           <div className="flex-1  p-6 pt-16 md:ml-64 overflow-x-auto">
@@ -39,14 +30,14 @@ const AdminTrainerManagement = () => {
              </h2>
              <NewTable columns={['profilePicture','name','email','phone','gender','yearsOfExperience']} tableDatas={trainers} filterKeys={['name','email','phone']} rederActions={(trainer)=>(
                 <button
-                onClick={() => handleToggleApprove(trainer._id,trainer.approved)}
-                className={`px-3 py-1 rounded ${
-                  trainer?.approved?  "bg-red-500":"bg-green-500" 
-                } text-white`}
+                onClick={() => navigate(`/admin/trainermanagement/${trainer._id}`)}
+                 className=" space-x-2 bg-[#FFC436] text-black px-4 font-semibold py-2 rounded hover:bg-black hover:text-[#FFC436] transition-colors"
               >
-                {trainer?.approved ? "Reject" : "Approve"}
+                {/* {trainer?.approved ? "Reject" : "Approve"} */}
+                View 
               </button>
              )} />
+            
           </div>
       
   )

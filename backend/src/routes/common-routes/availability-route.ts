@@ -11,5 +11,10 @@ const availabilityService = new AvailabilityService(availabilityRepository)
 const availabilityController = new AvailabilityController(availabilityService)
 
 availabilityRouter.get('/get',jwtTokenVerify(['user','trainer','admin']),(req:Request,res:Response)=>availabilityController.getAvailbility(req,res))
+availabilityRouter.get('/get-booked-sessions',jwtTokenVerify(['trainer','admin']),(req:Request,res:Response)=>availabilityController.getBookedSessions(req,res))
+availabilityRouter.get('/get-trainer-sessions',jwtTokenVerify(['admin']),(req:Request,res:Response)=>availabilityController.getTrainerBookedSessions(req,res))
+
+availabilityRouter.get('/get-user-booked-sessions',jwtTokenVerify(['user']),(req:Request,res:Response)=>availabilityController.getUserBookedSession(req,res))
+
 
 export default availabilityRouter

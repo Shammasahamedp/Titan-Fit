@@ -108,7 +108,7 @@ export class AuthService implements IAuthService{
                         const trainer:ITrainerDocument|null = await newTrainer.save()
                         const accessToken = generateAccessToken(trainer?._id.toString() as string,'trainer')
                         const refreshToken = generateRefreshToken(trainer?._id.toString() as string,'trainer')
-                            return {trainer,accessToken,refreshToken,trainerNew:true}
+                            return {trainer,accessToken,refreshToken,userNew:true}
                     }
                 }
                 

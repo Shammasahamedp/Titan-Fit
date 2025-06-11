@@ -14,7 +14,7 @@ const AdminSubscribedUsers = () => {
        const response = await getSubscribedUsers()
        console.log(response)
        const users = response?.data.subscribers
-
+        console.log('userss',users)
       setSubscribers(users)
 
       console.log(subscribers)
@@ -42,7 +42,7 @@ const AdminSubscribedUsers = () => {
           </div>
           <div className="w-full overflow-x-auto">
     <NewTable
-      columns={['name','planName','fitnessLevel','status','totalCredits','creditsRemaining']}
+      columns={['name','planName','status','totalCredits','creditsRemaining']}
       tableDatas={subscribers}
       filterKeys={['name']}
      rederActions={(user)=>(

@@ -35,6 +35,8 @@ export interface ITrainerProfile{
     age:number;
     yearsOfExperience:number;
     bio:string;
+    approved?:boolean;
+    rejectedDate:Date;
     profilePicture?:string;
     trainerCertificate:string[]
 

@@ -10,7 +10,6 @@ import { adminLogout } from "@/reduxStore/slices/admin-slice";
 import { store } from "@/reduxStore/store";
 
 const API = import.meta.env.VITE_BASE_URL
-console.log('llllllllllllll',API)
 export const login = async(loginData:LoginFormInput)=>{
     try {
         const response = await axiosInstance.post(`${API}/${loginData.role}/auth/login`,{email:loginData.email,password:loginData.password},{withCredentials:true})

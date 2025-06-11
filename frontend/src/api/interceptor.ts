@@ -1,5 +1,5 @@
 import { clearToken, getAccessToken } from "./localStorage";
-import {authLogout, refreshToken} from './auth'
+import {authLogout, logoutTrainer, refreshToken} from './auth'
 import { axiosInstance } from "./axiosInstance";
 import { logout } from "@/reduxStore/slices/user-slice";
 import { store } from "@/reduxStore/store";
@@ -20,6 +20,7 @@ const processQueue = (error:any,token:string|null=null)=>{
 axiosInstance.interceptors.request.use(
     (config)=>{
         const accessToken = getAccessToken()
+        console.log('token',accessToken)
         if(accessToken){
             config.headers["Authorization"] = `Bearer ${accessToken}`
         }
@@ -60,7 +61,7 @@ axiosInstance.interceptors.response.use(
                     role = state.user.user.role;
                   } else if (state.trainer?.trainer?.role) {
                     role = state.trainer.trainer.role;
-                  } else if (state.admin?.admin?.role) {
+                    } else if (state.admin?.admin?.role) {
                     role = state.admin.admin.role;
                   }
                   if(!role) throw new Error('Role is required to refresh the token')
@@ -76,7 +77,7 @@ axiosInstance.interceptors.response.use(
                 isRefreshing = false
             }
         }
-        if(error.response?.status===403){
+        if(error.response?.status===403 && error.response.data.role === 'user'){
             authLogout()
            clearToken()
            store.dispatch(logout())

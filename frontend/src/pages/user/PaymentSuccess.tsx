@@ -41,7 +41,7 @@ export default function PaymentSuccess() {
   return (
     <>
       <div className="flex flex-col items-center justify-center min-h-screen bg-yellow-50 p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-lg text-center w-full max-w-md">
+        <div className="bg-black p-8 rounded-2xl shadow-lg text-center w-full max-w-md">
           <svg
             className="mx-auto mb-4 w-16 h-16 text-[#FFC436]"
             fill="none"
@@ -52,11 +52,11 @@ export default function PaymentSuccess() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
           <h2 className="text-2xl font-bold text-[#FFC436] mb-2">Payment Successful!</h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-white mb-6">
             Thank you for your purchase. Here are your payment details:
           </p>
 
-          <div className="text-left text-gray-700 space-y-4 mb-6">
+          <div className="text-left  text-white space-y-4 mb-6">
             <div className="overflow-x-auto">
               <p>
                 <span className="font-semibold">Payment ID:</span>

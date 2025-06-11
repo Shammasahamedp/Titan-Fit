@@ -1,5 +1,3 @@
-import Navbar from "@/components/userComponents/Navbar";
-import SideBar from "@/components/common/SideBar";
 import { ToastContainer } from "react-toastify";
 import {
   ITrainerProfile,
@@ -16,6 +14,8 @@ import ResetPasswordModal from "@/modal/ResetPasswordModal";
 import { resetPassword } from "@/api/trainer-apicalls";
 import ConfirmPasswordModal from "@/modal/ConfirmPasswordModal";
 import { Outlet } from "react-router-dom";
+import NewSidebar from "@/components/userComponents/NewSidebar";
+import NewNavbar from "@/components/userComponents/NewNavbar";
 const TrainerDashboard = () => {
   const [trainerProfile, setTrainerProfile] = useState<ITrainerProfile | null>(
     null
@@ -52,11 +52,13 @@ const TrainerDashboard = () => {
   
   return (
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-      <Navbar logout={logoutTrainer} role="trainer" />
+      {/* <Navbar logout={logoutTrainer} role="trainer" /> */}
+            <NewNavbar role="trainer" logout={logoutTrainer}/>
+
       <div className="flex flex-1   text-white">
         {/* Sidebar */}
 
-        <SideBar
+        {/* <SideBar
           profilePicture={trainerProfile?.profilePicture}
           uploadProfilePicApi={uploadTrainerProfileImage}
           role="trainer"
@@ -64,12 +66,19 @@ const TrainerDashboard = () => {
             ["my bookings",'availability'],
            [ "my wallet",'wallet'],
           ]}
-        />
+        /> */}
+        <NewSidebar profilePicture={trainerProfile?.profilePicture}
+        uploadProfilePicApi={uploadTrainerProfileImage}
+        role="trainer"
+          items={[
+            ["my profile",'profile'],
+            ["my bookings",'availability'],
+          ]}/>
 
         {/* Main Content */}
         {/* <Outlet context={{trainerProfile,setTrainerProfile,setPasswordModal}}/>
          */}
-         <div className="flex-1 ml-0 p-4">
+         <div className="flex-1 ml-0 pt-10 p-4 overflow-x-auto">
   <Outlet context={{trainerProfile,setTrainerProfile,setPasswordModal}} />
 </div>
 

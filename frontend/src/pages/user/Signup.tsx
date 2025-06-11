@@ -105,11 +105,10 @@ export default function Signup() {
         <div className="absolute inset-0 bg-black/60"></div>
 
         <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
-          <h2 className="text-2xl font-bold text-center text-black">Sign Up</h2>
+          <h2 className="text-2xl font-bold text-center text-black">User Sign Up</h2>
           <p className="text-center text-sm text-black mt-4">
             <Link to="/trainer/signup" className="text-black hover:underline">
-              I am a trainer
-            </Link>
+go to trainer signup            </Link>
           </p>
           <div className="grid grid-cols-2 gap-4">
             {/* Name Input */}

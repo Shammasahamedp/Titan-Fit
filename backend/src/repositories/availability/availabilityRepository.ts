@@ -1,44 +1,70 @@
 import { TypeOf } from "zod";
 import { availabilityModel } from "../../models/availability/availabilityModel";
-import { IAvailabilityDocument, IAvailableDate } from "../../models/availability/IavailabilityModel";
+import {
+  IAvailabilityDocument,
+  IAvailabilityPopulated,
+  IAvailableDate,
+  IUserBookedSessionPopulated,
+} from "../../models/availability/IavailabilityModel";
 import { BaseRepository } from "../baseRepository";
 import { IAvailabilityRepository } from "./IavailabilityRepository";
 import { Types } from "mongoose";
+import mongoose from "mongoose";
+export class AvailabilityRepository
+  extends BaseRepository<IAvailabilityDocument>
+  implements IAvailabilityRepository
+{
+  constructor() {
+    super(availabilityModel);
+  }
 
+  async updateAvailability(
+    trainerId: string,
+    availableDate: IAvailableDate
+  ): Promise<IAvailabilityDocument | null> {
+    return await availabilityModel.findOneAndUpdate(
+      { trainerId: trainerId },
+      { $push: { availability: availableDate } },
+      { new: true, upsert: true }
+    );
+  }
 
+  async isDateExist(trainerId: string, date: string): Promise<boolean | null> {
+    console.log(trainerId, "id", "date", date);
+    return await availabilityModel.findOne({
+      trainerId: trainerId,
+      availability: {
+        $elemMatch: {
+          date: {
+            $eq: new Date(date),
+          },
+        },
+      },
+    });
+  }
 
-export class AvailabilityRepository extends BaseRepository<IAvailabilityDocument> implements IAvailabilityRepository{
-    constructor(){
-        super(availabilityModel)
-    }
+  async updateExistingDateAvailability(
+    trainerId: string,
+    availableDate: IAvailableDate
+  ): Promise<IAvailabilityDocument | null> {
+    return await availabilityModel.findOneAndUpdate(
+      { trainerId: trainerId, "availability.date": availableDate.date },
+      { $set: { "availability.$.timeSlots": availableDate.timeSlots } },
+      { new: true }
+    );
+  }
 
-    async updateAvailability(trainerId: string, availableDate: IAvailableDate): Promise<IAvailabilityDocument | null> {
-      return await availabilityModel.findOneAndUpdate({trainerId:trainerId},{$push:{availability:availableDate}},{new:true,upsert:true})
-    }
-    
-    async isDateExist(trainerId: string, date: string): Promise<boolean|null> {
-        console.log(trainerId,'id','date',date)
-        return   await availabilityModel.findOne({
-            trainerId: trainerId,
-            availability: {
-              $elemMatch: {
-                date: {
-                  $eq: new Date(date), 
-                },
-              },
-            },
-          });
-    }
+  async bookASession(
+    trainerId: Types.ObjectId,
+    userId: Types.ObjectId,
+    date: string,
+    startTime: string
+  ): Promise<IAvailabilityDocument | null> {
+    const [year, month, day] = date.split("-");
+    const formatted = `${year}-${month}-${day}`;
 
-    async updateExistingDateAvailability(trainerId: string, availableDate: IAvailableDate): Promise<IAvailabilityDocument | null> {
-        return await availabilityModel.findOneAndUpdate({trainerId:trainerId,'availability.date':availableDate.date},{$set:{'availability.$.timeSlots':availableDate.timeSlots}},{new:true})
-    }
-
-    async bookASession(trainerId: Types.ObjectId,userId:Types.ObjectId, date: string, startTime: string): Promise<IAvailabilityDocument | null> {
-      const [year, month, day] = date.split('-');
-      const formatted = `${year}-${month}-${day}`;
-      
-      return await availabilityModel.findOneAndUpdate({
+    return await availabilityModel.findOneAndUpdate(
+      {
         trainerId: trainerId,
         $expr: {
           $in: [
@@ -47,27 +73,365 @@ export class AvailabilityRepository extends BaseRepository<IAvailabilityDocument
               $map: {
                 input: "$availability",
                 as: "a",
-                in: { $dateToString: { date: "$$a.date", format: "%Y-%m-%d" } }
-              }
-            }
-          ]
-        }
+                in: { $dateToString: { date: "$$a.date", format: "%Y-%m-%d" } },
+              },
+            },
+          ],
+        },
       },
       {
         $set: {
-          'availability.$[outer].timeSlots.$[slot].isBooked': true,
-          'availability.$[outer].timeSlots.$[slot].userId': userId
-        }
+          "availability.$[outer].timeSlots.$[slot].isBooked": true,
+          "availability.$[outer].timeSlots.$[slot].userId": userId,
+        },
       },
       {
         arrayFilters: [
-          { 'outer.date': { $gte: new Date(date), $lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)) } },
-          { 'slot.startTime': startTime, 'slot.isBooked': false }
+          {
+            "outer.date": {
+              $gte: new Date(date),
+              $lt: new Date(
+                new Date(date).setDate(new Date(date).getDate() + 1)
+              ),
+            },
+          },
+          { "slot.startTime": startTime, "slot.isBooked": false },
         ],
-        new: true
+        new: true,
+      }
+    );
+  }
+
+  async getTrainersBookedSessions(
+    trainerId: string,
+    page: number,
+    search: string,
+    sortKey: string,
+    sortAsc: boolean | string
+  ): Promise<IAvailabilityPopulated | null> {
+    console.log("page", page,'trainerId',trainerId, "search", search, "sortKey", sortKey);
+
+    const PAGE_SIZE = 5;
+    const skip = (page - 1) * PAGE_SIZE;
+    
+    const pipeline: any[] = [
+      { $match: { trainerId: new mongoose.Types.ObjectId(trainerId) } },
+      { $unwind: "$availability" },
+      { $unwind: "$availability.timeSlots" },
+      { $match: { "availability.timeSlots.isBooked": true } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "availability.timeSlots.userId",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $addFields: {
+          "availability.timeSlots.userDetails": {
+            $let: {
+              vars: { user: { $arrayElemAt: ["$userDetails", 0] } },
+              in: {
+                name: "$$user.name",
+                email: "$$user.email",
+                fitnessLevel: "$$user.fitnessLevel",
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          date: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$availability.date",
+            },
+          },
+          isCompleted: "$availability.isCompleted",
+          timeSlot: {
+            startTime: "$availability.timeSlots.startTime",
+            userDetails: "$availability.timeSlots.userDetails",
+          },
+        },
+      },
+    ];
+
+    if (search && search !== "") {
+      pipeline.push({
+        $match: {
+          "timeSlot.userDetails.name": { $regex: search, $options: "i" },
+        },
       });
-      
-       
     }
+
+    if (sortKey) {
+      pipeline.push({
+        $sort: {
+          [sortKey]: false ? 1 : -1,
+        },
+      });
+    }
+
+    const countPipeline = [...pipeline, { $count: "total" }];
+    const countResult = await availabilityModel.aggregate(countPipeline);
+    const total = countResult[0]?.total || 0;
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+
+    pipeline.push({ $skip: skip }, { $limit: PAGE_SIZE });
+
+    const availability = await availabilityModel.aggregate(pipeline);
+    console.log(availability,totalPages,'hellllllllllllll')
+    return { availability, totalPages };
+  }
+
+  async getTrainerSessionsAdmin(
+  trainerId: string,
+  page: number,
+  search: string,
+  sortKey: string,
+  sortAsc: boolean | string
+): Promise<IAvailabilityPopulated | null> {
+  console.log("page", page, "trainerId", trainerId, "search", search, "sortKey", sortKey);
+
+  const PAGE_SIZE = 5;
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const pipeline: any[] = [
+    { $match: { trainerId: new mongoose.Types.ObjectId(trainerId) } },
+    { $unwind: "$availability" },
+    { $unwind: "$availability.timeSlots" },
+    {
+      $lookup: {
+        from: "users",
+        localField: "availability.timeSlots.userId",
+        foreignField: "_id",
+        as: "userDetails",
+      },
+    },
+    {
+      $addFields: {
+        "availability.timeSlots.userDetails": {
+          $cond: {
+            if: { $gt: [{ $size: "$userDetails" }, 0] },
+            then: {
+              name: { $arrayElemAt: ["$userDetails.name", 0] },
+              email: { $arrayElemAt: ["$userDetails.email", 0] },
+              fitnessLevel: { $arrayElemAt: ["$userDetails.fitnessLevel", 0] },
+            },
+            else: null,
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        date: {
+          $dateToString: {
+            format: "%Y-%m-%d",
+            date: "$availability.date",
+          },
+        },
+        isCompleted: "$availability.isCompleted",
+        isBooked: "$availability.timeSlots.isBooked",
+        time: "$availability.timeSlots.startTime",
+        userDetails: "$availability.timeSlots.userDetails",
+      },
+    },
+  ];
+
+  if (search && search.trim() !== "") {
+    pipeline.push({
+      $match: {
+        "userDetails.name": { $regex: search, $options: "i" },
+      },
+    });
+  }
+
+  if (sortKey) {
+    pipeline.push({
+      $sort: {
+        [sortKey]: sortAsc === true || sortAsc === "true" ? 1 : -1,
+      },
+    });
+  }
+
+  const countPipeline = [...pipeline, { $count: "total" }];
+  const countResult = await availabilityModel.aggregate(countPipeline);
+  const total = countResult[0]?.total || 0;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  pipeline.push({ $skip: skip }, { $limit: PAGE_SIZE });
+
+  const availability = await availabilityModel.aggregate(pipeline);
+  return { availability, totalPages };
+}
+
+
+async getUsersBookesSessions(
+  userId: string,
+  page: number,
+  search: string,
+  sortKey: string,
+  sortAsc: boolean | string
+): Promise<IUserBookedSessionPopulated | null> {
+  const PAGE_SIZE = 5;
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const pipeline: any[] = [
+    { $unwind: "$availability" },
+    { $unwind: "$availability.timeSlots" },
+    {
+      $match: {
+        "availability.timeSlots.userId": new mongoose.Types.ObjectId(userId),
+        "availability.timeSlots.isBooked": true,
+      },
+    },
+    {
+      $lookup: {
+        from: "trainers",
+        localField: "trainerId",
+        foreignField: "_id",
+        as: "trainerDetails"
+      }
+    },
+    {
+      $addFields: {
+        trainerDetails: { $arrayElemAt: ["$trainerDetails", 0] }
+      }
+    },
+  ];
+
+  if (search && search !== "") {
+    pipeline.push({
+      $match: {
+        "trainerDetails.name": { $regex: search, $options: "i" },
+      },
+    });
+  }
+
+  pipeline.push({
+    $project: {
+      _id: 0,
+      trainerName: "$trainerDetails.name",
+      trainerEmail: "$trainerDetails.email",
+      date: {
+        $dateToString: {
+          format: "%Y-%m-%d",
+          date: "$availability.date"
+        }
+      },
+      startTime: "$availability.timeSlots.startTime",
+      isCompleted: "$availability.isCompleted"
+    }
+  });
+
+  if (sortKey) {
+    pipeline.push({
+      $sort: {
+        [sortKey]: sortAsc ? 1 : -1,
+      },
+    });
+  }
+
+  const countPipeline = [...pipeline, { $count: "total" }];
+  const countResult = await availabilityModel.aggregate(countPipeline);
+  const total = countResult[0]?.total || 0;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  pipeline.push({ $skip: skip }, { $limit: PAGE_SIZE });
+
+  const sessions = await availabilityModel.aggregate(pipeline);
+
+  return { sessions, totalPages };
+}
+
+async getTrainersSlots(
+    trainerId: string,
+    page: number,
+    search: string,
+    sortKey: string,
+    sortAsc: boolean | string
+  ): Promise<IAvailabilityPopulated | null> {
+    console.log("page", page, "search", search, "sortKey", sortKey);
+
+    const PAGE_SIZE = 5;
+    const skip = (page - 1) * PAGE_SIZE;
+
+    const pipeline: any[] = [
+      { $match: { trainerId: new mongoose.Types.ObjectId(trainerId) } },
+      { $unwind: "$availability" },
+      { $unwind: "$availability.timeSlots" },
+      { $match: { "availability.timeSlots.isBooked": true } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "availability.timeSlots.userId",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $addFields: {
+          "availability.timeSlots.userDetails": {
+            $let: {
+              vars: { user: { $arrayElemAt: ["$userDetails", 0] } },
+              in: {
+                name: "$$user.name",
+                email: "$$user.email",
+                fitnessLevel: "$$user.fitnessLevel",
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          date: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$availability.date",
+            },
+          },
+          isCompleted: "$availability.isCompleted",
+          timeSlot: {
+            startTime: "$availability.timeSlots.startTime",
+            userDetails: "$availability.timeSlots.userDetails",
+          },
+        },
+      },
+    ];
+
+    if (search && search !== "") {
+      pipeline.push({
+        $match: {
+          "timeSlot.userDetails.name": { $regex: search, $options: "i" },
+        },
+      });
+    }
+
+    if (sortKey) {
+      pipeline.push({
+        $sort: {
+          [sortKey]: false ? 1 : -1,
+        },
+      });
+    }
+
+    const countPipeline = [...pipeline, { $count: "total" }];
+    const countResult = await availabilityModel.aggregate(countPipeline);
+    const total = countResult[0]?.total || 0;
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+
+    pipeline.push({ $skip: skip }, { $limit: PAGE_SIZE });
+
+    const availability = await availabilityModel.aggregate(pipeline);
+
+    return { availability, totalPages };
+  }
 
 }

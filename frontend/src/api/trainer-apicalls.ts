@@ -20,6 +20,7 @@ export const editTrainerProfile = async (trainerProfileData:ITrainerEditProfile)
         console.log('thiis is trainerprofiledata',trainerProfileData)//trainerProfileData
         const response = await axiosInstance.put(`${API}/trainer/editprofile`,trainerProfileData)
         if(response.data){
+            console.log(response.data)
             return response.data
         }
     } catch (error) {
@@ -85,13 +86,5 @@ export const uploadAvailability = async (availableSlots:ITrainerAvailableSlots)=
     }
 }
 
-export const getTrainerAvailability = async ()=>{
-    try {
-        const response = await axiosInstance.get(`${API}/get-availability`)
-        if(response.data){
-            return response
-        }
-    } catch (error) {
-        throw error
-    }
-}
+
+

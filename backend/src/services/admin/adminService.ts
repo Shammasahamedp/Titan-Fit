@@ -11,14 +11,23 @@ import { subscriptionMessage } from "../../messages/subscription-related";
 import { ISingleUserSubscriptions, ISubscriptionTableData } from "../../interfaces/subscriptionInterfaces";
 import { string } from "zod";
 import { userMessages } from "../../messages/userRelated";
+import { IAvailabilityDocument } from "../../models/availability/IavailabilityModel";
+import { trainerMessages } from "../../messages/trainerRelated";
+import { Types } from "mongoose";
+import { AvailabilityRepository } from "../../repositories/availability/availabilityRepository";
+import { IAvailabilityRepository } from "../../repositories/availability/IavailabilityRepository";
+import { availabilityMessages } from "../../messages/availability-related";
+import { sendMail } from "../../utils/nodeMailer";
 export class AdminService implements IAdminService{
     private adminRepository : AdminRepository
     private userRepository : IUserRepository
     private trainerRepository:ITrainerRepository
-    constructor(adminRepository:AdminRepository,userRepository:IUserRepository,trainerRepository:ITrainerRepository){
+    private availabilityRepository:IAvailabilityRepository
+    constructor(adminRepository:AdminRepository,userRepository:IUserRepository,trainerRepository:ITrainerRepository,availabilityRepository:IAvailabilityRepository){
         this.adminRepository = adminRepository
         this.userRepository = userRepository
         this.trainerRepository = trainerRepository
+        this.availabilityRepository = availabilityRepository
     }
    async loginAdmin(data: IAdminLogin): Promise<IAdminLoginResponse> {
         const admin = await this.adminRepository.findOne({email:data.email})
@@ -60,12 +69,16 @@ export class AdminService implements IAdminService{
         }
     }
    
-   async  changeTrainerApproval(trainerId: string,approved:boolean): Promise<ITrainerDocument> {
+   async  changeTrainerApproval(trainerId: string,approved:boolean,reason:string): Promise<ITrainerDocument> {
         try {
+            if(approved){
+               await this.trainerRepository.findByIdAndUpdate(trainerId,{rejectedDate:new Date()})
+            }
            const trainer= await this.trainerRepository.findByIdAndUpdate(trainerId,{approved:!approved},{new:true})
            if(!trainer){
             throw new AppError('trainer not found',404)
            }
+           await sendMail(trainer.email as string,'Admin Rejected',reason)
            return trainer
         } catch (error) {
             if(error instanceof AppError){
@@ -138,6 +151,51 @@ export class AdminService implements IAdminService{
                 throw error
             }
             throw new AppError('something went wrong while fetch subscriptions of the user',500)
+        }
+    }
+
+    async getSingleTrainer(trainerId:string): Promise<{ trainer: ITrainerDocument; availability: IAvailabilityDocument; }> {
+        try {
+            const trainer = await this.trainerRepository.findById(trainerId)
+            if(!trainer){
+                throw new AppError(trainerMessages.TRAINER_NOT_FOUND,404)
+            }
+            let newTrainerId = new Types.ObjectId(trainerId)
+            const availability = await this.availabilityRepository.findOne({trainerId:newTrainerId})
+            let newAvailability
+            if(!availability){
+                newAvailability = await this.availabilityRepository.create(
+                    {trainerId:newTrainerId,availability:[]}
+                )
+
+                if(newAvailability){
+                    return {trainer,availability:newAvailability}
+                }else{
+                    throw new AppError(availabilityMessages.AVAILABILITY_NOT_FOUND,404)
+                }
+            }
+            return {trainer,availability}
+        } catch (error) {
+            if(error instanceof AppError){
+                throw error 
+            }
+            throw new AppError('something went wrong while fetching trainer details',500)
+        }
+    }
+
+    async getSingleUser(userId: string): Promise<{ user: IUserDocument; } > {
+        try {
+            const user = await this.userRepository.findById(userId)
+            if(!user){
+                throw new AppError(userMessages.USER_NOT_FOUND,404)
+            }
+           
+            return {user}
+        } catch (error) {
+            if(error instanceof AppError){
+                throw error
+            }
+            throw new AppError('something went wrong while fetching user details',500)
         }
     }
     

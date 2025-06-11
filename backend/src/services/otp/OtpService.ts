@@ -25,6 +25,7 @@ export class OtpService implements IOtpService{
     async verifyOtp(email: string, enteredOtp: string): Promise<boolean> {
        try {
         const storedOtp = await this.otpRepository.getOtp(email)
+        console.log('store otp',storedOtp)
         if(storedOtp&&storedOtp===enteredOtp){
             await this.otpRepository.deleteOtp(email)
             return true

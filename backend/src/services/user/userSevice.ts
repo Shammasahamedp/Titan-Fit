@@ -51,7 +51,6 @@ export class UserService implements IUserService {
     if (!user) {
       throw new AppError("User not found",404);
     }else if(user.blocked){
-      console.log('inside blocked')
       throw new AppError('User is blocked , contact admin',403)
     }
     const isValid = comparePassword(data.password, user.password);
@@ -176,10 +175,13 @@ export class UserService implements IUserService {
   async getApprovedTrainers(page:number,limit:number,search:string,date:string): Promise<{trainers:ITrainerDocument[],total:number} | null> {
       try {
         const skip = (page -1) * limit
+        // const skip = 2
+        console.log('skip',skip,'search',search,'date',date)
         const [trainers, total] = await Promise.all([
           this.trainerRepository.getApprovedAvailableTrainers(skip,search,date),
           this.trainerRepository.countDocuments({ approved: true }),
         ]);
+        console.log('trainers and total',trainers,total)
         if(!trainers){
           throw new AppError(trainerMessages.APPROVED_TRAINERS_NOT_FOUND,404)
         }
@@ -237,7 +239,7 @@ export class UserService implements IUserService {
           if(user?.subscription){
             lastIndex = user.subscription.length-1
             if(user?.subscription[lastIndex]?.status !== 'active'){
-              throw new AppError(userMessages.SUBSCRIPTION_INACTIVE,403)
+              throw new AppError(userMessages.SUBSCRIPTION_INACTIVE,402)
              }
              const availability = await this.trainerAvailability.bookASession(trainerRefId,userRefId,date,startTime)
              if(!availability){

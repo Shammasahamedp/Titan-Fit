@@ -19,7 +19,6 @@ export class ResetPasswordController{
       } catch (error:any) {
          console.log(error)
          handleError(res,error)
-      //   res.status(400).json({success:false,message:emailMessages.TOKEN_SEND_FAILURE})
       }
    }
 
@@ -29,7 +28,6 @@ export class ResetPasswordController{
          res.status(200).json({success:true,message:commonMessages.PASSWORD_UPDATE_SUCCESS})
       } catch (error:any) {
         handleError(res,error)
-         // res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
       }
    }
 }

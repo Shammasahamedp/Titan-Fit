@@ -14,6 +14,7 @@ export interface ITrainerModel extends Document{
     approved:boolean;
     blocked:boolean
     // availableSlots?:Types.ObjectId;
+    rejectedDate?:Date;
     priceForSession?:number;
     googleId?:string,
     isGoogleAuthenticated:boolean

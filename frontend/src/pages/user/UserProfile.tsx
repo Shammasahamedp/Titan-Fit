@@ -1,95 +1,109 @@
-import { useState } from 'react';
-import { editUserProfile, getProfile,  } from "@/api/user-apicalls";
-import { IUserEditProfile, IUserProfileContextType } from "@/interfaces/user-interfaces";
+
+
+import  { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { editUserProfile, getProfile } from "@/api/user-apicalls";
+import { IUserEditProfile, IUserProfile, IUserProfileContextType } from "@/interfaces/user-interfaces";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { userErrors } from "@/messages/userside-error";
 import { userProfileEditSchema } from "@/schemas/user-profile-edit-schema";
 import InputField from "@/components/common/InputField";
-import {  useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import SelectField from "@/components/common/SelectField";
-import { useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { isDeepEqual } from '../../utils/is-equal';
+
 const UserProfile = () => {
-    const {userProfile,setConfirmPasswordModal,setUserProfile} = useOutletContext<IUserProfileContextType>()
-      const [disable,setButtonDisable] = useState(false)
-      const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-      } = useForm<IUserEditProfile>({
-        resolver: yupResolver(userProfileEditSchema),
-        mode:"onChange"
-      });
-    const onSubmit = async (data: IUserEditProfile) => {
-        try {
-          console.log("li");
-          if (userProfile) {
-            const { profilePicture, ...rest } = userProfile;
-            const existingData = JSON.stringify(rest);
-            const newData = JSON.stringify(data);
-            if (existingData === newData) {
-              showErrorToast(userErrors.PROFILE_CHANGE_NEED);
-              return;
-            }
-            const responseData = await editUserProfile(data);
-            console.log(responseData);
-            if (responseData.success) {
-              showSuccessToast(responseData.message);
-              setUserProfile(responseData.returnUserData)
-            }
-          }
-        } catch (error) {
-          console.log(error);
-          showErrorToast(error);
+  const {  setConfirmPasswordModal } = useOutletContext<IUserProfileContextType>();
+  const [disable, setButtonDisable] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [userProfile,setUserProfile] = useState<IUserProfile>()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<IUserEditProfile>({
+    resolver: yupResolver(userProfileEditSchema),
+    mode: "onChange"
+  });
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const userProfileDetails = await getProfile();
+        if (userProfileDetails) {
+          setUserProfile(userProfileDetails);
         }
-      };
-      useEffect(() => {
-        const fetchUserProfile = async () => {
-          try {
-            const userProfileDetails = await getProfile();
-            if (userProfileDetails) {
-              setUserProfile(userProfileDetails);
-            }
-          } catch (error) {
-            showErrorToast(error);
-          }
-        };
-        fetchUserProfile();
-      }, []);
-    
-      const [isEditing, setIsEditing] = useState(false);
-    
-      useEffect(() => {
-          if (userProfile && isEditing) {
-            const { profilePicture, ...rest } = userProfile;
-            console.log('this is rest',rest)
-            reset(rest) 
-          }
-      }, [isEditing, reset]);
+      } catch (error) {
+        showErrorToast(error);
+      }
+    };
+    fetchUserProfile();
+  }, []);
+
+  useEffect(() => {
+    if (userProfile && isEditing) {
+      const { profilePicture, ...rest } = userProfile;
+      reset(rest);
+    }
+  }, [isEditing, reset, userProfile]);
+
+  const onSubmit = async (data: IUserEditProfile) => {
+    try {
+      if (userProfile) {
+        const { profilePicture, ...rest } = userProfile;
+      
+        if (isDeepEqual(rest,data)) {
+          showErrorToast(userErrors.PROFILE_CHANGE_NEED);
+          return; 
+        }           
+        const responseData = await editUserProfile(data);
+        if (responseData.success) {
+          showSuccessToast(responseData.message);
+          setUserProfile(responseData.returnUserData);
+          setIsEditing(false);
+        }
+      }
+    } catch (error) {
+      showErrorToast(error);
+    } 
+  };
+
   return (
-    <div className="flex-1  p-6 pt-16  md:ml-64">
-    <h2
-      className="text-3xl font-bold mb-4 o hover:cursor-pointer"
-      onClick={() => setIsEditing(false)}
-    >
-      Profile Overview
-    </h2>
-    {isEditing && userProfile ? (
-      <>
-        <div className="flex justify-center">
-          <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
-            <h2 className="text-2xl font-bold text-center text-black">
-              Your Profile
-            </h2>
-            <p className="text-center text-sm text-black mt-4"></p>
-            <div className="grid grid-cols-2 gap-4">
+    <div className="max-w-4xl mx-auto px-4 py-8 ">
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-3xl font-bold text-warm-yellow">
+          Profile Overview
+        </h2>
+        {!isEditing && (
+          <div className="flex space-x-4">
+            <button
+              onClick={() => setIsEditing(true)}
+              className="mt-2 bg-[#FFC436]  text-black font-semibold px-4 py-2 rounded hover:bg-black hover:text-[#FFC436]"
+            >
+              Edit Profile
+            </button>
+            <button
+              disabled={disable}
+              onClick={() => setConfirmPasswordModal(true)}
+              className="mt-2 bg-[#FFC436]  text-black font-semibold px-3 py-1 rounded hover:bg-black hover:text-[#FFC436]"
+            >
+              {disable ? 'Loading...' : 'Reset Password'}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {isEditing ? (
+        <div className="bg-black/30 border border-white/10 rounded-xl p-6 shadow-lg  text-white">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-white">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <InputField
                 label="Name"
                 register={register("name")}
                 error={errors.name?.message}
-                type="text"
+                className='text-white'
               />
               <InputField
                 label="Email"
@@ -97,7 +111,6 @@ const UserProfile = () => {
                 error={errors.email?.message}
                 disabled={true}
               />
-             
               <SelectField
                 label="Gender"
                 options={[
@@ -105,18 +118,18 @@ const UserProfile = () => {
                   { value: "female", label: "Female" },
                 ]}
                 register={register("gender")}
+                error={errors.gender?.message}
               />
               <InputField
                 label="Age"
+                type="number"
                 register={register("age")}
                 error={errors.age?.message}
-                type="number"
               />
-
               <SelectField
                 label="Fitness Goal"
                 options={[
-                  { value: "fatloss", label: "Fatloss" },
+                  { value: "fatloss", label: "Fat Loss" },
                   { value: "buildmuscle", label: "Build Muscle" },
                   { value: "maintenance", label: "Maintenance" },
                 ]}
@@ -133,113 +146,70 @@ const UserProfile = () => {
                 register={register("fitnessLevel")}
                 error={errors.fitnessLevel?.message}
               />
-
               <InputField
                 label="Phone"
                 register={register("phone")}
                 error={errors.phone?.message}
-                type="text"
               />
-
               <InputField
-                label="Weight"
+                label="Weight (kg)"
+                type="number"
                 register={register("weight")}
                 error={errors.weight?.message}
-                type="number"
               />
               <InputField
-                label="Height"
+                label="Height (cm)"
+                type="number"
                 register={register("height")}
                 error={errors.height?.message}
-                type="number"
               />
-            </div>
+            </div> 
 
-            {/* Sign In Button */}
-            <div className="flex justify-center">
+            <div className="flex justify-end space-x-4 pt-6">
               <button
-                onClick={handleSubmit(onSubmit)}
-                className="w-1/3  bg-black text-white py-2 mt-6 rounded-lg hover:bg-gray-700 transition"
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="mt-4 bg-[#FFC436]  text-black font-semibold px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] "
               >
-                Edit
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="mt-4 bg-[#FFC436]  text-black font-semibold px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] "
+              >
+                Save Changes
               </button>
             </div>
+          </form>
+        </div>
+      ) : (
+        <div className="bg-black/30 border border-white/10 rounded-xl p-6 shadow-lg ">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+            {[
+              { label: "Name", value: userProfile?.name },
+              { label: "Email", value: userProfile?.email },
+              { label: "Phone", value: userProfile?.phone || "Not added" },
+              { label: "Age", value: userProfile?.age },
+              { label: "Gender", value: userProfile?.gender || "Not added" },
+              { label: "Height", value: userProfile?.height ? `${userProfile.height} cm` : "Not added" },
+              { label: "Weight", value: userProfile?.weight ? `${userProfile.weight} kg` : "Not added" },
+              { label: "Fitness Goal", value: userProfile?.fitnessGoal },
+              { label: "Fitness Level", value: userProfile?.fitnessLevel }
+            ].map((field, index) => (
+              <div key={index} className="p-4 bg-black/20 rounded-lg">
+                <div className="text-warm-yellow text-sm font-medium mb-1">
+                  {field.label}
+                </div>
+                <div className="text-white">
+                  {field.value}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </>
-    ) : (
-      <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <strong>Name:</strong>{" "}
-            <span className="text-white">{userProfile?.name}</span>
-          </div>
-          <div className="flex justify-between">
-            <strong>Email:</strong>{" "}
-            <span className="text-white">{userProfile?.email}</span>
-          </div>
-          <div className="flex justify-between">
-            <strong>Phone:</strong>{" "}
-            <span className="text-white">
-              {userProfile?.phone || "not added"}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <strong>Age:</strong>{" "}
-            <span className="text-white">{userProfile?.age}</span>
-          </div>
-          <div className="flex justify-between">
-            <strong>Gender:</strong>{" "}
-            <span className="text-white">
-              {userProfile?.gender || "not added"}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <strong>Height:</strong>{" "}
-            <span className="text-white">
-              {userProfile?.height || "not added"}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <strong>Weight:</strong>{" "}
-            <span className="text-white">
-              {userProfile?.weight || "not added"}
-            </span>
-          </div>
+      )}
+    </div>
+  );
+};
 
-          <div className="flex justify-between">
-            <strong>Fitness Goal:</strong>{" "}
-            <span className="text-white">{userProfile?.fitnessGoal}</span>
-          </div>
-          <div className="flex justify-between">
-            <strong>Fitness Level:</strong>{" "}
-            <span className="text-white">
-              {userProfile?.fitnessLevel}
-            </span>
-          </div>
-        </div>
-
-       <div className="flex justify-around">
-       <button
-          onClick={() => setIsEditing(true)}
-          className="mt-4 bg-[#FFC436] text-black px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] w-1/4"
-        >
-          Edit Profile
-        </button>
-        <button
-        disabled={disable}
-          onClick={() => setConfirmPasswordModal(true)}
-          className="mt-4 bg-[#FFC436] text-black px-4 py-2 rounded hover:bg-black hover:text-[#FFC436] w-1/4"
-        >
-          {disable ? 'Loading...':'Reset Password'}
-        </button>
-       </div>
-      </div>
-    )}
-
-    {/* Table Wrapper - Scrollable */}
-  </div>
-  )
-}
-
-export default UserProfile
+export default UserProfile;

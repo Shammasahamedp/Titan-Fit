@@ -8,18 +8,22 @@ import { Request,Response } from 'express'
 import { jwtTokenVerify } from '../middlewares/jwt-token-validation'
 import { UserRepository } from '../repositories/user/userRepository'
 import { TrainerRepository } from '../repositories/trainer/trainerRepository'
+import { AvailabilityRepository } from '../repositories/availability/availabilityRepository'
 const adminRoute = express.Router()
 
 
 const adminRepository = new AdminRepository()
 const userRepository = new UserRepository()
 const trainerRepository = new TrainerRepository()
-const adminService = new AdminService(adminRepository,userRepository,trainerRepository)
+const availabilityRepository = new AvailabilityRepository
+const adminService = new AdminService(adminRepository,userRepository,trainerRepository,availabilityRepository)
 const adminController = new AdminController(adminService)
 
 adminRoute.post('/auth/login',validate(loginSchema),(req:Request,res:Response)=>adminController.loginAdmin(req,res))
 adminRoute.get('/get-users',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getUsers(req,res))
+adminRoute.get('/get-users/:id',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getSingleUser(req,res))
 adminRoute.get('/get-trainers',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getTrainers(req,res))
+adminRoute.get('/get-trainers/:id',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getSingleTrainer(req,res))
 adminRoute.put('/change-approval',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.changeTrainerApproval(req,res))
 adminRoute.put('/user-toggle',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.userToggle(req,res))
 adminRoute.get('/get-subscribers',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getSubscribers(req,res))

@@ -2,9 +2,7 @@ import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 dotenv.config()
-// import session from "express-session"
 import cookieParser from "cookie-parser"
-console.log('id',process.env.GOOGLE_CLIENT_ID)
 import { connectDB } from "./config/db"
 import { connectRedis } from "./config/redis"
 (async ()=>{
@@ -26,7 +24,20 @@ import subscriptionRoute from "./routes/subscription-route"
 import paymentRoute from "./routes/common-routes/payment-route"
 import availabilityRouter from "./routes/common-routes/availability-route"
 import './utils/subscription-status'
+import http from 'http'
+import {Server} from 'socket.io'
+import { setUpSocket } from "./config/socket"
 const app = express()
+const server = http.createServer(app)
+
+const io = new Server(server,{
+   cors:{
+    origin:'http://localhost:5173',
+    credentials:true,
+   }
+})
+
+setUpSocket(io)
 
 app.use(cors({
     origin:'http://localhost:5173',
@@ -35,7 +46,6 @@ app.use(cors({
 }))
 connectDB()
 app.use(cookieParser())
-
 app.use('/payment',paymentRoute)
 app.use(express.json())
 app.use('/user',userRouter)
@@ -48,7 +58,7 @@ app.use('/auth',authRoute)
 app.use('/reset-password',resetPasswordRoute)
 app.use('/subscription',subscriptionRoute)
 app.use('/availability',availabilityRouter)
-app.listen(3000,"0.0.0.0",async()=>{
+server.listen(3000,"0.0.0.0",async()=>{
     console.log("server is running on http://localhost:3000")
     
 })

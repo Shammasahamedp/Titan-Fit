@@ -44,7 +44,7 @@ export default function UserProfileComplete() {
         )
        }
        removeProfileCompletionStatus()
-        navigate('/user/home')
+        navigate('/home')
       }
       
     } catch (error: any) {
@@ -100,7 +100,7 @@ export default function UserProfileComplete() {
             <InputField
               label="Email"
               type="email"
-              value={userData?.email}
+              // value={userData?.email}
               disabled ={true}
               // placeholder="Enter Your Email"
               register={register('email')}

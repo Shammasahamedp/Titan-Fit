@@ -18,6 +18,7 @@ export const fetchTrainers = async ()=>{
     try {
         const response = await  axiosInstance.get(`${API}/admin/get-trainers`)
         if(response.data){
+            console.log(response.data)
             return response
         }
     } catch (error) {
@@ -26,9 +27,9 @@ export const fetchTrainers = async ()=>{
     }
 }
 
-export const toggleTrainer = async (trainerId:string,approved:boolean)=>{
+export const toggleTrainer = async (trainerId:string,approved:boolean,reason:string)=>{
     try {
-        const response = await axiosInstance.put(`${API}/admin/change-approval`,{trainerId,approved})
+        const response = await axiosInstance.put(`${API}/admin/change-approval`,{trainerId,approved,reason})
         if(response.data){
             return response
         }
@@ -71,4 +72,28 @@ export const getSubscribedUsers = async ()=>{
         throw error
     }
   }
+
+  export const getSingleTrainerDetails = async (trainerId:string)=>{
+    try {
+        const response =  await axiosInstance.get(`${API}/admin/get-trainers/${trainerId}`)
+        if(response.data){
+            return response
+        }
+    } catch (error) {
+        throw error
+    }
+  }
+
+  export const getSingleUserDetails = async (userId:string)=>{
+    try {
+        const response = await axiosInstance.get(`${API}/admin/get-users/${userId}`)
+        if(response.data){
+            return response
+        }
+    } catch (error) {
+        throw error
+    }
+  }
+
+ 
 

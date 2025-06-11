@@ -2,7 +2,6 @@ import React, { useEffect,useState } from "react";
 import { fetchUsers } from "@/api/admin-apicalls";
 import { IUsers } from "@/interfaces/user-interfaces";
 import NewTable from "@/components/common/NewTable";
-import { toggleUser } from "@/api/admin-apicalls";
 import { showErrorToast } from "@/utils/toast";
 import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -25,22 +24,7 @@ const AdminUserManagement: React.FC = () => {
        getUsers()
     },[])
 
- const handleToggleUser = async(userId : string,blocked:boolean)=>{
-        try {
-            const response = await toggleUser(userId,blocked)
-            if(response?.data.success){
-                setUsers((prev)=>
-                  prev.map((user)=>
-                       user._id === response.data.user._id
-                       ?{...user,blocked:response.data.user.blocked}
-                       :user
-                  )
-                )
-            }
-        } catch (error) {
-            showErrorToast(error)
-        }
-    }
+
 
   return (
     
@@ -57,12 +41,10 @@ const AdminUserManagement: React.FC = () => {
           </div>
              <NewTable columns={['name','email','phone','gender','fitnessGoal','fitnessLevel']} tableDatas={users} filterKeys={['name','email','phone']} rederActions={(user)=>(
                <button
-               onClick={()=>handleToggleUser(user._id,user.blocked)}
-               className={`px-3 py-1 rounded ${
-                  user?.blocked?  "bg-green-500" :"bg-red-500"
-                } text-white`}
+               onClick={()=>navigate(`/admin/usermanagement/${user._id}`)}
+                 className=" space-x-2 bg-[#FFC436] text-black px-4 font-semibold py-1 rounded hover:bg-black hover:text-[#FFC436] transition-colors"
                >
-                {user?.blocked? 'Unblock':'block'}
+                View
                </button>
              )}/>
           </div>

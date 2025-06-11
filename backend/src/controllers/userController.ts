@@ -20,7 +20,6 @@ export class UserController {
             res.status(201).json({success:true,data:user,message:userMessages.SIGNUP_SUCCESS})
         } catch (error:any) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:error.message})
         }
     }
 
@@ -40,7 +39,6 @@ export class UserController {
             res.status(200).json({success:true,data,message:userMessages.LOGIN_SUCCESS})
         } catch (error:any) {
             handleError(res,error)
-            // res.status(401).json({success:false,message:userMessages.LOGIN_FAILED})
         }
     }
     async getProfile(req:Request,res:Response):Promise<void>{
@@ -52,7 +50,6 @@ export class UserController {
 
         } catch (error:any) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:error.message})
         }
     }
     async editProfile(req:Request,res:Response):Promise<void>{
@@ -63,7 +60,6 @@ export class UserController {
             }
         } catch (error:any) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:userMessages.EDIT_PROFILE_FAILURE})
         }
     }
     async addProfileImage(req:Request,res:Response):Promise<void>{
@@ -76,7 +72,6 @@ export class UserController {
             }
         } catch (error:any) {
             handleError(res,error)
-            //   res.status(400).json({success:false,message:userMessages.ADD_PROFILE_IMAGE_FAILURE})
         }
     }
     async checkPassword(req:Request,res:Response):Promise<void>{
@@ -89,7 +84,6 @@ export class UserController {
             res.status(200).json({success:true,message:userMessages.PASSWORD_CHECK_SUCCESS})
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:userMessages.PASSWORD_CHECK_ERROR})
         }
     }
     async resetPassword(req:Request,res:Response):Promise<void>{
@@ -102,7 +96,6 @@ export class UserController {
             res.status(201).json({success:true,message:commonMessages.PASSWORD_UPDATE_SUCCESS})
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:commonErrors.RESET_PASSWORD_ERROR})
 
         }
     }
@@ -110,7 +103,7 @@ export class UserController {
     async getApprovedTrainers(req:Request,res:Response):Promise<void>{
         try {
             const page = parseInt(req.query.page as string) || 1
-            const limit = parseInt(req.query.limit as string) || 2
+            const limit = parseInt(req.query.limit as string) || 3
             console.log('thsi is apge',page,limit)
             const response = await this.userService.getApprovedTrainers(page,limit,req.query.search as string,req.query.date as string)
             res.status(200).json({success:true,message:trainerMessages.GET_APPROVED_TRAINERS_SUCCESS,approvedTrainers:response?.trainers,totalTrainers:response?.total,currentPage:page,totalPages:Math.ceil(response?.total as number/limit)})

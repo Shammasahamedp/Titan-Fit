@@ -80,6 +80,7 @@ export const getApprovedSingleTrainer = async (trainerId:string)=>{
   try {
     const response = await axiosInstance.get(`${API}/user/get-trainers/${trainerId}`)
     if(response.data){
+      console.log(response.data)
       return response
     }
   } catch (error) {

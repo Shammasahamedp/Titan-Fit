@@ -27,6 +27,7 @@ export class TrainerController {
     async loginTrainer(req:Request,res:Response):Promise<void>{
         try {
             const response = await this.trainerService.loginTrainer(req.body)
+            console.log('responssssssssssssssssss',response)
             res.cookie('refreshToken',response?.refreshToken,{
                 httpOnly:true,
                 secure:false,
@@ -39,8 +40,8 @@ export class TrainerController {
             }
             res.status(200).json({success:true,data,message:trainerMessages.LOGIN_SUCCESS})
         } catch (error:any) {
+            console.log('eeeeeeeeeeeeerrrrrrrrrrrooooooorrrrrrr')
             handleError(res,error)
-            // res.status(401).json({success:false,message:trainerMessages.LOGIN_FAILED})
         }
     }
 

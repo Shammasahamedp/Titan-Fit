@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/reduxStore/store";
 import Navbar from "@/components/userComponents/Navbar";
 import { logoutUser } from "@/api/auth";
-
+import { ArrowLeft } from "lucide-react";
 interface Slot {
   startTime: string;
   isBooked: boolean;
@@ -27,6 +27,7 @@ interface Availability {
 }
 
 const TrainerDetail = () => {
+  const navigate = useNavigate()
   const user = useSelector((state: RootState) => state.user.user);
   const { id } = useParams<{ id: string }>();
   const [trainer, setTrainer] = useState<ITrainers | null>(null);
@@ -52,6 +53,7 @@ const TrainerDetail = () => {
     try {
       const response = await getApprovedSingleTrainer(id as string);
       setTrainer(response?.data.trainer);
+      console.log(response?.data.availability?.availability)
       setAvailability(response?.data.availability?.availability || []);
     } catch (error) {
       showErrorToast(error);
@@ -73,13 +75,16 @@ const TrainerDetail = () => {
     <>
       <Navbar role="user" logout={logoutUser} />
       <div
-        className="min-h-screen py-12 px-4"
+        className="mt-10 min-h-screen py-12 px-4"
         style={{
           backgroundImage: "url('/white-bg.jpg')",
           backgroundSize: "cover",
         }}
       >
         <div className="max-w-6xl mx-auto bg-white bg-opacity-90 rounded-xl p-8 shadow-lg">
+          <button onClick={()=>navigate('/trainers')}>
+               <ArrowLeft/>
+          </button>
           {/* Trainer Info */}
           {trainer && (
             <div className="flex flex-col lg:flex-row gap-8">
@@ -135,6 +140,8 @@ const TrainerDetail = () => {
                   onChange={(value) => setSelectedDate(value as Date)}
                   value={selectedDate}
                   className="custom-calendar mb-6"
+          tileDisabled={({ date }) => date < new Date(new Date().setHours(24, 0, 0, 0))}
+
                   tileClassName={({ date }) => {
                     const day = availability.find(
                       (item) =>

@@ -15,8 +15,9 @@ const PublicRoute = () => {
       <Navigate to="/home" />
     );
   }
-
+ 
   if (trainer) {
+    console.log('insidedddddddddd',userNew)
     return userNew === 'true' ? (
       <Navigate to="/trainer/profile-complete" />
     ) : (

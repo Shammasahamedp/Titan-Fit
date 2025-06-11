@@ -1,43 +1,109 @@
-.react-calendar-custom {
-    width: 100%;
-    max-width: 100%;
-    border: none;
-    background-color: #000;
-    color: #FFC436;
-    border-radius: 12px;
-    padding: 10px;
-    font-family: sans-serif;
-  }
-  .all-booked {
-  background-color: #f87171 !important; /* red-400 */
-  color: white;
-  border-radius: 6px;
+
+
+/* Make calendar container bigger and centered */
+.custom-calendar {
+  width: 3000px;
+  margin: 0 auto;
+  background-color: black;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  border-radius: 0; /* No rounded corners */
+  border: none;
 }
-  @media(min-width:768px){
-    .react-calendar-custom{
-      width: auto;
-      max-width: 100%;
-    }
-  }
-  .react-calendar-custom abbr {
-    text-decoration: none;
-    font-weight: bold;
-  }
-  .react-calendar__tile--active {
-    background: #FFC436 !important;
-    color: black !important;
-  }
-  .react-calendar__tile:enabled:hover {
-    background: #FFC43640 !important;
-    color: white;
-    border-radius: 6px;
-  }
-  .booked-date{
-    background: #7dc2ed ;
-    color:black;
-    border-radius:50%
-  }
-  .available-date{
-    background: #c6f6d5;
-    border-radius: 6px;
-  }
+
+/* Center the calendar */
+.react-calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Navigation and weekdays */
+.react-calendar__navigation button {
+  background: transparent;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  border: none;
+}
+
+.react-calendar__month-view__weekdays {
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: #444;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Date tiles: square with borders */
+.react-calendar__tile {
+  width: 60px;
+  height: 60px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease;
+  font-weight: 500;
+  color:#FFC436
+
+}
+
+/* Today's date */
+.react-calendar__tile--now {
+  background-color: #ffe9b3;
+  color: black;
+}
+
+/* Selected date */
+.react-calendar__tile--active {
+  background-color: #FFC436 !important;
+  color: black;
+}
+
+/* Hover effect */
+.react-calendar__tile:hover {
+  background-color: #FFC43644;
+}
+
+/* Highlight available dates */
+.highlight-available {
+  background-color: #FFC43633 !important;
+  font-weight: bold;
+}
+
+.highlight-available:hover {
+  background-color: #FFC43666 !important;
+}
+
+.react-calendar__tile:disabled {
+  color: black !important;
+  background-color:#808080 !important;
+  border: 1px solid #ccc;
+}
+
+/* If current user has booked a slot on this day */
+.booked-date {
+  background-color: #007bff !important; /* Blue */
+  color: white !important;
+  font-weight: bold;
+}
+
+/* If all slots are booked, but not by the current user */
+.all-booked {
+  background-color: #dc3545 !important; /* Red */
+  color: white !important;
+  font-weight: bold;
+}
+
+/* If at least one slot is available */
+.available-date {
+  background-color: #28a745 !important; /* Green */
+  color: white !important;
+  font-weight: bold;
+}
+

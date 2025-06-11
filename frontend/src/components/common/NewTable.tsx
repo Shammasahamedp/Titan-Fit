@@ -47,7 +47,7 @@ const NewTable = <T,>({ columns, tableDatas, rederActions, filterKeys = [] }: IN
   };
 
   return (
-    <div className="bg-gray-900 p-4 rounded-lg overflow-hidden ">
+    <div className="bg-black/30 p-4 rounded-lg overflow-hidden ">
       <div className="mb-4">
         <input
           type="text"

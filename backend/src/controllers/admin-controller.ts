@@ -4,6 +4,7 @@ import { handleError } from "../utils/handleResponse";
 import { IAdminService } from "../services/admin/IadminService";
 import { subscriptionMessage } from "../messages/subscription-related";
 import { userMessages } from "../messages/userRelated";
+import { trainerMessages } from "../messages/trainerRelated";
 
 export class AdminController {
     private adminService:IAdminService
@@ -29,7 +30,6 @@ export class AdminController {
             res.status(200).json({success:true,data,message:adminMessages.LOGIN_SUCCESS})
         } catch (error:any) {
            handleError(res,error)
-            // res.status(401).json({success:false,message:error.message})
         }
     }
 
@@ -39,7 +39,6 @@ export class AdminController {
             res.status(200).json({success:true,message:adminMessages.GET_USERS_SUCCESS,users})
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:adminMessages.GET_USERS_FAILURE})
         }
     }
 
@@ -49,19 +48,17 @@ export class AdminController {
             res.status(200).json({success:true,message:adminMessages.GET_TRAINERS_SUCCESS,trainers})
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:adminMessages.GET_TRAINERS_FAILURE})
         }
     }
 
     async changeTrainerApproval(req:Request,res:Response):Promise<void>{
         try {
-           const trainer= await this.adminService.changeTrainerApproval(req.body.trainerId,req.body.approved)
+           const trainer= await this.adminService.changeTrainerApproval(req.body.trainerId,req.body.approved,req.body.reason)
            if(trainer){
             res.status(200).json({success:true,message:adminMessages.TOGGLE_TRAINER_SUCCESS,trainer})
            }
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:adminMessages.TOGGLE_TRAINER_FAILURE})
         }
     }
 
@@ -73,7 +70,6 @@ export class AdminController {
             }
         } catch (error) {
             handleError(res,error)
-            // res.status(400).json({success:false,message:adminMessages.TOGGLE_USER_FAILURE})
         }
     }
 
@@ -90,6 +86,24 @@ export class AdminController {
         try {
             const subscriptions = await this.adminService.getSingleUserSubscriptions(req.params.id)
             res.status(200).json({success:true,message:userMessages.SUBSCRIPTION_GET_SUCCESS,subscriptions})
+        } catch (error) {
+            handleError(res,error)
+        }
+    }
+
+    async getSingleTrainer (req:Request,res:Response):Promise<void>{
+        try {
+            const {trainer,availability} = await this.adminService.getSingleTrainer(req.params.id)
+            res.status(200).json({success:true,message:trainerMessages.GET_TRAINER_PROFILE_SUCCESS,trainer,availability})
+        } catch (error) {
+            handleError(res,error)
+        }
+    }
+
+    async getSingleUser (req:Request,res:Response):Promise<void>{
+        try {
+            const {user} = await this.adminService.getSingleUser(req.params.id)
+            res.status(200).json({success:true,message:userMessages.GET_PROFILE_SUCCESS,user})
         } catch (error) {
             handleError(res,error)
         }
