@@ -1,12 +1,13 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { IPayment } from "./IpaymentModel";
 import { IPaymentDocument } from "../../interfaces/paymentInterfaces";
 const paymentSchema = new Schema<IPaymentDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: function (){
+        return this.type === 'subscription'
+      },
     },
     amount: {
       type: Number,

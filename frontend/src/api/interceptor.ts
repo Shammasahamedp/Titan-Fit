@@ -1,7 +1,6 @@
 import { clearToken, getAccessToken } from "./localStorage";
-import {authLogout, logoutTrainer, refreshToken} from './auth'
+import { logoutAdmin, logoutTrainer, logoutUser, refreshToken} from './auth'
 import { axiosInstance } from "./axiosInstance";
-import { logout } from "@/reduxStore/slices/user-slice";
 import { store } from "@/reduxStore/store";
 let isRefreshing =false
 let failedQueue:any[] = []
@@ -78,9 +77,13 @@ axiosInstance.interceptors.response.use(
             }
         }
         if(error.response?.status===403 && error.response.data.role === 'user'){
-            authLogout()
-           clearToken()
-           store.dispatch(logout())
+            logoutUser()
+            clearToken()
+        }else if(error.response?.data?.token === false){
+            clearToken()
+            logoutUser()
+            logoutAdmin()
+            logoutTrainer()
         }
         return Promise.reject(error)
     }

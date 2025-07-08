@@ -256,7 +256,10 @@ export default function Login() {
         </div>
 
         {/* Google Login */}
-
+        <p className="text-center text-sm text-gray-600 mt-4 mb-4">
+          
+         before proceed with google signin select role
+        </p>
         <GoogleLogin  onSuccess={handleGoogleSignin} onError={()=>console.log('error ocuured')} />
 
         {/* Sign Up Link */}

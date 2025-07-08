@@ -45,7 +45,7 @@ export default function UserProfileComplete() {
         const {_id,name,email} = response.returnedTrainerProfile
         dispatch(
           trainerLoginSuccess({
-            trainer:{_id,name,email},
+            trainer:{_id,name,email,role:'trainer'},
              
             token:getAccessToken() as string
           })
@@ -92,8 +92,7 @@ export default function UserProfileComplete() {
         <div className="absolute inset-0 bg-black/60"></div>
 <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl">
 <form  onSubmit={handleSubmit(onSubmit)}>
-          {/* <div className="bg-white z-10 shadow-lg rounded-2xl p-8 w-full max-w-2xl"> */}
-          <h2 className="text-2xl font-bold text-center text-black">Profile Data</h2>
+          <h2 className="text-2xl font-bold text-center text-black">Complete Profile </h2>
           
           <div className="grid grid-cols-2 gap-4">
             {/* Name Input */}

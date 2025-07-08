@@ -13,8 +13,8 @@ export interface ITrainerModel extends Document{
     yearsOfExperience?:number;
     approved:boolean;
     blocked:boolean
-    // availableSlots?:Types.ObjectId;
     rejectedDate?:Date;
+    new:boolean;
     priceForSession?:number;
     googleId?:string,
     isGoogleAuthenticated:boolean

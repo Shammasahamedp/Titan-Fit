@@ -103,4 +103,24 @@ export class AvailabilityController {
       handleError(res, error);
     }
   }
+
+  async getUserBookedSessionAdmin(req:Request,res:Response){
+  try {
+    const {
+        page = 1,
+        search = "",
+        sortKey = "availability.date",
+        sortAsc = true,
+        userId
+      } = req.query;
+    
+       const userBookedSessions =  await this.availabilityService.getUsersBookesSessions(userId as string,Number(page),search as string,sortKey as string,sortAsc === "true" || sortAsc === true)
+            res.status(200).json({success:true,message:availabilityMessages.USER_BOOKEDSESSION_GET_SUCCESSFULL,userBookedSessions})
+
+  } catch (error) {
+    handleError(res,error)
+  }
 }
+}
+
+

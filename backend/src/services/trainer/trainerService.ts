@@ -65,28 +65,14 @@ export class TrainerService implements ITrainerService {
       const existingUser = await this.userRepository.findOne({
         email: data.email,
       });
-      const cooldownPeriod = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
-
-      if (existingTrainer) {
-        const rejectedDate = existingTrainer.rejectedDate;
-        const now = new Date();
-        if (rejectedDate) {
-          const timeSinceRejection = now.getTime() - rejectedDate?.getTime();
-          const canReapplay = timeSinceRejection >= cooldownPeriod;
-          if (!canReapplay) {
-            const nextEligibleDate = new Date(
-              rejectedDate.getTime() + cooldownPeriod
-            );
-
-            throw new AppError(`You can re-apply after ${nextEligibleDate.toLocaleDateString()},for further details contact admin`,400)
-          }
-        }
-      }
+      
+      
       if (existingTrainer || existingUser) {
         throw new AppError(trainerMessages.EMAIL_ALREADY_EXIST, 409);
       }
 
       data.password = await hashPassword(data.password);
+      data.new = true
       return await this.trainerRepository.create(data);
     } catch (error) {
       if (error instanceof AppError) {

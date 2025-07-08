@@ -51,6 +51,15 @@ export class AdminController {
         }
     }
 
+    async getNewTrainers(req:Request,res:Response):Promise<void>{
+        try {
+            const newTrainers = await this.adminService.getNewTrainers()
+            res.status(200).json({success:true,message:adminMessages.GET_TRAINERS_SUCCESS,newTrainers})
+        } catch (error) {
+            handleError(res,error)
+        }
+    }
+
     async changeTrainerApproval(req:Request,res:Response):Promise<void>{
         try {
            const trainer= await this.adminService.changeTrainerApproval(req.body.trainerId,req.body.approved,req.body.reason)

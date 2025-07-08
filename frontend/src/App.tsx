@@ -32,6 +32,7 @@ import AdminSingleTrainer from "./pages/admin/AdminSingleTrainer";
 import AdminSingleUser from "./pages/admin/AdminSingleUser";
 import { useEffect } from "react";
 import { socket } from "./utils/socket";
+import AdminNewTrainers from "./pages/admin/AdminNewTrainers";
 function App() {
   useEffect(() => {
     socket.connect();
@@ -98,6 +99,10 @@ function App() {
             <Route
               path="trainermanagement"
               element={<AdminTrainerManagement />}
+            />
+            <Route
+              path="newtrainers"
+              element={<AdminNewTrainers />}
             />
             <Route
               path="trainermanagement/:trainerId"

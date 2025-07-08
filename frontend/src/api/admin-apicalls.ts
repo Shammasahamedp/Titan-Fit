@@ -9,7 +9,6 @@ export const fetchUsers = async ()=>{
             return response
         }
     } catch (error) {
-        console.log('error',error)
         throw error
     }
 }
@@ -18,11 +17,20 @@ export const fetchTrainers = async ()=>{
     try {
         const response = await  axiosInstance.get(`${API}/admin/get-trainers`)
         if(response.data){
-            console.log(response.data)
             return response
         }
     } catch (error) {
-        console.log(error)
+        throw error
+    }
+}
+
+export const fetchNewTrainers = async ()=>{
+    try {
+        const response =  await axiosInstance.get(`${API}/admin/get-newtrainers`)
+        if(response.data){
+            return response
+        }
+    } catch (error) {
         throw error
     }
 }

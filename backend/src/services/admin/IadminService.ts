@@ -10,6 +10,7 @@ export interface IAdminService{
     getUsers():Promise<IUserDocument[]|null>
     getSingleUser(userId:string):Promise<{user:IUserDocument}>
     getTrainers():Promise<ITrainerDocument[]>
+    getNewTrainers():Promise<ITrainerDocument[]>
     getSingleTrainer(trainerId:string):Promise<{trainer:ITrainerDocument,availability:IAvailabilityDocument}>
     changeTrainerApproval(trainerId:string,approved:boolean,reason:string):Promise<ITrainerDocument>
     userToggle(userId:string,blocked:boolean):Promise<IUserDocument>

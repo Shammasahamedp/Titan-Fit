@@ -23,6 +23,8 @@ adminRoute.post('/auth/login',validate(loginSchema),(req:Request,res:Response)=>
 adminRoute.get('/get-users',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getUsers(req,res))
 adminRoute.get('/get-users/:id',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getSingleUser(req,res))
 adminRoute.get('/get-trainers',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getTrainers(req,res))
+adminRoute.get('/get-newtrainers',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getNewTrainers(req,res))
+
 adminRoute.get('/get-trainers/:id',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.getSingleTrainer(req,res))
 adminRoute.put('/change-approval',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.changeTrainerApproval(req,res))
 adminRoute.put('/user-toggle',jwtTokenVerify(['admin']),(req:Request,res:Response)=>adminController.userToggle(req,res))

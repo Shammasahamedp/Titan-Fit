@@ -257,7 +257,7 @@ const TrainerProfile = () => {
         <div className="text-[#FFC436] text-sm font-medium mb-1">
           {trainerProfile?.approved
             ? "Trainer has approved"
-            : "has no trainer approval, check the mail and contact admin for futher details ..!"}
+            : "has no trainer approval, check the mail and contact admin for futher details ..!.If you are new to the app add your certificates ."}
         </div>
        {!trainerProfile?.approved && trainerProfile?.rejectedDate && (() => {
     const rejectedDate = new Date(trainerProfile.rejectedDate);

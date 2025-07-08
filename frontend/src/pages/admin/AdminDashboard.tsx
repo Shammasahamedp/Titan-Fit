@@ -15,6 +15,7 @@ const AdminDashboard: React.FC = () => {
             ["Trainer management", "trainermanagement"],
             ["Subscription management", "subscriptionmanagement"],
             ['Subscribed Users','subscribedusers'],
+            ['Payments','payments']
           ]}
 
           

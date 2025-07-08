@@ -8,7 +8,8 @@ export interface ITrainerSignUp{
     gender:string;
     age:number;
     yearsOfExperience:number;
-    bio:string
+    bio:string;
+    new:boolean;
     trainerCertificate:string[]
 }
 

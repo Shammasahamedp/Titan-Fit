@@ -18,6 +18,7 @@ const TrainerSchema: Schema = new Schema(
     blocked:{type:Boolean,default:false},
     // availableSlots: { type: Types.ObjectId },
     rejectedDate:{type:Date},
+    new:{type:Boolean,default:true},
     priceForSession: { type: Number },
     googleId:{type:String},
     isGoogleAuthenticated:{type:Boolean,default:false}

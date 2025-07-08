@@ -36,6 +36,8 @@ export interface ITrainers{
     trainerCertificate:string[];
     yearsOfExperience:number;
     approved:boolean
+    createdAt:string
+    rejectedDate:string
 }
 
 export interface ITrainerProfileContextType  {

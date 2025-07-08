@@ -75,9 +75,9 @@ export class AvailabilityService implements IAvailabilityService {
 
             status: item.isCompleted
               ? "completed"
-              : new Date(item.date) < new Date()
+              :( new Date(item.date) < new Date()
               ? "missed"
-              : "upcoming",
+              : "upcoming"),
           };
         }
 

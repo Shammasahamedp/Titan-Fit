@@ -3,11 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ITrainers, IAvailability } from "@/interfaces/trainer-interfaces";
-import { showErrorToast } from "@/utils/toast";
+import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import BackendTable from "@/components/common/BackendTable";
 import { toggleTrainer } from "@/api/admin-apicalls";
 import ConfirmModal from "@/modal/ConfirmationModal";
 import { getBookedSessionDetails } from "@/api/availability-apicalls";
+import { ToastContainer } from "react-toastify";
 
 interface BookedSession {
   date: string;
@@ -32,7 +33,7 @@ const AdminSingleTrainer = () => {
     const [sortKey, setSortKey] = useState<string | undefined>();
     const [sortAsc, setSortAsc] = useState(true);
 
-
+   
   const fetchSingleTrainer = async () => {
     try {
       const response = await getSingleTrainerDetails(trainerId as string);
@@ -52,6 +53,7 @@ const AdminSingleTrainer = () => {
         console.log(response.data)
         setTrainer(response.data.trainer)
         setModalOpen(false)
+        showSuccessToast('Your request has been approved ')
       }
     } catch (error) { 
       showErrorToast(error);
@@ -85,7 +87,7 @@ const AdminSingleTrainer = () => {
 useEffect(() => {
   if(trainer){
       fetchBookedSessions();
-
+  
   }
 }, [page, search, sortKey, sortAsc,trainer]);
 
@@ -105,7 +107,7 @@ useEffect(() => {
                 alt={trainer.name}
                 // className="w-full h-[400px] object-cover rounded-xl shadow-md"
                 // className="w-[300px] h-[250px] object-cover rounded-xl shadow-md"
-                className="w-full max-w-[300px] h-[300px] object-cover rounded-xl shadow-md"
+                className="w-full max-w-[350px] object-cover rounded-xl shadow-md"
 
 
               />
@@ -178,11 +180,41 @@ useEffect(() => {
       sortAsc={sortAsc}
       // filterKeys={["clientName", "status"]}
     />
+    {trainer && (
+  <div className="mt-8 border-t border-white/10 pt-4">
+    <h4 className="text-xl font-semibold text-white mb-2">Trainer History</h4>
+    <ul className="text-white space-y-1">
+      <li>
+        <strong>Joined:</strong>{" "}
+        {new Date(trainer.createdAt).toLocaleDateString("en-IN", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        })}
+      </li>
+
+      
+
+      {!trainer.approved && trainer.rejectedDate && (
+        <li>
+          <strong>Last Rejected on:</strong>{" "}
+          {new Date(trainer.rejectedDate).toLocaleDateString("en-IN", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </li>
+      )}
+    </ul>
+  </div>
+)}
+
         </div>
       </div>
       {isModalOpen &&
-        <ConfirmModal onClose={()=>setModalOpen(false)} confrimToProceed={(reason?:string)=>{handleToggleApprove(trainerId as string,trainer?.approved as boolean,reason as string)}}/>
+        <ConfirmModal onClose={()=>setModalOpen(false)} confirmToProceed={(reason?:string)=>{handleToggleApprove(trainerId as string,trainer?.approved as boolean,reason as string)}}/>
       }
+      <ToastContainer/>
     </div> 
   );
 };

@@ -15,7 +15,7 @@ tokenRoute.post('/refresh/:id',(req:Request,res:Response)=>{
     console.log('this is role',role)
     const decoded = verifyRefreshToken(refreshToken)
     if(!decoded){
-        res.status(403).json({success:false,message:commonErrors.INVALID_REFRESH_TOKEN})
+        res.status(403).json({success:false,message:commonErrors.INVALID_REFRESH_TOKEN,token:false})
         return 
     }
     const newAccessToken = generateAccessToken(decoded.userId,role as string)

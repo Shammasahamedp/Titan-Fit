@@ -46,3 +46,15 @@ export const getUsersBookedSession = async (page:number,search:string,sortKey:st
         throw error
     }
 }
+
+export const getUsersBookesSessionForAdmin = async(userId:string,page:number,search:string,sortKey:string,sortAsc:boolean)=>{
+    try {
+        const response = await axiosInstance.get(`${API}/availability/get-user-booked-session-admin?page=${page}&search=${search}&sortKey=${sortKey}&sortAsc=${sortAsc}&userId=${userId}`)
+        if(response.data){
+            console.log('sha',response.data)
+            return response
+        }
+    } catch (error) {
+        throw error
+    }
+}

@@ -2,15 +2,33 @@ import { getSingleUserDetails } from "@/api/admin-apicalls"
 import { IUsers } from "@/interfaces/user-interfaces"
 import ConfirmModal from "@/modal/ConfirmationModal"
 import { showErrorToast } from "@/utils/toast"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, SortAsc } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { toggleUser } from "@/api/admin-apicalls"
+import {  getUsersBookesSessionForAdmin } from "@/api/availability-apicalls"
+import BackendTable from "@/components/common/BackendTable"
+
+
+export interface IUserBookedSessionDetails{
+  trainer:string;
+  email:string;
+  date:Date;
+  time:string;
+  status:'upcoming'|'completed'|'attended'
+}
+
 const AdminSingleUser = () => {
     const navigate = useNavigate()
     const {userId} = useParams()
     const [user,setUser] = useState<IUsers|null>(null)
     const [isModalOpen,setModalOpen] = useState(false)
+    const [data,setData] = useState<IUserBookedSessionDetails[]>([])
+    const [page,setPage] = useState(1)
+    const [totalPages,setTotalPages] = useState(1)
+    const [search,setSearch] = useState('')
+    const [sortKey,setSortKey] = useState<string|undefined>()
+    const [sortAsc,setSortAsc] = useState(true)
     const fetchSingleUser = async ()=>{
         try {
             const response = await getSingleUserDetails(userId as string)
@@ -19,6 +37,23 @@ const AdminSingleUser = () => {
         } catch (error) {
             showErrorToast(error)
         }
+    }
+
+    const fetchUserSessions = async()=>{
+      try {
+         const response = await getUsersBookesSessionForAdmin(
+             user?._id as string,
+             page,
+             search,
+             sortKey || '',
+             sortAsc
+         )
+         console.log(response?.data.userBookedSessions)
+        setData(response?.data.userBookedSessions || [])
+        setTotalPages(response?.data.totalPages || 1)
+      } catch (error) {
+        showErrorToast(error)
+      }
     }
 
     const handleToggleUser = async(userId : string,blocked:boolean)=>{
@@ -36,6 +71,12 @@ const AdminSingleUser = () => {
     useEffect(()=>{
          fetchSingleUser()
     },[userId])
+
+    useEffect(()=>{
+      if(user){
+        fetchUserSessions()
+      }
+    },[page, search, sortKey, sortAsc,user])
    return (
     <div className="w-full flex justify-center">
         <div className="max-w-4xl md:ml-94 w-full mx-auto  overflow-x-auto pt-16  bg-black/30  rounded-xl p-8 shadow-lg">
@@ -75,11 +116,29 @@ const AdminSingleUser = () => {
               {user?.blocked ? "unblock" : "block"}
             </button>
             </div>
-
+           <BackendTable
+      columns={[["date",'date'], ["status",'status'], ["time",'time'], ["trainer",'name'],['email','email']]}
+      tableDatas={data}
+      currentPage={page}
+      totalPages={totalPages}
+      onPageChange={setPage}
+      onSearchChange={(value) => {
+        setPage(1);
+        setSearch(value);
+      }}
+      onSortChange={(key, asc) => {
+        setSortKey(key as string);
+        setSortAsc(asc);
+      }}
+      search={search}
+      sortKey={sortKey as string}
+      sortAsc={sortAsc}
+      // filterKeys={["clientName", "status"]}
+    />
          </div>
         </div>
-        {isModalOpen &&
-          <ConfirmModal onClose={()=>setModalOpen(false)} confrimToProceed={()=>handleToggleUser(user?._id as string,user?.blocked as boolean)}/>
+        {isModalOpen && 
+          <ConfirmModal onClose={()=>setModalOpen(false)} confirmToProceed={()=>handleToggleUser(user?._id as string,user?.blocked as boolean)}/>
         }
       
     </div>

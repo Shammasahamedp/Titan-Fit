@@ -68,17 +68,35 @@ export class AdminService implements IAdminService{
             throw new AppError('something went wrong while fetching trainers',500)
         }
     }
+    async getNewTrainers(): Promise<ITrainerDocument[]> {
+        try {
+            const trainers = await this.trainerRepository.find({new:true})
+            if(!trainers){
+                throw new AppError('trainers not found',404)
+            }
+            return trainers
+        } catch (error) {
+            if(error instanceof AppError){
+                throw error
+            }
+            throw new AppError('something went wrong while fetching new trainers',500)
+        }
+    }
    
    async  changeTrainerApproval(trainerId: string,approved:boolean,reason:string): Promise<ITrainerDocument> {
         try {
             if(approved){
                await this.trainerRepository.findByIdAndUpdate(trainerId,{rejectedDate:new Date()})
-            }
+            } 
            const trainer= await this.trainerRepository.findByIdAndUpdate(trainerId,{approved:!approved},{new:true})
            if(!trainer){
             throw new AppError('trainer not found',404)
            }
-           await sendMail(trainer.email as string,'Admin Rejected',reason)
+           if(!approved){
+            await sendMail(trainer.email as string,'Titan Fit : Admin Approved',reason)
+           }else {
+            await sendMail(trainer.email as string,'Titan Fit : Admin Rejected',reason)
+           }
            return trainer
         } catch (error) {
             if(error instanceof AppError){

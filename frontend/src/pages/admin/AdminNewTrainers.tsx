@@ -2,18 +2,18 @@
 import NewTable from "@/components/common/NewTable"
 import { useEffect, useState } from "react"
 import { ITrainers } from "@/interfaces/trainer-interfaces"
-import { fetchTrainers  } from "@/api/admin-apicalls"
+import { fetchNewTrainers  } from "@/api/admin-apicalls"
 import { useNavigate } from "react-router-dom"
 import { showErrorToast } from "@/utils/toast"
-const AdminTrainerManagement = () => {
-    const [trainers,setTrainers] = useState<ITrainers[]>([])
+const AdminNewTrainers = () => {
+    const [newTrainers,setTrainers] = useState<ITrainers[]>([])
     const navigate = useNavigate()
     useEffect(()=>{
           const getTrainers = async()=>{
             try {
-                const response = await fetchTrainers()
-             if(response?.data.trainers){
-                setTrainers(response.data.trainers)
+                const response = await fetchNewTrainers()
+             if(response?.data.newTrainers){
+                setTrainers(response.data.newTrainers)
              }
             } catch (error) {
                showErrorToast(error)
@@ -28,33 +28,27 @@ const AdminTrainerManagement = () => {
                       <div className="flex justify-between items-center mb-6">
 
              <h2 className="text-3xl font-bold mb-4 o hover:cursor-pointer">
-                Trainer Management
+                Newly Joined Trainers 
              </h2>
              <button
               className="bg-[#FFC436] text-black font-semibold px-4 py-2 mt-3  rounded hover:bg-black hover:text-[#FFC436]"
-              onClick={()=>navigate('/admin/newtrainers')}
+              onClick={()=>navigate('/admin/trainermanagement')}
             >
-              New Trainers joined
+               All Trainers 
             </button>
             </div>
-             {trainers.length>0 && 
-             <NewTable columns={['profilePicture','name','email','phone','gender','yearsOfExperience']} tableDatas={trainers} filterKeys={['name','email','phone']} rederActions={(trainer)=>(
+             <NewTable columns={['profilePicture','name','email','phone','gender','yearsOfExperience']} tableDatas={newTrainers} filterKeys={['name','email','phone']} rederActions={(trainer)=>(
                 <button
                 onClick={() => navigate(`/admin/trainermanagement/${trainer._id}`)}
                  className=" space-x-2 bg-[#FFC436] text-black px-4 font-semibold py-2 rounded hover:bg-black hover:text-[#FFC436] transition-colors"
               >
                 View 
               </button>
-             )} /> }
-           {trainers.length === 0 && (
-  <div className="flex justify-center items-center h-64 text-lg font-semibold text-gray-500 border border-dashed border-gray-400 rounded-md mt-10">
-    No trainers found
-  </div>
-)}
+             )} />
             
           </div>
       
   )
 }
 
-export default AdminTrainerManagement
+export default AdminNewTrainers

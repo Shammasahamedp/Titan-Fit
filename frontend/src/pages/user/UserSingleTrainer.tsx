@@ -15,6 +15,7 @@ import { RootState } from "@/reduxStore/store";
 import Navbar from "@/components/userComponents/Navbar";
 import { logoutUser } from "@/api/auth";
 import { ArrowLeft } from "lucide-react";
+import ConfirmModal from "@/modal/ConfirmationModal";
 interface Slot {
   startTime: string;
   isBooked: boolean;
@@ -26,6 +27,12 @@ interface Availability {
   timeSlots: Slot[];
 }
 
+interface SlotBookArg{
+  id:string;
+  date:string|undefined;
+  startTime:string
+}
+
 const TrainerDetail = () => {
   const navigate = useNavigate()
   const user = useSelector((state: RootState) => state.user.user);
@@ -33,6 +40,8 @@ const TrainerDetail = () => {
   const [trainer, setTrainer] = useState<ITrainers | null>(null);
   const [availability, setAvailability] = useState<Availability[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isModalOpen,setModalOpen]  = useState(false)
+  const [slot,setSlot] = useState<SlotBookArg|null>(null)
   const bookASession = async (
     trainerId: string,
     date: string,
@@ -44,6 +53,7 @@ const TrainerDetail = () => {
       if (response?.data.success) {
         fetchTrainerDetails();
         showSuccessToast(response.data.message);
+        setModalOpen(false)
       }
     } catch (error) {
       showErrorToast(error);
@@ -53,7 +63,7 @@ const TrainerDetail = () => {
     try {
       const response = await getApprovedSingleTrainer(id as string);
       setTrainer(response?.data.trainer);
-      console.log(response?.data.availability?.availability)
+      console.log('asdfasdfasdfasdf',response?.data.availability?.availability)
       setAvailability(response?.data.availability?.availability || []);
     } catch (error) {
       showErrorToast(error);
@@ -181,7 +191,10 @@ const TrainerDetail = () => {
                       <button
                         key={idx}
                         onClick={() =>
-                          bookASession(id as string, dateKey, slot.startTime)
+                          // bookASession(id as string, dateKey, slot.startTime)
+                           {setSlot({id:id as string,date:dateKey,startTime:slot.startTime})
+                           setModalOpen(true)}
+                           
                         }
                         className="bg-black text-white px-4 py-2 rounded hover:bg-gray-500 transition"
                       >
@@ -215,6 +228,8 @@ const TrainerDetail = () => {
           </div>
         </div>
         <ToastContainer />
+        {isModalOpen &&
+        <ConfirmModal  needTextField={false} confirmToProceed={()=>{bookASession(slot?.id as string,slot?.date as string,slot?.startTime as string)}} onClose={()=>setModalOpen(false)}/>}
       </div>
     </>
   );

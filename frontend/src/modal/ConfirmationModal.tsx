@@ -7,22 +7,22 @@ import { trainerRejectionEmailSchema } from '@/schemas/trainer-rejection-mail.sc
 
 interface IConfirmPasswordModalProps {
     onClose:()=>void;
-    confrimToProceed: (reason?:string)=>void
+    confirmToProceed: (reason?:string)=>void;
+    needTextField?:boolean
 }
 interface TrainerRejectionReason{
-  reason:string
+  reason?:string
 }
 
-const ConfirmModal: React.FC<IConfirmPasswordModalProps> = ({ onClose ,confrimToProceed }) => {
+const ConfirmModal: React.FC<IConfirmPasswordModalProps> = ({ onClose ,confirmToProceed ,needTextField=true}) => {
 
   const handleSubmitYes = async () => {
-    console.log('clicked this is handleyes')
-    
-      confrimToProceed(reason)
+    console.log('clicked this is handle yes')
+    confirmToProceed(reason)
   };
 
   const [reason,setReason] = useState('')
-  const {register,handleSubmit,formState:{errors}} = useForm<TrainerRejectionReason>({resolver:yupResolver(trainerRejectionEmailSchema)})
+  const {register,handleSubmit,formState:{errors}} = useForm<TrainerRejectionReason>({resolver:yupResolver(trainerRejectionEmailSchema),context:{needTextField}})
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
       <div className="bg-black border border-white/10 rounded-lg shadow-xl max-w-md w-full animate-fadeIn">
@@ -42,10 +42,11 @@ const ConfirmModal: React.FC<IConfirmPasswordModalProps> = ({ onClose ,confrimTo
         {/* Content */}
         <div className="p-6">
           <p>Mail</p>
+        {needTextField&&
           <textarea  id="" {...register('reason')} onChange={(e)=>{setReason(e.target.value)}} className='border w-full h-20'>
 
-          </textarea>
-          {errors.reason?.message&&(
+          </textarea>}
+          {errors.reason?.message&& (
             <p className='text-red-600'>{errors.reason?.message}</p>
           )}
           <p className="text-white/70 mb-4">

@@ -39,6 +39,7 @@ const AdminUserManagement: React.FC = () => {
               Show Subscribed Users
             </button>
           </div>
+             {users.length>0 &&
              <NewTable columns={['name','email','phone','gender','fitnessGoal','fitnessLevel']} tableDatas={users} filterKeys={['name','email','phone']} rederActions={(user)=>(
                <button
                onClick={()=>navigate(`/admin/usermanagement/${user._id}`)}
@@ -46,7 +47,12 @@ const AdminUserManagement: React.FC = () => {
                >
                 View
                </button>
-             )}/>
+             )}/>}
+             {users.length === 0 && (
+  <div className="flex justify-center items-center h-64 text-lg font-semibold text-gray-500 border border-dashed border-gray-400 rounded-md mt-10">
+    No users found
+  </div>
+)}
           </div>
         <ToastContainer/></>
   );

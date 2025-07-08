@@ -14,7 +14,9 @@ availabilityRouter.get('/get',jwtTokenVerify(['user','trainer','admin']),(req:Re
 availabilityRouter.get('/get-booked-sessions',jwtTokenVerify(['trainer','admin']),(req:Request,res:Response)=>availabilityController.getBookedSessions(req,res))
 availabilityRouter.get('/get-trainer-sessions',jwtTokenVerify(['admin']),(req:Request,res:Response)=>availabilityController.getTrainerBookedSessions(req,res))
 
-availabilityRouter.get('/get-user-booked-sessions',jwtTokenVerify(['user']),(req:Request,res:Response)=>availabilityController.getUserBookedSession(req,res))
+availabilityRouter.get('/get-user-booked-sessions',jwtTokenVerify(['user','admin']),(req:Request,res:Response)=>availabilityController.getUserBookedSession(req,res))
+availabilityRouter.get('/get-user-booked-session-admin',jwtTokenVerify(['user','admin']),(req:Request,res:Response)=>availabilityController.getUserBookedSessionAdmin(req,res))
+
 
 
 export default availabilityRouter

@@ -3,7 +3,7 @@
 import { Document, Types } from 'mongoose';
 
 export interface IPayment extends Document {
-  userId: Types.ObjectId;
+  userId?: Types.ObjectId;
   amount: number;
   status: 'completed' | 'pending' | 'failed';
   transactionId: string;
