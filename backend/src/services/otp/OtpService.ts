@@ -15,7 +15,7 @@ export class OtpService implements IOtpService{
         try {
             const otp = generateOtp()
         console.log('this is otp:',otp)
-        await this.otpRepository.saveOtp(email,otp,60)
+        await this.otpRepository.saveOtp(email,otp,30)
         await sendMail(email,emailMessages.OTP_SUBJECT,`Your otp is ${otp}`)
         } catch (error) {
             throw new AppError('something went wrong while send otp',500)

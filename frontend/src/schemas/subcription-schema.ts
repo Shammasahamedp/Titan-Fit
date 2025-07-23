@@ -2,7 +2,8 @@ import * as yup from 'yup'
 
 export const subscriptionSchema = yup.object().shape({
     planName:yup.string().required('Name is required'),
-    price:yup.number().positive('Price must be a positive value').integer('Must be a whole number').required('Price is required'),
+    price:yup.number()    .transform((value, originalValue) => originalValue === '' ? undefined : Number(value))
+.positive('Price must be a positive value').integer('Must be a whole number').required('Price is required'),
     description:yup.string().required("Bio is required")
     .test("minWords","Enter at least five words",(value:any)=>{
       if(!value){

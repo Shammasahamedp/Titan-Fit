@@ -46,9 +46,14 @@ export interface ITrainerProfileContextType  {
     setPasswordModal:React.Dispatch<React.SetStateAction<boolean>>
 }
 
+interface ISlotObject{
+    startTime:string,
+    isBooked:boolean
+}
+
 export interface ITrainerAvailableSlots{
     date:Date;
-    slots:string[],
+    slots:,
     
 }
 

@@ -4,6 +4,7 @@ export interface ISubscriptionDetails{
     planName:string,
     subscriptionId:Types.ObjectId|string,
     paymentId:Types.ObjectId|string,
+    amountPaid:number,
     startDate:Date,
     endDate:Date,
     creditsRemaining:number,

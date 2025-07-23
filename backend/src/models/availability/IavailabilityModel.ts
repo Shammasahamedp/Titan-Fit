@@ -7,7 +7,7 @@ export interface ISlot{
 }
 
 export interface IAvailableDate{
-    date:string,
+    date: Date,
     timeSlots:ISlot[]
     isCompleted:boolean
 }

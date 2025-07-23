@@ -28,4 +28,5 @@ userRouter.put('/reset-password',jwtTokenVerify(['user']),checkIfUserBlocked,(re
 userRouter.get('/get-trainers',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.getApprovedTrainers(req,res))
 userRouter.get('/get-trainers/:id',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.getSingleApprovedTrainer(req,res))
 userRouter.put('/book-session',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.bookATrainingSession(req,res))
+userRouter.put('/cancel-booking',jwtTokenVerify(['user']),checkIfUserBlocked,(req:Request,res:Response)=>userController.cancelSessionBooking(req,res))
 export default userRouter

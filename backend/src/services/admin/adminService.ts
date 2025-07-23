@@ -156,12 +156,26 @@ export class AdminService implements IAdminService{
     }
     async getSingleUserSubscriptions(userId: string): Promise<ISingleUserSubscriptions[]> {
         try {
-            const user = await this.userRepository.findById(userId)
+            const user = await this.userRepository.getSubscriptionDetails(userId)
             if(!user){
                 throw new AppError(userMessages.USER_NOT_FOUND,404)
             }
-            if( user.subscription){
-                return user.subscription
+            console.log('userrrrrrrrrrrrr',user)
+                        // console.log('userrrrrrrrrrrrr',user.subscriptionId)
+                        //             console.log('userrrrrrrrrrrrr',user.paymentId)
+
+
+            if( user.subscription){   
+                console.log('user.subscription',user.subscription)
+                 let userSubscriptionDetails = user.subscription.map((sub)=>({
+                    ...sub,
+                    subscriptionId:sub.subscriptionId._id,
+                    
+                    paymentId:sub.paymentId._id
+                 }))
+                // return userSubscriptionDetails
+                console.log('userSubscriptionDetails',userSubscriptionDetails)
+                return userSubscriptionDetails
             }
             throw new AppError(userMessages.SUBSCRIPTION_NOT_FOUND,404)
         } catch (error) {

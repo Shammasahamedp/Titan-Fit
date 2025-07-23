@@ -18,6 +18,7 @@ const UserSchema: Schema = new Schema(
     subscription: [
       {
         planName:{type:String,required:true},
+        amountPaid:{type:String,required:true},
         subscriptionId: { type: Types.ObjectId, ref: 'Subscription', required: true },
         paymentId: { type: Types.ObjectId, ref: 'Payment', required: true },
         startDate: { type: Date, required: true },

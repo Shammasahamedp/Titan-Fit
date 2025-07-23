@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -12,8 +10,16 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
 const timeSlots = [
-  "08:00", "09:00", "10:00", "11:00", "12:00",
-  "13:00", "14:00", "15:00", "16:00", "17:00",
+  "08:00",
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
 ];
 
 const TrainerAvailability: React.FC = () => {
@@ -38,13 +44,13 @@ const TrainerAvailability: React.FC = () => {
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
-    const selectedDateStr = date.toISOString().split('T')[0];
+    const selectedDateStr = date.toISOString().split("T")[0];
     const matched = availabilityData.find(
       // (item) => new Date(item.date).toDateString() === date.toDateString()
-      (item)=>{
-    const itemDateStr = new Date(item.date).toISOString().split('T')[0];
-    return itemDateStr === selectedDateStr;
-  }
+      (item) => {
+        const itemDateStr = new Date(item.date).toISOString().split("T")[0];
+        return itemDateStr === selectedDateStr;
+      }
     );
 
     if (matched) {
@@ -76,12 +82,28 @@ const TrainerAvailability: React.FC = () => {
       return;
     }
 
-    const existing = availabilityData.find(
-      (item) => new Date(item.date).toDateString() === selectedDate.toDateString()
-    );
+    // const existing = availabilityData.find(
+    //   (item) =>
+    //     new Date(item.date).toDateString() === selectedDate.toDateString()
+    // );
 
-    const existingSlots = existing?.timeSlots.map((s) => s.startTime).sort() || [];
-    const currentSlots = [...selectedSlots.map((s) => s.startTime)].sort();
+    const selectedDateStr = selectedDate.toISOString().split("T")[0];
+    const existing = availabilityData.find((item) => {
+      const itemDateStr = new Date(item.date).toISOString().split("T")[0];
+      return itemDateStr === selectedDateStr;
+    });
+
+    const bookedSlots = existing?.timeSlots.filter((s) => s.isBooked) || [];
+
+    const newAvailability: ISlot[] = [
+      ...bookedSlots,
+      ...selectedSlots.filter(
+        (slot) => !bookedSlots.some((b) => b.startTime === slot.startTime)
+      ),
+    ];
+    const existingSlots =
+      existing?.timeSlots.map((s) => s.startTime).sort() || [];
+    const currentSlots = [...newAvailability.map((s) => s.startTime)].sort();
 
     const isSame =
       existingSlots.length === currentSlots.length &&
@@ -93,12 +115,28 @@ const TrainerAvailability: React.FC = () => {
     }
 
     try {
-      console.log('selected dates',selectedDate)
-      
+      console.log("selected dates", selectedDate);
+      console.log("selecteslots", selectedSlots);
+      const fixedDate = new Date(
+        Date.UTC(
+          selectedDate.getFullYear(),
+          selectedDate.getMonth(),
+          selectedDate.getDate()
+        )
+      );
+
       const response = await uploadAvailability({
         date: selectedDate,
-        slots: selectedSlots.map((slot)=>slot.startTime),
+        slots: selectedSlots.map((slot) => slot.startTime),
       });
+
+      //   const response = await uploadAvailability({
+      //   date: selectedDate,
+      //   slots: newAvailability.map((slot) => ({
+      //     startTime: slot.startTime,
+      //     isBooked: slot.isBooked || false,
+      //   })),
+      // });
       showSuccessToast(response?.data.message);
       setSelectedDate(null);
       setSelectedSlots([]);
@@ -130,11 +168,22 @@ const TrainerAvailability: React.FC = () => {
           tileDisabled={({ date }) =>
             date < new Date(new Date().setHours(24, 0, 0, 0))
           }
+          // tileClassName={({ date }) => {
+          //   const hasSlots = availabilityData.some(
+          //     (item) =>
+          //       new Date(item.date).toDateString() === date.toDateString()
+          //   );
+          //   return hasSlots ? "highlight-available" : "";
+          // }}
+          
           tileClassName={({ date }) => {
-            const hasSlots = availabilityData.some(
-              (item) =>
-                new Date(item.date).toDateString() === date.toDateString()
-            );
+            const calDateStr = date.toISOString().split("T")[0];
+            const hasSlots = availabilityData.some((item) => {
+              const itemDateStr = new Date(item.date)
+                .toISOString()
+                .split("T")[0];
+              return itemDateStr === calDateStr;
+            });
             return hasSlots ? "highlight-available" : "";
           }}
           className="custom-calendar"
@@ -150,6 +199,7 @@ const TrainerAvailability: React.FC = () => {
 
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {timeSlots.map((slot) => {
+                console.log("slots", slot);
                 const selected = isSlotSelected(slot);
                 const booked = isSlotBooked(slot);
                 return (
@@ -160,11 +210,13 @@ const TrainerAvailability: React.FC = () => {
                     }}
                     className={`
                       px-4 py-3 rounded-xl cursor-pointer transition-all
-                      ${booked
-                        ? "bg-gray-500 text-white cursor-not-allowed"
-                        : selected
-                        ? "bg-[#FFC436] text-black font-semibold hover:bg-[#ffc436cc]"
-                        : "bg-black/80 text-white hover:bg-black/60"}
+                      ${
+                        booked
+                          ? "bg-gray-500 text-white cursor-not-allowed"
+                          : selected
+                          ? "bg-[#FFC436] text-black font-semibold hover:bg-[#ffc436cc]"
+                          : "bg-black/80 text-white hover:bg-black/60"
+                      }
                     `}
                   >
                     {slot} —{" "}

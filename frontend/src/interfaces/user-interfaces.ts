@@ -81,6 +81,7 @@ export interface ISubscribersTableData{
 
 export interface ISingleUserSubscriptions{
     planName:string,
+    amountPaid?:number,
         subscriptionId: string,
         paymentId: string,
         startDate: string,

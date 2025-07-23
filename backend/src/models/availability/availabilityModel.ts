@@ -12,6 +12,7 @@ const AvailabilitySchema:Schema = new Schema(
                     startTime:{type:String},
                     isBooked:{type:Boolean,default:false},
                     userId:{type:Types.ObjectId}
+                    
                 }],
                 isCompleted:{type:Boolean,default:false}
             }

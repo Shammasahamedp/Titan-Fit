@@ -14,5 +14,6 @@ export interface IUserService{
     getApprovedTrainers(page:number,limit:number,search:string,date:string):Promise<{trainers:ITrainerDocument[],total:number}|null>
     getSingleApprovedTrainer(trainerId:string):Promise<{trainer:ITrainerDocument,availability:IAvailabilityDocument}>
     bookASessionWithTrainer(trainerId:string,userId:string,date:string,startTime:string):Promise<boolean>
+    cancelTrainingSession(trainerId:string,userId:string,date:string,startTime:string):Promise<boolean>
     updateExpiredSubscription():Promise<void>
 }

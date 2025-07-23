@@ -85,7 +85,7 @@ export default function Signup() {
         return 
       }
         
-        setShowOtpModal(false)
+       
      }
   };
 

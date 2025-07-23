@@ -133,4 +133,16 @@ export class UserController {
             handleError(res,error)
         }
     }
+
+    async cancelSessionBooking(req:Request,res:Response):Promise<void>{
+        try {
+            const {trainerId,date,startTime} = req.body
+            const success = await this.userService.cancelTrainingSession(trainerId,res.locals.user.userId,date,startTime)
+            if(success){
+                res.status(200).json({success:true,message:availabilityMessages.CANCEL_BOOKED_SESSION})
+            }
+        } catch (error) {
+            handleError(res,error)
+        }
+    }
 }

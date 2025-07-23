@@ -75,7 +75,7 @@ export const resetPassword = async (password:string)=>{
     }
 }
 
-export const uploadAvailability = async (availableSlots:ITrainerAvailableSlots)=>{
+export const    uploadAvailability = async (availableSlots:ITrainerAvailableSlots)=>{
     try {
         console.log('avalable slots',availableSlots)
         const response = await axiosInstance.put(`${API}/trainer/update-availability`,availableSlots)

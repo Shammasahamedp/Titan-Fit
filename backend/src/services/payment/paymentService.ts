@@ -73,7 +73,7 @@ export class PaymentService implements IPaymentService{
              const paymentIntentId = session.payment_intent
              const payementIntent = await stripe.paymentIntents.retrieve(paymentIntentId as string)
              if(payementIntent.status === 'succeeded'){
-               
+               console.log('payment success','inside paymentintent.status')
                 let paymentData:Partial<IPaymentDocument> = {
                     ...payementIntent.metadata,
                     status:'completed',
@@ -81,14 +81,18 @@ export class PaymentService implements IPaymentService{
 
                 }
                 const paymentWithSameId = await this.paymentRepo.findOne({transactionId:paymentData.transactionId})
+                console.log('paymentwithsameid',paymentWithSameId)
                 if(!paymentWithSameId){
+                    console.log('this is inside ')
                     const payment=await this.paymentRepo.create(paymentData)
-                    if(payment){
+
+                    if(payment){   
                         const subscription = await this.subscriptionRepo.findById(payementIntent.metadata.subscriptionId)
                         const subscriptionDetails:ISubscriptionDetails={
                             planName:subscription?.planName as string,
                             creditsRemaining:subscription?.credits as number,
                             paymentId:payment._id,
+                            amountPaid:payment.amount,
                             status:"active",
                             totalCredits:subscription?.credits as number,
                             subscriptionId:subscription?._id as Types.ObjectId,

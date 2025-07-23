@@ -117,15 +117,5 @@ export class TrainerRepository
     
   }
 
-  // async getTrainers(): Promise<ITrainerDocument[] | null> {
-  //     return await trainerModel.find().select('-password -createdAt -updatedAt -__v -googleId')
-  // }
-
-  //    async changeApproval(trainerId: string,approved:boolean): Promise<ITrainerDocument | null> {
-  //         return await trainerModel.findByIdAndUpdate(
-  //             trainerId,
-  //             {$set:{approved:!approved}},
-  //             {new:true}
-  //         )
-  //     }
+ 
 }

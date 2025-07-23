@@ -1,4 +1,4 @@
-import { IUserSignUp,IUserDocument, IUserProfile } from "../../interfaces/userInterfaces";
+import { IUserSignUp,IUserDocument, IUserProfile, IUserSubscriptionDetailsPopulated } from "../../interfaces/userInterfaces";
 import { ISubscriptionDetails } from "../../models/user/IuserModel";
 import { IBaseRepository } from "../IbaseRepository";
 
@@ -7,6 +7,7 @@ export interface IUserRepository extends IBaseRepository<IUserDocument>{
     // createUser(data:IUserSignUp):Promise<IUserDocument>
     // findOne(googleId:string):Promise<IUserDocument|null>
     saveGoogleId(email:string,googleId:string):Promise<IUserDocument|null>
+    getSubscriptionDetails(userId:string):Promise<IUserSubscriptionDetailsPopulated|null>
     // findUserById(userId:string):Promise<IUserDocument|null>
     editUserProfile(userId:string,profileData:IUserProfile):Promise<IUserDocument|null>
     addProfilePic(userId:string,profilePic:string):Promise<IUserDocument|null>

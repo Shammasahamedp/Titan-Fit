@@ -4,8 +4,10 @@ export const trainerProfileEditSchema = yup.object().shape({
     name:yup.string().required('Name is required'),
     email:yup.string().required(),
     gender:yup.string().required('Gender is required'),
-    age:yup.number().typeError('Age must be a number')
-    .min(20,'You must be at least 20 year old to become a trainer')
+    age:yup.number()    .transform((value, originalValue) => originalValue === '' ? undefined : Number(value))
+.typeError('Age must be a number')
+    .min(20,'Age must be above 20')
+.max(50,'Age must be below 50')
     .positive('Age must be a positive number')
     .integer('Age must be a whole number')
     .required('Age is required'),
@@ -14,7 +16,8 @@ export const trainerProfileEditSchema = yup.object().shape({
         /^(\+91)?\d{10}$/,
       "Phone number must be 10 digits (with optional +91)"
     ),
-   yearsOfExperience:yup.number()
+   yearsOfExperience:yup.number()    .transform((value, originalValue) => originalValue === '' ? undefined : Number(value))
+.max(25,'Experience must be below 25 years')
      .positive("Must be a positive value")
      .required("Years of experience is required"),
     

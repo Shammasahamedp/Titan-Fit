@@ -1,5 +1,7 @@
 import { Document,Types } from "mongoose";
 import { ISubscriptionDetails, IuserModel } from "../models/user/IuserModel";
+import { ISubscriptionDocument } from "./subscriptionInterfaces";
+import { IPaymentDocument } from "./paymentInterfaces";
 export interface IUserSignUp{
     name:string;
     email:string;
@@ -38,5 +40,18 @@ export interface  IUserProfile {
     weight?:number;
     height?:number;
     subscription?:ISubscriptionDetails[]
+}
+
+export interface IUserSubscriptionDetailsPopulated extends Omit<IUserDocument,'subscription'>{
+    subscription: {
+    planName: string;
+    subscriptionId: ISubscriptionDocument; 
+    paymentId: IPaymentDocument;           
+    startDate: Date;
+    endDate: Date;
+    creditsRemaining: number;
+    totalCredits: number;
+    status: 'active' | 'completed';
+  }[];
 }
 

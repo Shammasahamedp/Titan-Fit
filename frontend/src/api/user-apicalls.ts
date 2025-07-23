@@ -100,5 +100,16 @@ export const bookATrainingSession = async (trainerId:string,date:string,startTim
   }
 }
 
+export const cancelTheBooking = async (trainerId:string,date:string,startTime:string)=>{
+  try {
+     const response = await axiosInstance.put(`${API}/user/cancel-booking`,{trainerId,date,startTime})
+     if(response.data){
+      return response
+     }
+  } catch (error) {
+    throw error
+  }
+}
+
 
 

@@ -14,7 +14,22 @@ const SingleUserSubscriptions = () => {
     try {
        const response = await getSingleUserSubscriptions(userId)
        if(response?.data.subscriptions){
-        setSubscriptions(response.data.subscriptions)
+        let formattedSubscriptions = response.data.subscriptions.map((sub:ISingleUserSubscriptions)=>({
+             ...sub,
+            //  paymentId:sub.paymentId
+             startDate: new Date(sub.startDate).toLocaleDateString("en-IN", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        endDate: new Date(sub.endDate).toLocaleDateString("en-IN", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+        }))
+        setSubscriptions(formattedSubscriptions)
+        console.log('for',formattedSubscriptions)
        }
 
     } catch (error) {
@@ -32,7 +47,7 @@ const SingleUserSubscriptions = () => {
       <button onClick={()=>navigate('/admin/subscribedusers')}>
                <ArrowLeft/>
           </button>
-    <NewTable columns={['planName','subscriptionId','paymentId','startDate','endDate','totalCredits','creditsRemaining','status']} tableDatas={subsriptions} filterKeys={['planName']}  />
+    <NewTable columns={['planName','amountPaid','subscriptionId','paymentId','startDate','endDate','totalCredits','creditsRemaining','status']} tableDatas={subsriptions} filterKeys={['planName']}  />
  </div>
   )
 }

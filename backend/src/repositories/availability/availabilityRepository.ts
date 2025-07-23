@@ -4,6 +4,7 @@ import {
   IAvailabilityDocument,
   IAvailabilityPopulated,
   IAvailableDate,
+  ISlot,
   IUserBookedSessionPopulated,
 } from "../../models/availability/IavailabilityModel";
 import { BaseRepository } from "../baseRepository";
@@ -29,17 +30,32 @@ export class AvailabilityRepository
     );
   }
 
+  async getBookedSlotsInADate(
+    trainerId: string,
+    date: string
+  ): Promise<string[] | []> {
+    const data = await availabilityModel.findOne({ trainerId: trainerId });
+    console.log('data',data,'date',date)
+const something = data?.availability.find((value) =>
+  new Date(value.date).toISOString().split('T')[0] === new Date(date).toISOString().split('T')[0]
+);
+    console.log('something',something)
+    const bookedSlots = something?.timeSlots
+      .filter((value) => value.isBooked)
+      .map((value) => value.startTime);
+
+    if (bookedSlots) {
+      return bookedSlots;
+    } else {
+      return [];
+    }
+  }
+
   async isDateExist(trainerId: string, date: string): Promise<boolean | null> {
     console.log(trainerId, "id", "date", date);
     return await availabilityModel.findOne({
       trainerId: trainerId,
-      availability: {
-        $elemMatch: {
-          date: {
-            $eq: new Date(date),
-          },
-        },
-      },
+      'availability.date':date
     });
   }
 
@@ -53,6 +69,37 @@ export class AvailabilityRepository
       { new: true }
     );
   }
+
+
+  async updateAlreadyBookedDateAvailability(
+  trainerId: string,
+  date: string,
+  newSlots: ISlot[]
+): Promise<IAvailabilityDocument | null> {
+  const availabilityDoc = await availabilityModel.findOne({ trainerId });
+  console.log('aav',availabilityDoc)
+  if (!availabilityDoc) return null;
+
+  console.log(availabilityDoc.availability[0].date,'date',date)
+  const dateEntry = availabilityDoc.availability.find((entry) => entry.date.toISOString() === date);
+  console.log('dateentry',dateEntry)
+  if (!dateEntry) return null;
+
+  const existingStartTimes = new Set(dateEntry.timeSlots.map((slot) => slot.startTime));
+   console.log('existing start time',existingStartTimes)
+  const filteredNewSlots = newSlots.filter(
+    (slot) => !existingStartTimes.has(slot.startTime)
+  );
+
+  console.log('filtered new slots',filteredNewSlots)
+
+  dateEntry.timeSlots.push(...filteredNewSlots);
+   
+  await availabilityDoc.save();
+   console.log('availability document',availabilityDoc)
+  return availabilityDoc;
+}
+
 
   async bookASession(
     trainerId: Types.ObjectId,
@@ -102,6 +149,139 @@ export class AvailabilityRepository
     );
   }
 
+  async cancelTrainerBookedSession(trainerId: Types.ObjectId, userId: Types.ObjectId, date: string, startTime: string): Promise<IAvailabilityDocument | null> {
+      const [year, month, day] = date.split("-");
+    const formatted = `${year}-${month}-${day}`;
+   console.log('this is repo layer cancel trainign session')
+    return await availabilityModel.findOneAndUpdate(
+      {
+        trainerId: trainerId,
+        $expr: {
+          $in: [
+            formatted,
+            {
+              $map: {
+                input: "$availability",
+                as: "a",
+                in: { $dateToString: { date: "$$a.date", format: "%Y-%m-%d" } },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $set: {
+          "availability.$[outer].timeSlots.$[slot].isBooked": false,
+          "availability.$[outer].timeSlots.$[slot].userId": null,
+        },
+      },
+       {
+    arrayFilters: [
+       {
+            "outer.date": {
+              $gte: new Date(date),
+              $lt: new Date(
+                new Date(date).setDate(new Date(date).getDate() + 1)
+              ),
+            },
+          },               // target the correct date in availability array
+      { "slot.userId": userId }                    // target the slot where this user booked
+    ],
+    new: true
+  }
+    );
+  }
+
+
+
+async changeUserSlotOnDate(
+  trainerId: Types.ObjectId,
+  userId: Types.ObjectId,
+  date: string,
+  newStartTime: string
+): Promise<IAvailabilityDocument | null> {
+  const startOfDay = new Date(`${date}T00:00:00.000Z`);
+  const endOfDay = new Date(`${date}T23:59:59.999Z`);
+
+  // 1️⃣ Step 1: Unset (unbook) previous slot
+  await availabilityModel.updateOne(
+    {
+      trainerId,
+      "availability.date": { $gte: startOfDay, $lt: endOfDay },
+      "availability.timeSlots.userId": userId
+    },
+    {
+      $set: {
+        "availability.$[outer].timeSlots.$[slot].isBooked": false,
+        "availability.$[outer].timeSlots.$[slot].userId": null
+      }
+    },
+    {
+      arrayFilters: [
+        { "outer.date": { $gte: startOfDay, $lt: endOfDay } },
+        { "slot.userId": userId }
+      ]
+    }
+  );
+
+  // 2️⃣ Step 2: Set (book) new slot
+  const updated = await availabilityModel.findOneAndUpdate(
+    {
+      trainerId,
+      "availability.date": { $gte: startOfDay, $lt: endOfDay },
+      "availability.timeSlots.startTime": newStartTime,
+      "availability.timeSlots.isBooked": false
+    },
+    {
+      $set: {
+        "availability.$[outer].timeSlots.$[slot].isBooked": true,
+        "availability.$[outer].timeSlots.$[slot].userId": userId
+      }
+    },
+    {
+      arrayFilters: [
+        { "outer.date": { $gte: startOfDay, $lt: endOfDay } },
+        { "slot.startTime": newStartTime, "slot.isBooked": false }
+      ],
+      new: true
+    }
+  );
+
+  return updated;
+}
+
+
+
+
+
+  async findUserSlotInAnyTrainerInADate(userId: Types.ObjectId, date: string): Promise<IAvailabilityDocument | null> {
+  // const startOfDay = new Date(date);
+
+  const startOfDay = new Date(`${date}T00:00:00.000Z`);
+const endOfDay = new Date(`${date}T23:59:59.999Z`);
+
+
+  console.log('userId', userId);
+  console.log('startOfDay', startOfDay.toISOString());
+  console.log('endOfDay', endOfDay.toISOString());
+
+  const existingBooking = await availabilityModel.findOne({ 
+    availability: {
+      $elemMatch: {
+        date: { $gte: startOfDay, $lt: endOfDay },
+        timeSlots: {
+          $elemMatch: {
+            userId: userId // or userId.toString() depending on schema
+          }
+        }
+      }
+    }
+  });
+
+  console.log('existing booking', existingBooking);
+  return existingBooking;
+}
+
   async getTrainersBookedSessions(
     trainerId: string,
     page: number,
@@ -109,11 +289,20 @@ export class AvailabilityRepository
     sortKey: string,
     sortAsc: boolean | string
   ): Promise<IAvailabilityPopulated | null> {
-    console.log("page", page,'trainerId',trainerId, "search", search, "sortKey", sortKey);
+    console.log(
+      "page",
+      page,
+      "trainerId",
+      trainerId,
+      "search",
+      search,
+      "sortKey",
+      sortKey
+    );
 
     const PAGE_SIZE = 5;
     const skip = (page - 1) * PAGE_SIZE;
-    
+
     const pipeline: any[] = [
       { $match: { trainerId: new mongoose.Types.ObjectId(trainerId) } },
       { $unwind: "$availability" },
@@ -183,173 +372,183 @@ export class AvailabilityRepository
     pipeline.push({ $skip: skip }, { $limit: PAGE_SIZE });
 
     const availability = await availabilityModel.aggregate(pipeline);
-    console.log(availability,totalPages,'hellllllllllllll')
+    console.log(availability, totalPages, "hellllllllllllll");
     return { availability, totalPages };
   }
 
   async getTrainerSessionsAdmin(
-  trainerId: string,
-  page: number,
-  search: string,
-  sortKey: string,
-  sortAsc: boolean | string
-): Promise<IAvailabilityPopulated | null> {
-  console.log("page", page, "trainerId", trainerId, "search", search, "sortKey", sortKey);
+    trainerId: string,
+    page: number,
+    search: string,
+    sortKey: string,
+    sortAsc: boolean | string
+  ): Promise<IAvailabilityPopulated | null> {
+    console.log(
+      "page",
+      page,
+      "trainerId",
+      trainerId,
+      "search",
+      search,
+      "sortKey",
+      sortKey
+    );
 
-  const PAGE_SIZE = 5;
-  const skip = (page - 1) * PAGE_SIZE;
+    const PAGE_SIZE = 5;
+    const skip = (page - 1) * PAGE_SIZE;
 
-  const pipeline: any[] = [
-    { $match: { trainerId: new mongoose.Types.ObjectId(trainerId) } },
-    { $unwind: "$availability" },
-    { $unwind: "$availability.timeSlots" },
-    {
-      $lookup: {
-        from: "users",
-        localField: "availability.timeSlots.userId",
-        foreignField: "_id",
-        as: "userDetails",
+    const pipeline: any[] = [
+      { $match: { trainerId: new mongoose.Types.ObjectId(trainerId) } },
+      { $unwind: "$availability" },
+      { $unwind: "$availability.timeSlots" },
+      {
+        $lookup: {
+          from: "users",
+          localField: "availability.timeSlots.userId",
+          foreignField: "_id",
+          as: "userDetails",
+        },
       },
-    },
-    {
-      $addFields: {
-        "availability.timeSlots.userDetails": {
-          $cond: {
-            if: { $gt: [{ $size: "$userDetails" }, 0] },
-            then: {
-              name: { $arrayElemAt: ["$userDetails.name", 0] },
-              email: { $arrayElemAt: ["$userDetails.email", 0] },
-              fitnessLevel: { $arrayElemAt: ["$userDetails.fitnessLevel", 0] },
+      {
+        $addFields: {
+          "availability.timeSlots.userDetails": {
+            $cond: {
+              if: { $gt: [{ $size: "$userDetails" }, 0] },
+              then: {
+                name: { $arrayElemAt: ["$userDetails.name", 0] },
+                email: { $arrayElemAt: ["$userDetails.email", 0] },
+                fitnessLevel: {
+                  $arrayElemAt: ["$userDetails.fitnessLevel", 0],
+                },
+              },
+              else: null,
             },
-            else: null,
           },
         },
       },
-    },
-    {
+      {
+        $project: {
+          _id: 0,
+          date: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$availability.date",
+            },
+          },
+          isCompleted: "$availability.isCompleted",
+          isBooked: "$availability.timeSlots.isBooked",
+          time: "$availability.timeSlots.startTime",
+          userDetails: "$availability.timeSlots.userDetails",
+        },
+      },
+    ];
+
+    if (search && search.trim() !== "") {
+      pipeline.push({
+        $match: {
+          "userDetails.name": { $regex: search, $options: "i" },
+        },
+      });
+    }
+
+    if (sortKey) {
+      pipeline.push({
+        $sort: {
+          [sortKey]: sortAsc === true || sortAsc === "true" ? 1 : -1,
+        },
+      });
+    }
+
+    const countPipeline = [...pipeline, { $count: "total" }];
+    const countResult = await availabilityModel.aggregate(countPipeline);
+    const total = countResult[0]?.total || 0;
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+
+    pipeline.push({ $skip: skip }, { $limit: PAGE_SIZE });
+
+    const availability = await availabilityModel.aggregate(pipeline);
+    return { availability, totalPages };
+  }
+
+  async getUsersBookesSessions(
+    userId: string,
+    page: number,
+    search: string,
+    sortKey: string,
+    sortAsc: boolean | string
+  ): Promise<IUserBookedSessionPopulated | null> {
+    const PAGE_SIZE = 5;
+    const skip = (page - 1) * PAGE_SIZE;
+
+    const pipeline: any[] = [
+      { $unwind: "$availability" },
+      { $unwind: "$availability.timeSlots" },
+      {
+        $match: {
+          "availability.timeSlots.userId": new mongoose.Types.ObjectId(userId),
+          "availability.timeSlots.isBooked": true,
+        },
+      },
+      {
+        $lookup: {
+          from: "trainers",
+          localField: "trainerId",
+          foreignField: "_id",
+          as: "trainerDetails",
+        },
+      },
+      {
+        $addFields: {
+          trainerDetails: { $arrayElemAt: ["$trainerDetails", 0] },
+        },
+      },
+    ];
+
+    if (search && search !== "") {
+      pipeline.push({
+        $match: {
+          "trainerDetails.name": { $regex: search, $options: "i" },
+        },
+      });
+    }
+
+    pipeline.push({
       $project: {
         _id: 0,
+        trainerName: "$trainerDetails.name",
+        trainerEmail: "$trainerDetails.email",
         date: {
           $dateToString: {
             format: "%Y-%m-%d",
             date: "$availability.date",
           },
         },
+        startTime: "$availability.timeSlots.startTime",
         isCompleted: "$availability.isCompleted",
-        isBooked: "$availability.timeSlots.isBooked",
-        time: "$availability.timeSlots.startTime",
-        userDetails: "$availability.timeSlots.userDetails",
-      },
-    },
-  ];
-
-  if (search && search.trim() !== "") {
-    pipeline.push({
-      $match: {
-        "userDetails.name": { $regex: search, $options: "i" },
       },
     });
-  }
 
-  if (sortKey) {
-    pipeline.push({
-      $sort: {
-        [sortKey]: sortAsc === true || sortAsc === "true" ? 1 : -1,
-      },
-    });
-  }
-
-  const countPipeline = [...pipeline, { $count: "total" }];
-  const countResult = await availabilityModel.aggregate(countPipeline);
-  const total = countResult[0]?.total || 0;
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-
-  pipeline.push({ $skip: skip }, { $limit: PAGE_SIZE });
-
-  const availability = await availabilityModel.aggregate(pipeline);
-  return { availability, totalPages };
-}
-
-
-async getUsersBookesSessions(
-  userId: string,
-  page: number,
-  search: string,
-  sortKey: string,
-  sortAsc: boolean | string
-): Promise<IUserBookedSessionPopulated | null> {
-  const PAGE_SIZE = 5;
-  const skip = (page - 1) * PAGE_SIZE;
-
-  const pipeline: any[] = [
-    { $unwind: "$availability" },
-    { $unwind: "$availability.timeSlots" },
-    {
-      $match: {
-        "availability.timeSlots.userId": new mongoose.Types.ObjectId(userId),
-        "availability.timeSlots.isBooked": true,
-      },
-    },
-    {
-      $lookup: {
-        from: "trainers",
-        localField: "trainerId",
-        foreignField: "_id",
-        as: "trainerDetails"
-      }
-    },
-    {
-      $addFields: {
-        trainerDetails: { $arrayElemAt: ["$trainerDetails", 0] }
-      }
-    },
-  ];
-
-  if (search && search !== "") {
-    pipeline.push({
-      $match: {
-        "trainerDetails.name": { $regex: search, $options: "i" },
-      },
-    });
-  }
-
-  pipeline.push({
-    $project: {
-      _id: 0,
-      trainerName: "$trainerDetails.name",
-      trainerEmail: "$trainerDetails.email",
-      date: {
-        $dateToString: {
-          format: "%Y-%m-%d",
-          date: "$availability.date"
-        }
-      },
-      startTime: "$availability.timeSlots.startTime",
-      isCompleted: "$availability.isCompleted"
+    if (sortKey) {
+      pipeline.push({
+        $sort: {
+          [sortKey]: sortAsc ? 1 : -1,
+        },
+      });
     }
-  });
 
-  if (sortKey) {
-    pipeline.push({
-      $sort: {
-        [sortKey]: sortAsc ? 1 : -1,
-      },
-    });
+    const countPipeline = [...pipeline, { $count: "total" }];
+    const countResult = await availabilityModel.aggregate(countPipeline);
+    const total = countResult[0]?.total || 0;
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+
+    pipeline.push({ $skip: skip }, { $limit: PAGE_SIZE });
+
+    const sessions = await availabilityModel.aggregate(pipeline);
+
+    return { sessions, totalPages };
   }
 
-  const countPipeline = [...pipeline, { $count: "total" }];
-  const countResult = await availabilityModel.aggregate(countPipeline);
-  const total = countResult[0]?.total || 0;
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-
-  pipeline.push({ $skip: skip }, { $limit: PAGE_SIZE });
-
-  const sessions = await availabilityModel.aggregate(pipeline);
-
-  return { sessions, totalPages };
-}
-
-async getTrainersSlots(
+  async getTrainersSlots(
     trainerId: string,
     page: number,
     search: string,
@@ -433,5 +632,4 @@ async getTrainersSlots(
 
     return { availability, totalPages };
   }
-
 }

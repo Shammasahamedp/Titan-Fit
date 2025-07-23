@@ -21,6 +21,7 @@ async addSubscription(subscription: ISubscription): Promise<ISubscriptionDocumen
             throw new AppError('Subscription already Exists',409)
         }
         const newSubscription = await this.subscriptionRepo.create(subscription)
+        
         if(!newSubscription){
             throw new AppError('failed to create new subscription',400)
         }

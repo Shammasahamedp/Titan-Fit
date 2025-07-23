@@ -5,6 +5,7 @@ import "react-calendar/dist/Calendar.css";
 import {
   bookATrainingSession,
   getApprovedSingleTrainer,
+  cancelTheBooking
 } from "@/api/user-apicalls";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { ToastContainer } from "react-toastify";
@@ -27,21 +28,22 @@ interface Availability {
   timeSlots: Slot[];
 }
 
-interface SlotBookArg{
-  id:string;
-  date:string|undefined;
-  startTime:string
+interface SlotBookArg {
+  id: string;
+  date: string | undefined;
+  startTime: string;
 }
 
 const TrainerDetail = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user.user);
   const { id } = useParams<{ id: string }>();
   const [trainer, setTrainer] = useState<ITrainers | null>(null);
   const [availability, setAvailability] = useState<Availability[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [isModalOpen,setModalOpen]  = useState(false)
-  const [slot,setSlot] = useState<SlotBookArg|null>(null)
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isCancelModalOpen,setCancelModal] = useState(false)
+  const [slot, setSlot] = useState<SlotBookArg | null>(null);
   const bookASession = async (
     trainerId: string,
     date: string,
@@ -53,17 +55,35 @@ const TrainerDetail = () => {
       if (response?.data.success) {
         fetchTrainerDetails();
         showSuccessToast(response.data.message);
-        setModalOpen(false)
+        setModalOpen(false);
       }
     } catch (error) {
       showErrorToast(error);
     }
   };
+
+   const cancelBooking = async(trainerId:string,date:string,startTime:string)=>{
+    try {
+      console.log('enters')
+       const response = await cancelTheBooking(trainerId,date,startTime)
+       if(response?.data.success){
+        fetchTrainerDetails();
+        showSuccessToast(response.data.message)
+        setCancelModal(false)
+       }
+    } catch (error) {
+      showErrorToast(error)
+    }
+  }
+
   const fetchTrainerDetails = async () => {
     try {
       const response = await getApprovedSingleTrainer(id as string);
       setTrainer(response?.data.trainer);
-      console.log('asdfasdfasdfasdf',response?.data.availability?.availability)
+      console.log(
+        "asdfasdfasdfasdf",
+        response?.data.availability?.availability
+      );
       setAvailability(response?.data.availability?.availability || []);
     } catch (error) {
       showErrorToast(error);
@@ -73,9 +93,26 @@ const TrainerDetail = () => {
     fetchTrainerDetails();
   }, [id]);
 
+  const isTomorrow = (date: string) => {
+    console.log('date',date)
+    const today = new Date();
+    const targetDate = new Date(date);
+    console.log('target date',targetDate)
+    const diff = targetDate.getTime() - today.getTime();
+    console.log('diff',diff)
+    return diff <= 86400000 
+    // && diff > 0;
+  };
+
+ 
+  
   const dateKey = selectedDate.toISOString().split("T")[0];
   const selectedDayAvailability = availability.find(
     (item) => item.date.split("T")[0] === dateKey
+  );
+
+  const bookedSlotByUser = selectedDayAvailability?.timeSlots.find(
+    (slot) => slot.userId === user?._id
   );
 
   const availableSlots =
@@ -92,8 +129,8 @@ const TrainerDetail = () => {
         }}
       >
         <div className="max-w-6xl mx-auto bg-white bg-opacity-90 rounded-xl p-8 shadow-lg">
-          <button onClick={()=>navigate('/trainers')}>
-               <ArrowLeft/>
+          <button onClick={() => navigate("/trainers")}>
+            <ArrowLeft />
           </button>
           {/* Trainer Info */}
           {trainer && (
@@ -150,8 +187,9 @@ const TrainerDetail = () => {
                   onChange={(value) => setSelectedDate(value as Date)}
                   value={selectedDate}
                   className="custom-calendar mb-6"
-          tileDisabled={({ date }) => date < new Date(new Date().setHours(24, 0, 0, 0))}
-
+                  tileDisabled={({ date }) =>
+                    date < new Date(new Date().setHours(24, 0, 0, 0))
+                  }
                   tileClassName={({ date }) => {
                     const day = availability.find(
                       (item) =>
@@ -183,31 +221,108 @@ const TrainerDetail = () => {
 
               <div className="w-full lg:w-1/2">
                 <h4 className="text-lg font-medium mb-2">
-                  Available Slots on {dateKey}:
+                  {bookedSlotByUser
+                    ? `Your Booked Slot on ${dateKey}:`
+                    : `Available Slots on ${dateKey}:`}
                 </h4>
+
+                {/* {bookedSlotByUser ? (
+                  <div className="flex flex-wrap gap-3">
+                    <div className="bg-blue-600 text-white px-4 py-2 rounded">
+                      {bookedSlotByUser.startTime}
+                    </div>
+                  </div>
+                ) : */}
+
+
+                {bookedSlotByUser && (
+                  <div className="text-sm text-blue-700 mb-2">
+                    You have already booked a slot on this day.
+                    {isTomorrow(dateKey) ? (
+                      <div className="text-red-500 text-sm">
+                        You cannot change your slot for tomorrow.
+                      </div>
+                    ) : (
+                      <div className="text-gray-600 text-sm">
+                        You can change to another available slot.
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {availableSlots.length > 0 ? (
                   <div className="flex flex-wrap gap-3">
+                    {bookedSlotByUser && (
+                      <>
+                      <div className="bg-blue-600 text-white px-4 py-2 rounded">
+                        {bookedSlotByUser.startTime}
+                      </div> 
+                      
+                      </>
+                      
+
+                      
+                    )}
                     {availableSlots.map((slot, idx) => (
-                      <button
+                  
+                      <>
+                         <button
                         key={idx}
-                        onClick={() =>
-                          // bookASession(id as string, dateKey, slot.startTime)
-                           {setSlot({id:id as string,date:dateKey,startTime:slot.startTime})
-                           setModalOpen(true)}
-                           
-                        }
+                        onClick={() => {
+                          if (bookedSlotByUser && isTomorrow(dateKey)) {
+                            showErrorToast(
+                              "You cannot change your slot for tomorrow."
+                            );
+                            return;
+                          }
+
+                          setSlot({
+                            id: id as string,
+                            date: dateKey,
+                            startTime: slot.startTime,
+                          });
+                          setModalOpen(true);
+                        }}
                         className="bg-black text-white px-4 py-2 rounded hover:bg-gray-500 transition"
                       >
                         {slot.startTime}
                       </button>
+                      {
+                        bookedSlotByUser && (
+                          <button className="bg-red-500 text-black px-4 py-2 rounded hover:bg-red-900 transition" onClick={() => {
+                          if (bookedSlotByUser && isTomorrow(dateKey)) {
+                            showErrorToast(
+                              "You cannot cancel slot for tomorrow."
+                            );
+                            return;
+                          }
+
+                          setSlot({
+                            id: id as string,
+                            date: dateKey,
+                            startTime: slot.startTime,
+                          });
+                          setCancelModal(true);
+                        }}>
+                            cancel booking
+                     </button>
+                        )
+                      }
+                      </>
+                      
                     ))}
+
                   </div>
                 ) : (
                   <p className="text-red-500">
                     No slots available on this day.
                   </p>
                 )}
+                      
               </div>
+
+                     
+
               <div className="flex flex-wrap gap-4 items-center mb-4 mt-2">
                 <div className="flex items-center gap-2">
                   <span className="w-4 h-4 bg-green-400 rounded-sm"></span>
@@ -216,6 +331,10 @@ const TrainerDetail = () => {
                 <div className="flex items-center gap-2">
                   <span className="w-4 h-4 bg-red-400 rounded-sm"></span>
                   <span className="text-sm text-gray-700">Fully Booked</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-4 h-4 bg-black rounded-sm"></span>
+                  <span className="text-sm text-gray-700">Available Slots</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-4 h-4 bg-blue-400 rounded-sm"></span>
@@ -228,8 +347,30 @@ const TrainerDetail = () => {
           </div>
         </div>
         <ToastContainer />
-        {isModalOpen &&
-        <ConfirmModal  needTextField={false} confirmToProceed={()=>{bookASession(slot?.id as string,slot?.date as string,slot?.startTime as string)}} onClose={()=>setModalOpen(false)}/>}
+        {isModalOpen && (
+          <ConfirmModal
+            needTextField={false}
+            confirmToProceed={() => {
+              bookASession(
+                slot?.id as string,
+                slot?.date as string,
+                slot?.startTime as string
+              );
+            }}
+            onClose={() => setModalOpen(false)}
+          />
+        )}
+        {isCancelModalOpen && (
+          <ConfirmModal
+            needTextField={false}
+            confirmToProceed={()=>{
+              cancelBooking(slot?.id as string,slot?.date as string,slot?.startTime as string)
+            }}
+            onClose={()=>setCancelModal(false)}
+          />
+        )
+
+        }
       </div>
     </>
   );
