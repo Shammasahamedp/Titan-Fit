@@ -3,6 +3,7 @@ import {
   IUserDocument,
   IUserProfile,
   IUserSubscriptionDetailsPopulated,
+  IUsersForChat,
 } from "../../interfaces/userInterfaces";
 import { ISubscriptionDetails } from "../../models/user/IuserModel";
 import { userModel } from "../../models/user/userModel";
@@ -135,4 +136,6 @@ export class UserRepository
 
     return userSubscriptionDetails[0];
   }
+
+ 
 }

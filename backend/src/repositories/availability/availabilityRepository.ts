@@ -11,6 +11,7 @@ import { BaseRepository } from "../baseRepository";
 import { IAvailabilityRepository } from "./IavailabilityRepository";
 import { Types } from "mongoose";
 import mongoose from "mongoose";
+import { IUsersForChat } from "../../interfaces/userInterfaces";
 export class AvailabilityRepository
   extends BaseRepository<IAvailabilityDocument>
   implements IAvailabilityRepository
@@ -632,4 +633,48 @@ const endOfDay = new Date(`${date}T23:59:59.999Z`);
 
     return { availability, totalPages };
   }
+
+  
+
+ getUsersForChat = async (trainerId: string): Promise<IUsersForChat[]> => {
+  const users = await availabilityModel.aggregate([
+    {
+      $match: { trainerId: new mongoose.Types.ObjectId(trainerId) }
+    },
+    { $unwind: "$availability" },
+    { $unwind: "$availability.timeSlots" },
+    {
+      $match: {
+        "availability.timeSlots.userId": { $ne: null }
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "availability.timeSlots.userId",
+        foreignField: "_id",
+        as: "userDetails"
+      }
+    },
+    { $unwind: "$userDetails" },
+    {
+      $group: {
+        _id: "$userDetails._id",
+        name: { $first: "$userDetails.name" },
+        profilePicture: { $first: "$userDetails.profilePicture" }
+      }
+    },
+    {
+      $project: {
+        id: "$_id",
+        name: 1,
+        profilePicture: 1,
+        _id: 0
+      }
+    }
+  ]);
+
+  return users as IUsersForChat[];
+};
+
 }

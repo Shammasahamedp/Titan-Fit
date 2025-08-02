@@ -7,6 +7,7 @@ import {
   ISlot,
 } from "../../models/availability/IavailabilityModel";
 import { IBaseRepository } from "../IbaseRepository";
+import { IUsersForChat } from "../../interfaces/userInterfaces";
 
 export interface IAvailabilityRepository
   extends IBaseRepository<IAvailabilityDocument> {
@@ -79,4 +80,6 @@ export interface IAvailabilityRepository
     date: string,
     startTime: string
   ): Promise<IAvailabilityDocument | null>;
+
+  getUsersForChat(trainerId:string):Promise<IUsersForChat[]|null>
 }

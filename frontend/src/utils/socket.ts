@@ -4,7 +4,7 @@ const URL = import.meta.env.VITE_BASE_URL
 
 
 export const socket:Socket = io(URL,{
-    withCredentials:true,
-    autoConnect:false
+    withCredentials:true
+   
 })
 

@@ -1,5 +1,6 @@
-import { Types } from "mongoose";
-import { ITrainerDocument, ITrainerLogin, ITrainerLoginResponse, ITrainerProfile, ITrainerSignUp } from "../../interfaces/trainerInterfaces";
+// import { Types } from "mongoose";
+import { ITrainerDocument, ITrainerLogin, ITrainerLoginResponse, ITrainerProfile, ITrainersForChat, ITrainerSignUp } from "../../interfaces/trainerInterfaces";
+import { IUsersForChat } from "../../interfaces/userInterfaces";
 import { IAvailabilityDocument, IAvailableDate } from "../../models/availability/IavailabilityModel";
 
 
@@ -13,4 +14,6 @@ export interface ITrainerService {
     checkPassword(trainerId:string,password:string):Promise<boolean>
     resetPassword(trainerId:string,password:string):Promise<ITrainerDocument|null>
     updateAvailability(trainerId:string,availability:{date:string,slots:string[]}):Promise<IAvailabilityDocument|null>
+    getTrainersForChat():Promise<ITrainersForChat[]>
+    getUsersForChat(trainerId:string):Promise<IUsersForChat[]>
 }

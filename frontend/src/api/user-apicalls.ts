@@ -111,5 +111,18 @@ export const cancelTheBooking = async (trainerId:string,date:string,startTime:st
   }
 }
 
+export const getTrainers = async ()=>{
+  try {
+    console.log('this is gettrainers method ')
+    const response = await axiosInstance.get(`${API}/chat/trainers`)
+    if(response.data){
+      console.log('response.data',response.data)
+      return response
+    }
+  } catch (error) {
+    throw error
+  }
+}  
+
 
 

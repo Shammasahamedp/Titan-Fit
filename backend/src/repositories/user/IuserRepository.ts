@@ -1,4 +1,4 @@
-import { IUserSignUp,IUserDocument, IUserProfile, IUserSubscriptionDetailsPopulated } from "../../interfaces/userInterfaces";
+import { IUserSignUp,IUserDocument, IUserProfile, IUserSubscriptionDetailsPopulated, IUsersForChat } from "../../interfaces/userInterfaces";
 import { ISubscriptionDetails } from "../../models/user/IuserModel";
 import { IBaseRepository } from "../IbaseRepository";
 
@@ -14,6 +14,7 @@ export interface IUserRepository extends IBaseRepository<IUserDocument>{
     updatePassword(id:string,password:string):Promise<IUserDocument|null>
     addSubscription(userId:string,subscriptionDetails:ISubscriptionDetails):Promise<void>
     getSubscribers():Promise<IUserDocument[]>
+    // getUsersForChat():Promise<IUsersForChat[]|null>
     // getUsers():Promise<IUserDocument[]|null>
     // userToggle(userId:string,blocked:boolean):Promise<IUserDocument|null>
 }

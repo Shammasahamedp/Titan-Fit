@@ -4,6 +4,7 @@ import {
   ITrainerLogin,
   ITrainerLoginResponse,
   ITrainerProfile,
+  ITrainersForChat,
   ITrainerSignUp,
 } from "../../interfaces/trainerInterfaces";
 import { availabilityMessages } from "../../messages/availability-related";
@@ -19,6 +20,7 @@ import { AppError } from "../../utils/handleResponse";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { comparePassword, hashPassword } from "../../utils/password";
 import { ITrainerService } from "./ItrainerService";
+import { IUsersForChat } from "../../interfaces/userInterfaces";
 export interface ISlot {
   startTime: string;
   isBooked: boolean;
@@ -70,14 +72,13 @@ export class TrainerService implements ITrainerService {
       const existingUser = await this.userRepository.findOne({
         email: data.email,
       });
-      
-      
+
       if (existingTrainer || existingUser) {
         throw new AppError(trainerMessages.EMAIL_ALREADY_EXIST, 409);
       }
 
       data.password = await hashPassword(data.password);
-      data.new = true
+      data.new = true;
       return await this.trainerRepository.create(data);
     } catch (error) {
       if (error instanceof AppError) {
@@ -101,7 +102,7 @@ export class TrainerService implements ITrainerService {
           profilePicture,
           trainerCertificate,
           approved,
-          rejectedDate
+          rejectedDate,
         } = trainer;
 
         const trainerProfile = {
@@ -115,7 +116,7 @@ export class TrainerService implements ITrainerService {
           profilePicture,
           trainerCertificate,
           approved,
-          rejectedDate
+          rejectedDate,
         };
         return trainerProfile as ITrainerProfile;
       }
@@ -245,12 +246,10 @@ export class TrainerService implements ITrainerService {
   // ): Promise<IAvailabilityDocument | null> {
   //   try {
 
-
   //     const trainer = await this.trainerRepository.findById(trainerId);
   //     if (!trainer) {
   //       throw new AppError(trainerMessages.TRAINER_NOT_FOUND, 404);
   //     }
-     
 
   //     let transformedSlots = availability.slots.map((value) => {
   //       return { startTime: value, isBooked: false };
@@ -275,10 +274,9 @@ export class TrainerService implements ITrainerService {
   //           return value
   //         }
   //     })
-        
 
   //     }
-      
+
   //     return await this.availabilityRepo.updateExistingDateAvailability(
   //       trainerId,
   //       {
@@ -299,78 +297,116 @@ export class TrainerService implements ITrainerService {
   //   }
   // }
   async updateAvailability(
-  trainerId: string,
-  availability: { date: string; slots: string[] }
-): Promise<IAvailabilityDocument | null> {
-  try {
-    console.log('trainerId',trainerId,'availability',availability)
-    const trainer = await this.trainerRepository.findById(trainerId);
-    if (!trainer) {
-      throw new AppError(trainerMessages.TRAINER_NOT_FOUND, 404);
-    }
+    trainerId: string,
+    availability: { date: string; slots: string[] }
+  ): Promise<IAvailabilityDocument | null> {
+    try {
+      console.log("trainerId", trainerId, "availability", availability);
+      const trainer = await this.trainerRepository.findById(trainerId);
+      if (!trainer) {
+        throw new AppError(trainerMessages.TRAINER_NOT_FOUND, 404);
+      }
 
-    const transformedSlots: ISlot[] = availability.slots.map((value) => ({
-      startTime: value,
-      isBooked: false,
-    }));
-
-    const isDateExist = await this.availabilityRepo.isDateExist(
-      trainerId,
-      availability.date
-    );
-
-    console.log('isDateExists',isDateExist)
-
-    // If date does not exist, create new availability entry
-    if (!isDateExist) {
-      console.log('inside is  not date exists ')
-      return await this.availabilityRepo.updateAvailability(trainerId, {
-        date: new Date(availability.date),
-        timeSlots: transformedSlots,
-        isCompleted: false,
-      });
-    }
-
-    // If date exists, check for booked slots
-    const bookedSlots: string[] =
-      await this.availabilityRepo.getBookedSlotsInADate(trainerId, availability.date);
-     
-      console.log('bookedslots',bookedSlots)
-
-    if (bookedSlots.length > 0) {
-      // Filter out any slot that is already booked
-      const unbookedSlots = availability.slots.filter(
-        (slot) => !bookedSlots.includes(slot)
-      );
-
-      console.log('unbooked slots',unbookedSlots)
-
-      const newSlotObjects: ISlot[] = unbookedSlots.map((slot) => ({
-        startTime: slot,
+      const transformedSlots: ISlot[] = availability.slots.map((value) => ({
+        startTime: value,
         isBooked: false,
       }));
-       
-      // Call the new repository method to push only new unbooked slots
-      return await this.availabilityRepo.updateAlreadyBookedDateAvailability(
+
+      const isDateExist = await this.availabilityRepo.isDateExist(
         trainerId,
-        availability.date,
-        newSlotObjects
+        availability.date
+      );
+
+      console.log("isDateExists", isDateExist);
+
+      // If date does not exist, create new availability entry
+      if (!isDateExist) {
+        console.log("inside is  not date exists ");
+        return await this.availabilityRepo.updateAvailability(trainerId, {
+          date: new Date(availability.date),
+          timeSlots: transformedSlots,
+          isCompleted: false,
+        });
+      }
+
+      // If date exists, check for booked slots
+      const bookedSlots: string[] =
+        await this.availabilityRepo.getBookedSlotsInADate(
+          trainerId,
+          availability.date
+        );
+
+      console.log("bookedslots", bookedSlots);
+
+      if (bookedSlots.length > 0) {
+        // Filter out any slot that is already booked
+        const unbookedSlots = availability.slots.filter(
+          (slot) => !bookedSlots.includes(slot)
+        );
+
+        console.log("unbooked slots", unbookedSlots);
+
+        const newSlotObjects: ISlot[] = unbookedSlots.map((slot) => ({
+          startTime: slot,
+          isBooked: false,
+        }));
+
+        // Call the new repository method to push only new unbooked slots
+        return await this.availabilityRepo.updateAlreadyBookedDateAvailability(
+          trainerId,
+          availability.date,
+          newSlotObjects
+        );
+      }
+
+      // No booked slots — safe to replace entire slot array
+      return await this.availabilityRepo.updateExistingDateAvailability(
+        trainerId,
+        {
+          date: new Date(availability.date),
+          timeSlots: transformedSlots,
+          isCompleted: false,
+        }
+      );
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError(
+        "Something went wrong while updating availability",
+        500
       );
     }
-
-    // No booked slots — safe to replace entire slot array
-    return await this.availabilityRepo.updateExistingDateAvailability(trainerId, {
-      date: new Date(availability.date),
-      timeSlots: transformedSlots,
-      isCompleted: false,
-    });
-  } catch (error) {
-    console.log(error);
-    if (error instanceof AppError) {
-      throw error;
-    }
-    throw new AppError("Something went wrong while updating availability", 500);
   }
-}
+  async getTrainersForChat(): Promise<ITrainersForChat[]> {
+    try {
+      const trainers = await this.trainerRepository.getTrainersForChat()
+      if(trainers){
+        return trainers
+      }else {
+        throw new AppError(trainerMessages.TRAINER_NOT_FOUND,404)
+      }
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError("something went wrong while fetching trainers", 500);
+    }
+  }
 
+  async getUsersForChat(trainerId:string): Promise<IUsersForChat[] | null> {
+        try {
+           const users = await this.availabilityRepo.getUsersForChat()
+           if(users){
+            return users
+           }else{
+            throw new AppError(userMessages.USER_NOT_FOUND,404)
+           }
+        } catch (error) {
+          if(error instanceof AppError){
+            throw error
+          }
+          throw new AppError('something went wrong while fetching users for chat',500)
+        }
+    }
 }

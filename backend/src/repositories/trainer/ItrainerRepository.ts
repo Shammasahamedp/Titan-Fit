@@ -1,7 +1,7 @@
 import { ITrainerSignUp,ITrainerDocument, ITrainerProfile, ITrainersAvailabilityDocument } from "../../interfaces/trainerInterfaces";
 import { IUserDocument } from "../../interfaces/userInterfaces";
 import { IBaseRepository } from "../IbaseRepository";
-
+import { ITrainersForChat } from "../../interfaces/trainerInterfaces";
 export interface ITrainerRepository extends IBaseRepository<ITrainerDocument>{
     // findTrainerByEmail(email:string):Promise<ITrainerDocument|null>;
     // createTrainer(data:ITrainerSignUp):Promise<ITrainerDocument>
@@ -14,6 +14,7 @@ export interface ITrainerRepository extends IBaseRepository<ITrainerDocument>{
     addCertificate(trainerId:string,trainerCertificate:string):Promise<ITrainerDocument|null>
     getApprovedTrainer(trainerId:string):Promise<ITrainerDocument|null>
     getApprovedAvailableTrainers(skip:number,search:string,date:string):Promise<ITrainersAvailabilityDocument[]|null>
+    getTrainersForChat():Promise<ITrainersForChat[]|null>
     // getTrainers():Promise<ITrainerDocument[]|null>
     // changeApproval(trainerId:string,approved:boolean):Promise<ITrainerDocument|null>
 }

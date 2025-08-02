@@ -22,6 +22,12 @@ export interface ITrainerDocument extends ITrainerModel,Document{
     _id:Types.ObjectId
 }
 
+export interface ITrainersForChat {
+    id:string,
+    name:string,
+    profilePicture?:string
+}
+
 export interface ITrainerLoginResponse{
     trainer:ITrainerDocument;
     accessToken:string;

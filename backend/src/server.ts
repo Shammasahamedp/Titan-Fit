@@ -18,6 +18,7 @@ import trainerRoute from "./routes/trainer-route"
 import uploadRoute from "./routes/common-routes/upload-file"
 import tokenRoute from "./routes/common-routes/token-route"
 import adminRoute from "./routes/admin-route"
+import chatRoute from "./routes/common-routes/chat-routes"
 import authRoute from "./routes/common-routes/auth-route"
 import resetPasswordRoute from "./routes/common-routes/reset-password.route"
 import subscriptionRoute from "./routes/subscription-route"
@@ -55,11 +56,11 @@ app.use('/otp',otpRoute)
 app.use('/upload',uploadRoute)
 app.use('/token',tokenRoute)
 app.use('/auth',authRoute)
+app.use('/chat',chatRoute)
 app.use('/reset-password',resetPasswordRoute)
 app.use('/subscription',subscriptionRoute)
 app.use('/availability',availabilityRouter)
 server.listen(3000,"0.0.0.0",async()=>{
     console.log("server is running on http://localhost:3000")
-    
 })
 

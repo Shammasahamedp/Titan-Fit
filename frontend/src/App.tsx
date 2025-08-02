@@ -33,9 +33,11 @@ import AdminSingleUser from "./pages/admin/AdminSingleUser";
 import { useEffect } from "react";
 import { socket } from "./utils/socket";
 import AdminNewTrainers from "./pages/admin/AdminNewTrainers";
+import ProtectedChatRoute from "./routes/ProtectedChatRoute";
+import ChatDashboard from "./pages/ChatDashboard";
+import ChatWindow from "./components/common/Chatwindow";
 function App() {
   useEffect(() => {
-    socket.connect();
 
     socket.on("connect", () => {
       console.log("Socket connected with ID:", socket.id);
@@ -63,6 +65,12 @@ function App() {
           path="/trainer/profile-complete"
           element={<TrainerProfileComplete />}
         />
+        <Route element={<ProtectedChatRoute/>}>
+          <Route path="/chat" element={<ChatDashboard />}>
+            <Route path=":id" element={<ChatWindow />} />
+            
+          </Route>
+        </Route>
 
         <Route element={<PublicRoute />}>
           <Route path="/" element={<LandingPage />} />

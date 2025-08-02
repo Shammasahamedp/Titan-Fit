@@ -1,6 +1,7 @@
 import {
   ITrainerDocument,
   ITrainersAvailabilityDocument,
+  ITrainersForChat,
 } from "../../interfaces/trainerInterfaces";
 import { ITrainerRepository } from "./ItrainerRepository";
 import { trainerModel } from "../../models/trainer/trainerModel";
@@ -89,12 +90,12 @@ export class TrainerRepository
     });
 
     if (date) {
-        let newDate = new Date(date)
-        newDate.setHours(0,0,0,0)
-       
+      let newDate = new Date(date);
+      newDate.setHours(0, 0, 0, 0);
+
       pipeline.push({
         $match: {
-          "availability.availability.date":new Date(newDate.toISOString()),
+          "availability.availability.date": new Date(newDate.toISOString()),
         },
       });
     }
@@ -109,13 +110,30 @@ export class TrainerRepository
     });
 
     pipeline.push({ $skip: skip });
-    pipeline.push({ $limit: 3});
+    pipeline.push({ $limit: 3 });
 
     const result = await trainerModel.aggregate(pipeline);
-    return result
-
-    
+    return result;
   }
 
- 
+  async getTrainersForChat(): Promise<ITrainersForChat[] | null> {
+    const trainers = await trainerModel.aggregate([
+      {
+        $match: {
+          approved: true,
+          blocked: false,
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: { $toString: "$_id" },
+          name: 1,
+          profilePicture: 1,
+        },
+      },
+    ]);
+
+    return trainers;
+  }
 }

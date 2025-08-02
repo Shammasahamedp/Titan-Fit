@@ -1,5 +1,5 @@
 import { ITrainerDocument } from "../../interfaces/trainerInterfaces";
-import { IUserSignUp,IUserDocument, IUserLogin, ILoginResponse ,IUserProfile} from "../../interfaces/userInterfaces";
+import { IUserSignUp,IUserDocument, IUserLogin, ILoginResponse ,IUserProfile, IUsersForChat} from "../../interfaces/userInterfaces";
 import { IAvailabilityDocument } from "../../models/availability/IavailabilityModel";
 
 
@@ -16,4 +16,5 @@ export interface IUserService{
     bookASessionWithTrainer(trainerId:string,userId:string,date:string,startTime:string):Promise<boolean>
     cancelTrainingSession(trainerId:string,userId:string,date:string,startTime:string):Promise<boolean>
     updateExpiredSubscription():Promise<void>
+    getUsersForChat(trainerId:string):Promise<IUsersForChat[]|null>
 }

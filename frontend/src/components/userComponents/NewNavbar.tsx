@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, User, LogOut, Bell } from 'lucide-react';
+import { Menu, X, User, LogOut, Bell,MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface NavbarProps {
@@ -29,16 +29,18 @@ const NewNavbar: React.FC<NavbarProps> = ({ logout, role }) => {
         <button className="text-white/70 hover:text-warm-yellow p-2 rounded-full transition-colors">
           {/* <Bell className="h-5 w-5" /> */}
         </button>
+           
         <div className="relative group">
           <button className="flex items-center space-x-2 text-white hover:text-warm-yellow transition-colors">
             {/* <User className="h-5 w-5" /> */}
             {/* <span className="capitalize">{role}</span> */}
           </button>
+          
         </div>
       </div>
 
       {/* === Right: Logout button === */}
-      {logout && (
+      {/* {logout && (
         <div className="hidden md:block">
           <button
             onClick={logout}
@@ -47,7 +49,23 @@ const NewNavbar: React.FC<NavbarProps> = ({ logout, role }) => {
             <span>Logout</span>
           </button>
         </div>
-      )}
+      )} */}
+      <div className="hidden md:flex items-center space-x-4">
+  {/* Chat Icon - right side */}
+  <Link to="/chat">
+    <MessageCircle className="h-6 w-6" style={{ color: '#f1c40f' }} />
+  </Link>
+
+  {/* Logout Button */}
+  {logout && (
+    <button
+      onClick={logout}
+      className="flex items-center space-x-2 bg-[#FFC436] text-black px-4 font-semibold py-2 rounded hover:bg-black hover:text-[#FFC436] transition-colors"
+    >
+      <span>Logout</span>
+    </button>
+  )}
+</div>
 
       {/* === Mobile menu button === */}
       <div className="md:hidden">

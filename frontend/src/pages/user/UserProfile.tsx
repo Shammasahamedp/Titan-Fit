@@ -42,6 +42,7 @@ const UserProfile = () => {
     fetchUserProfile();
   }, []);
 
+  
   useEffect(() => {
     if (userProfile && isEditing) {
       const { profilePicture, ...rest } = userProfile;
@@ -208,6 +209,7 @@ const UserProfile = () => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };

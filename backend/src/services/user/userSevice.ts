@@ -4,6 +4,7 @@ import {
   IUserLogin,
   ILoginResponse,
   IUserProfile,
+  IUsersForChat,
 } from "../../interfaces/userInterfaces";
 import { IUserRepository } from "../../repositories/user/IuserRepository";
 import { IUserService } from "./IuserService";
@@ -414,5 +415,21 @@ export class UserService implements IUserService {
         500
       );
     }
+  }
+
+  async getUsersForChat(trainerId:string): Promise<IUsersForChat[] | null> {
+      try {
+         const users = await this.trainerAvailability.getUsersForChat(trainerId)
+         if(users){
+          return users
+         }else{
+          throw new AppError(userMessages.USER_NOT_FOUND,404)
+         }
+      } catch (error) {
+        if(error instanceof AppError){
+          throw error
+        }
+        throw new AppError('something went wrong while fetching users for chat',500)
+      }
   }
 }

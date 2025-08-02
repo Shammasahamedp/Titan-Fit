@@ -28,6 +28,8 @@ export interface ILoginResponse  {
     userNew?:boolean
 }
 
+
+
 export interface  IUserProfile {
     name:string;
     email:string;
@@ -40,6 +42,12 @@ export interface  IUserProfile {
     weight?:number;
     height?:number;
     subscription?:ISubscriptionDetails[]
+}
+
+export interface IUsersForChat {
+    id:string,
+    name:string,
+    profilePicture?:string
 }
 
 export interface IUserSubscriptionDetailsPopulated extends Omit<IUserDocument,'subscription'>{
