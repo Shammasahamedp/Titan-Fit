@@ -34,18 +34,15 @@ const NewSidebar: React.FC<SidebarProps> = ({
           `${role}-profilepic`
         );
         if (uploadFileResponse.data) {
-          console.log("this is url", uploadFileResponse.data.url);
 
           const response = await uploadProfilePicApi(
             uploadFileResponse.data.url
           );
-          console.log("response", response);
           if (!response?.data.success) {
             throw new Error();
           }
           showSuccessToast(response?.data.message);
           setUserProfilePic(() => {
-            console.log("this is setimageurl", response.data.image);
             return response.data.image;
           });
         }
@@ -81,7 +78,6 @@ const NewSidebar: React.FC<SidebarProps> = ({
                 alt="Profile"
                 className="w-full h-full object-cover"
                 onError={() => {
-                  console.log("Image failed to load:", userPic);
                   setUserProfilePic("");
                 }}
               />

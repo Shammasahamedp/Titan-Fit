@@ -30,18 +30,13 @@ export default function UserProfileComplete() {
     resolver: yupResolver(trainerProfileEditSchema),
   });
   const onSubmit = async (data: ITrainerEditProfile) => {
-    console.log('d'
-      
-    )
-    console.log(errors)
+   
     try {
       
-      console.log('onsubmit')
       setTrainerData(data);
       const response = await editTrainerProfile(data);
       if (response.success) {
         showSuccessToast(response.message);
-        console.log(response.returnedTrainerProfile)
         const {_id,name,email} = response.returnedTrainerProfile
         dispatch(
           trainerLoginSuccess({

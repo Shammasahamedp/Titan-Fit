@@ -32,7 +32,6 @@ const AdminSingleUser = () => {
     const fetchSingleUser = async ()=>{
         try {
             const response = await getSingleUserDetails(userId as string)
-            console.log('response',response)
             setUser(response?.data.user)
         } catch (error) {
             showErrorToast(error)
@@ -48,7 +47,6 @@ const AdminSingleUser = () => {
              sortKey || '',
              sortAsc
          )
-         console.log(response?.data.userBookedSessions)
         setData(response?.data.userBookedSessions || [])
         setTotalPages(response?.data.totalPages || 1)
       } catch (error) {

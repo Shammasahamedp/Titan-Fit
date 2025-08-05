@@ -20,12 +20,10 @@ const UserBookings = () => {
     useEffect(()=>{
        const fetch = async()=>{
        try {
-         console.log('hi')
         const response= await getUsersBookedSession( page,
         search,
         sortKey || '',
         sortAsc)
-        console.log(response?.data.userBookedSessions)
         setTableData(response?.data.userBookedSessions)
         setTotalPages(response?.data.totalPages || 1)
        } catch (error) {

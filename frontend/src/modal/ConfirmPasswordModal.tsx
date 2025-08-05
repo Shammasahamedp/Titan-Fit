@@ -20,7 +20,6 @@ const ConfirmPasswordModal: React.FC<IForgotPasswordModalProps> = ({ onClose, on
       setIsSubmitting(true);
       await onSubmit(password);
     } catch (error) {
-      console.error('Error submitting password:', error);
     } finally {
       setIsSubmitting(false);
     }

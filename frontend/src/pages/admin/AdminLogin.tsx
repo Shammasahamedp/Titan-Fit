@@ -25,7 +25,6 @@ export default function AdminLogin() {
         dispatch(adminLoginStart())
         const response = await adminLogin(data)
         if(response?.data.success){
-          console.log(response)
           dispatch(
             adminLoginSuccess({
               admin:response.data.data.admin,

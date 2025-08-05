@@ -7,10 +7,8 @@ import {
   ITrainersForChat,
   ITrainerSignUp,
 } from "../../interfaces/trainerInterfaces";
-import { availabilityMessages } from "../../messages/availability-related";
 import { trainerMessages } from "../../messages/trainerRelated";
 import {
-  IAvailableDate,
   IAvailabilityDocument,
 } from "../../models/availability/IavailabilityModel";
 import { IAvailabilityRepository } from "../../repositories/availability/IavailabilityRepository";
@@ -20,14 +18,13 @@ import { AppError } from "../../utils/handleResponse";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { comparePassword, hashPassword } from "../../utils/password";
 import { ITrainerService } from "./ItrainerService";
-import { IUsersForChat } from "../../interfaces/userInterfaces";
 export interface ISlot {
   startTime: string;
   isBooked: boolean;
   userId?: string; // optional: only set if booked by a user
 }
 
-export class TrainerService implements ITrainerService {
+export class TrainerService implements TrainerService {
   private trainerRepository: ITrainerRepository;
   private userRepository: IUserRepository;
   private availabilityRepo: IAvailabilityRepository;
@@ -391,22 +388,8 @@ export class TrainerService implements ITrainerService {
         throw error;
       }
       throw new AppError("something went wrong while fetching trainers", 500);
-    }
+    }  
   }
 
-  async getUsersForChat(trainerId:string): Promise<IUsersForChat[] | null> {
-        try {
-           const users = await this.availabilityRepo.getUsersForChat()
-           if(users){
-            return users
-           }else{
-            throw new AppError(userMessages.USER_NOT_FOUND,404)
-           }
-        } catch (error) {
-          if(error instanceof AppError){
-            throw error
-          }
-          throw new AppError('something went wrong while fetching users for chat',500)
-        }
-    }
+
 }

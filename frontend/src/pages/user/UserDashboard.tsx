@@ -27,7 +27,6 @@ const UserDashboard: React.FC = () => {
                setResetPasswordModal(true)
       }
     } catch (error:any) {
-      console.log(error)
       showErrorToast(error)
     }
   }
@@ -44,15 +43,12 @@ const UserDashboard: React.FC = () => {
   }
  
   useEffect(()=>{
-    console.log('sdf',userProfile)
     if(userProfile === null){ 
       (async()=>{
         try {
-          console.log('asdf')
           const data = await getProfile()
            
           if(data){
-            console.log('data',data)
             setUserProfile(data)
           }
         } catch (error) {

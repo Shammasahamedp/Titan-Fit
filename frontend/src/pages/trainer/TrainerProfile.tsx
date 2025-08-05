@@ -57,30 +57,25 @@ const TrainerProfile = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     try {
-      console.log("this is the function");
       const fileList = event.target.files;
       const uploadFileResponse = await uploadFile(
         fileList as FileList,
         "trainer-certificate"
       );
       if (uploadFileResponse.data) {
-        console.log("this is url", uploadFileResponse.data.url);
         const response = await uploadTrainerCertificate(
           uploadFileResponse.data.url
         );
-        console.log(response);
 
         showSuccessToast(response?.data.message);
         setCertificates(response?.data.trainerCertificate);
       }
     } catch (error) {
-      console.log(error);
       showErrorToast(error);
     }
   };
   const onSubmit = async (data: ITrainerEditProfile) => {
     try {
-      console.log(data);
       if (trainerProfile) {
         const { profilePicture, trainerCertificate, ...rest } = trainerProfile;
 
@@ -88,16 +83,13 @@ const TrainerProfile = () => {
           showErrorToast(trainerErrors.PROFILE_CHANGE_NEED);
           return;
         }
-        console.log("this is data", data);
         const responseData = await editTrainerProfile(data);
         if (responseData.success) {
           showSuccessToast(responseData.message);
-          console.log(responseData);
           setTrainerProfile(responseData.returnedTrainerProfile);
         }
       }
     } catch (error) {
-      console.log(error);
       showErrorToast(error);
     }
   };
@@ -106,7 +98,6 @@ const TrainerProfile = () => {
       try {
         const trainerProfileDetails = await getTrainerProfile();
         if (trainerProfileDetails) {
-          console.log(trainerProfileDetails);
           setTrainerProfile(trainerProfileDetails.trainerProfile);
           setCertificates(
             trainerProfileDetails.trainerProfile.trainerCertificate

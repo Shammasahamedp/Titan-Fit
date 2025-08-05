@@ -12,7 +12,6 @@ const ForgotPassword = () => {
     const {token} = useParams<{token:string}>()
     const handleSubmit = async ()=>{
         try {
-          console.log('helo')
             if(password !== confirmPassword){
                 showErrorToast('password doesnt match')
                 return

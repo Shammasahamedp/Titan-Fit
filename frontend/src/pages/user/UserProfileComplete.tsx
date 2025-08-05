@@ -30,10 +30,8 @@ export default function UserProfileComplete() {
     console.log(errors)
     try {
       setUserData(data);
-      console.log('clic')
       const response = await editUserProfile(data)
       if(response.success){
-        console.log(response)
         showSuccessToast(response.message)
         const {name} = response.returnUserData
        if(name){

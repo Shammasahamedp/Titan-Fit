@@ -34,7 +34,6 @@ const TrainerDashboard = () => {
                setResetPasswordModal(true)
       }
     } catch (error) {
-      console.log(error)
       showErrorToast(error)
     }
   }
@@ -58,15 +57,7 @@ const TrainerDashboard = () => {
       <div className="flex flex-1   text-white">
         {/* Sidebar */}
 
-        {/* <SideBar
-          profilePicture={trainerProfile?.profilePicture}
-          uploadProfilePicApi={uploadTrainerProfileImage}
-          role="trainer"
-          items={[
-            ["my bookings",'availability'],
-           [ "my wallet",'wallet'],
-          ]}
-        /> */}
+       
         <NewSidebar profilePicture={trainerProfile?.profilePicture}
         uploadProfilePicApi={uploadTrainerProfileImage}
         role="trainer"

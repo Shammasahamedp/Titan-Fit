@@ -39,7 +39,6 @@ const AdminSingleTrainer = () => {
       const response = await getSingleTrainerDetails(trainerId as string);
       setTrainer(response?.data.trainer);
       setAvailability(response?.data.availability.availability);
-      console.log("sdf", response?.data.availability);
     } catch (error) {
       showErrorToast(error);
     }
@@ -50,7 +49,6 @@ const AdminSingleTrainer = () => {
 
         const response = await toggleTrainer(trainerId, approved,reason);
       if (response?.data.success) {
-        console.log(response.data)
         setTrainer(response.data.trainer)
         setModalOpen(false)
         showSuccessToast('Your request has been approved ')
@@ -70,7 +68,6 @@ const AdminSingleTrainer = () => {
       );
 
       setData(response?.data.bookedData || []);
-      console.log('dataaa',response?.data)
       setTotalPages(response?.data.totalPages || 1);
       
     } catch (error) {

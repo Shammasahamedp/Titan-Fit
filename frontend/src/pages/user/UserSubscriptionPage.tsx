@@ -14,22 +14,17 @@ const UserSubscriptionPage = () => {
     try {
       const userProfile = await getProfile();
       const subscription = userProfile?.subscription;
-      console.log('subscription',subscription)
       if (Array.isArray(subscription)&&subscription.length>0) {
         if (subscription.length > 1) {
           const usedPlans = subscription.slice(0, subscription.length - 1);
-          console.log(usedPlans);
           setOldPlans(usedPlans);
         }
         let length = subscription?.length;
         const lastSubscription = subscription[length - 1];
-        console.log(lastSubscription);
         const endTs = new Date(lastSubscription.endDate).getTime();
         const nowTs = Date.now();
-        console.log(endTs, nowTs);
         if (lastSubscription.creditsRemaining > 0 && endTs > nowTs) {
           setCurrentPlan(lastSubscription);
-          console.log(currentPlan)
           const remaining = Math.ceil((endTs - nowTs) / (1000 * 60 * 60 * 24));
           setDaysRemaining(remaining);
         }

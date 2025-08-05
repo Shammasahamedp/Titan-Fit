@@ -11,11 +11,12 @@ const BackendTable = <T,>({
   onPageChange,
   onSortChange,
   onSearchChange,
+  onFilterChange,
+  filters,
   sortKey,
   sortAsc,
   search = ""
 }: BackendTableProps<T>) => {
-  console.log('table data ',tableDatas)
   const handleSort = (col: keyof T) => {
     if (sortKey === col) onSortChange(col, !sortAsc);
     else onSortChange(col, true);
@@ -38,7 +39,7 @@ const BackendTable = <T,>({
       <div key={filter.key.toString()}>
         <label className="text-white mr-2">{filter.label}</label>
         <select
-          value={filters[filter.key as string] || ""}
+          value={filters&&filters[filter.key as string] || ""}
           onChange={(e) => onFilterChange?.(filter.key, e.target.value)}
           className="p-2 rounded text-black"
         >

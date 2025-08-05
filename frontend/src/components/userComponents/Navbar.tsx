@@ -7,7 +7,6 @@ import { Menu, X } from "lucide-react";
 import { INavebarProps } from "@/interfaces/InavbarProps";
 const Navbar:React.FC<INavebarProps> = ({logout,role}) => {
   const [isOpen, setIsOpen] = useState(false);
- console.log('this is role',role)
  const location = useLocation()
  const currentPath=location.pathname
 

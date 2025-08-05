@@ -29,7 +29,6 @@ const SingleUserSubscriptions = () => {
         })
         }))
         setSubscriptions(formattedSubscriptions)
-        console.log('for',formattedSubscriptions)
        }
 
     } catch (error) {

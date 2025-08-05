@@ -12,6 +12,7 @@ import NewNavbar from "@/components/userComponents/NewNavbar";
 import ChatSidebar from "@/components/common/ChatSidebar";
 import { useSelector } from "react-redux";
 import { RootState } from "@/reduxStore/store";
+import { getBookedUsersForChat } from "@/api/trainer-apicalls";
 
 const ChatDashboard: React.FC = () => {
 
@@ -38,7 +39,6 @@ const ChatDashboard: React.FC = () => {
       }
     } catch (error:any) {
       
-      console.log(error)
 
       showErrorToast(error)
     }
@@ -60,12 +60,12 @@ const ChatDashboard: React.FC = () => {
       if(role === 'user'){
          const response = await getTrainers()
         if(response?.data){
-          console.log('res',response.data)
              setUsers(response.data.trainers)
         }
       }else if(role === 'trainer'){
         const response = await getBookedUsersForChat()
         if(response?.data){
+
           setUsers(response.data.users)
         }
       }
@@ -77,7 +77,7 @@ const ChatDashboard: React.FC = () => {
   }
  
   useEffect(()=>{
-      getUsersForChat()
+      getUsersForChat()    
   },[])
   
 

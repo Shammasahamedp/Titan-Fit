@@ -26,7 +26,6 @@ const getMessages = async (roomId:string)=>{
 }
 
 const ChatWindow: React.FC = () => {
-  console.log('this is chatwindow')
   const { id } = useParams(); 
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -38,48 +37,71 @@ const ChatWindow: React.FC = () => {
   }
 
 
-  
-  const currentUserId = user? user._id:trainer?.id; // Replace with auth user ID
+
+   
+  const currentUserId = user? user._id:trainer?._id; 
   const roomId = [currentUserId, id].sort().join("_");
-  console.log('roomId',roomId)
-  console.log('messag',messages)
+ 
   useEffect(() => {   
     (async () => {
-      const res = await getMessages(roomId);
+      try {
+        const res = await getMessages(roomId);
       if(res){
         setMessages(res);  
+      }
+      } catch (error) {
+        showErrorToast(error)
       }
     })();
 
    
 
     socket.on("receive_message", (msg: Message) => {
+      try {
+        console.log('ths is recieve message part ')
       setMessages((prev) => [...prev, msg]);
+      } catch (error) {
+        showErrorToast(error)
+      }
     });
 
     return () => {
-      socket.off("receive_message");
+      socket.off("receive_message");   
     };
   }, [roomId]);
 
    useEffect(()=>{
-     socket.emit("join_room", roomId);
+    try {
+       socket.emit("join_room", roomId);
+    } catch (error) {
+      showErrorToast(error)
+    }
     },[id])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+
   const sendMessage = () => {
-    if (!newMessage.trim()) return;
+    try {
+      if (!newMessage.trim()) return;
 
     socket.emit("send_message", {
       roomId,
       senderId: currentUserId,
       message: newMessage,
     });
-
+   let message = {
+      senderId:currentUserId as string ,
+  message: newMessage,
+  timestamp: new Date(Date.now()).toLocaleTimeString()
+    }
+    setMessages((prev)=>[...prev,message])
     setNewMessage("");
+    } catch (error) {
+      showErrorToast(error)
+    }
   };
 
   return (

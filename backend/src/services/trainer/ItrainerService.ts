@@ -15,5 +15,4 @@ export interface ITrainerService {
     resetPassword(trainerId:string,password:string):Promise<ITrainerDocument|null>
     updateAvailability(trainerId:string,availability:{date:string,slots:string[]}):Promise<IAvailabilityDocument|null>
     getTrainersForChat():Promise<ITrainersForChat[]>
-    getUsersForChat(trainerId:string):Promise<IUsersForChat[]>
 }

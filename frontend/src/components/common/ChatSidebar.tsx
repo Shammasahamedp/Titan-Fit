@@ -9,7 +9,6 @@ export interface ChatSidebarProps {
 
 const ChatSidebar: React.FC<ChatSidebarProps> = ({ users,userRole }) => {
   const location = useLocation();
-  console.log('user',users)
   return (
     <div className="w-64 bg-black/95 border-r border-white/10 p-6 pt-20 hidden md:block">
       <h2 className="text-lg font-semibold text-warm-yellow mb-6 text-center">

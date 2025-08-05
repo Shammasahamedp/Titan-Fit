@@ -49,7 +49,6 @@ const TrainerDetail = () => {
     date: string,
     startTime: string
   ) => {
-    console.log("clicked");
     try {
       const response = await bookATrainingSession(trainerId, date, startTime);
       if (response?.data.success) {
@@ -64,7 +63,6 @@ const TrainerDetail = () => {
 
    const cancelBooking = async(trainerId:string,date:string,startTime:string)=>{
     try {
-      console.log('enters')
        const response = await cancelTheBooking(trainerId,date,startTime)
        if(response?.data.success){
         fetchTrainerDetails();
@@ -80,10 +78,7 @@ const TrainerDetail = () => {
     try {
       const response = await getApprovedSingleTrainer(id as string);
       setTrainer(response?.data.trainer);
-      console.log(
-        "asdfasdfasdfasdf",
-        response?.data.availability?.availability
-      );
+      
       setAvailability(response?.data.availability?.availability || []);
     } catch (error) {
       showErrorToast(error);
@@ -94,12 +89,9 @@ const TrainerDetail = () => {
   }, [id]);
 
   const isTomorrow = (date: string) => {
-    console.log('date',date)
     const today = new Date();
     const targetDate = new Date(date);
-    console.log('target date',targetDate)
     const diff = targetDate.getTime() - today.getTime();
-    console.log('diff',diff)
     return diff <= 86400000 
     // && diff > 0;
   };

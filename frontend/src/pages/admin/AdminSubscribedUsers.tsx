@@ -12,9 +12,7 @@ const AdminSubscribedUsers = () => {
     try {
 
        const response = await getSubscribedUsers()
-       console.log(response)
        const users = response?.data.subscribers
-        console.log('userss',users)
       setSubscribers(users)
 
       console.log(subscribers)
@@ -24,7 +22,6 @@ const AdminSubscribedUsers = () => {
    }
    const getSubscriptionsOfSelectedUser = async(userId:string)=>{
     try {
-      console.log(userId)
         navigate(`/admin/subscribedusers/${userId}`)
     } catch (error) {
       showErrorToast(error)

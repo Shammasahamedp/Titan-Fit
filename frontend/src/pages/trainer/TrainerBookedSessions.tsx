@@ -36,20 +36,13 @@ const TrainerBookedSession = () => {
       );
 
       setData(response?.data.bookedData || []);
-      console.log('dataaa',response?.data.bookedData)
       setTotalPages(response?.data.totalPages || 1);
     } catch (error) {
       showErrorToast(error);
     }
   };
 
-  const checkTrainerApproved = async ()=>{
-    try {
-       
-    } catch (error) {
-       
-    }
-  }
+
 
   return (
     

@@ -22,7 +22,6 @@ export default function PaymentSuccess() {
         const response = await getSessionDetails(sessionId as string);
         setSessionDetails(response?.data.sessionDetails);
       } catch (error) {
-        console.log(error);
         showErrorToast(error);
       }
     };

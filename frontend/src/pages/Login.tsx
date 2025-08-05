@@ -40,7 +40,6 @@ export default function Login() {
        
         dispatch(logingStart());
         const response = await login(data);
-        console.log(response);
         if (response?.data.success) {
           const {_id,name,email} = response.data.data.user
           dispatch(
@@ -58,9 +57,7 @@ export default function Login() {
         dispatch(trainerLoginStart());
         const response = await login(data);
         if (response?.data.success) {
-          console.log('successfully loged')
           const {_id,name,email} = response.data.data.trainer
-          console.log(response.data.data)
           dispatch(
             trainerLoginSuccess({
               trainer: {_id,name,email,role:'trainer'},
@@ -73,7 +70,6 @@ export default function Login() {
       }
      
     } catch (error: any) {
-      console.log(error)
      showErrorToast(error)
       if(data.role === 'user'){
         if(!error.response){
@@ -97,21 +93,17 @@ export default function Login() {
     try {
 
       const idToken = response.credential
-      console.log('this is token',idToken)
       
       if(!role){
         setError('role',{type:'manual',message:'you should select the role to proceed'})
         return 
       }
-      console.log(role)
    if(idToken){
     const tokenResponse= await googleLogin(idToken,role)
-    console.log(tokenResponse)
     if(role === 'user'){
       dispatch(logingStart())  
       if(tokenResponse?.data.success){
         const {_id,name,email} = tokenResponse.data.data.user
-        console.log(_id,name,tokenResponse.data.data.message)
         dispatch(loginSuccess({
             user:{_id,name,email,role:'user'},
             token:tokenResponse.data.data.accessToken
@@ -135,10 +127,7 @@ export default function Login() {
           token:tokenResponse.data.data.accessToken
         }))
         showSuccessToast(tokenResponse.data.data.message)
-         console.log('dddddddddata',tokenResponse.data.data)
         if(tokenResponse.data.data.trainerNew){
-          console.log('inside',tokenResponse.data.data.trainerNew)
-          console.log('inside ')
              navigate('/trainer/profile-complete')
              return 
         }else{
@@ -155,7 +144,6 @@ export default function Login() {
       console.log(error)
       showErrorToast(error)
        if(role==='user'){
-        console.log('error')
         if(!error.response){
           dispatch(loginFailure(commonErrors.NETWORK_ISSUE))
          }
@@ -170,7 +158,6 @@ export default function Login() {
   }
   const handleSendResetLink = async (email:string)=>{
     try {
-      console.log('this is onSubmit')
        const isExist = await findByEmail(email)
        if(!isExist){
         showErrorToast(commonErrors.EMAIL_NOT_FOUND)

@@ -60,7 +60,6 @@ export default function TrainerSignup() {
         showSuccessToast('otp has send successfully')
       }
       } catch (error) {
-        console.log("error in resend otp",error)
       }
     }
   }

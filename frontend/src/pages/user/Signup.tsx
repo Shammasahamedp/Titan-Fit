@@ -24,10 +24,8 @@ export default function Signup() {
     formState: { errors },
   } = useForm<SignupFormatInputs>({ resolver: yupResolver(signupSchema) });
   const onSubmit = async (data: SignupFormatInputs) => {
-    console.log(errors)
     try {
       setUserData(data);
-      console.log(data)
       const isEmailExistResponse=await findByEmail(data.email)
       if(isEmailExistResponse.data.success){
         showErrorToast(isEmailExistResponse.data.message)
@@ -35,7 +33,6 @@ export default function Signup() {
       }
       const otpResponse = await sendOtp(data.email);
       if (otpResponse?.data.success) {
-        console.log("otp has sent successfully");
         showSuccessToast(otpResponse.data.message)
       }
       setShowOtpModal(true);
@@ -49,11 +46,10 @@ export default function Signup() {
       try {
         const otpResponse = await sendOtp(userData.email);
         if (otpResponse?.data.success) {
-          console.log("otp has sent successfully");
           showSuccessToast('otp has send successfully')
         }
       } catch (error) {
-        console.log("error in resend otp", error);
+        showErrorToast(error)
       }
     }
   };
@@ -63,7 +59,6 @@ export default function Signup() {
       
       const response = await verifyOtp(userData?.email as string, otp);
       if (response?.data.success) {
-        console.log("this is response", response.data);
         showSuccessToast(response.data.message)
         if (userData) {
   
@@ -79,9 +74,7 @@ export default function Signup() {
       }
      } catch (error:any) {
       showErrorToast(error)
-      console.log('error in ',error.response.data)
       if(error.response.data.validationError){
-        console.log(error.response.data.errorResult)
         return 
       }
         

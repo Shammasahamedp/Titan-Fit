@@ -13,15 +13,12 @@ const Services = () => {
    const navigate = useNavigate()
    const handleSubscription = async(subscriptionId:string)=>{
       try {
-        console.log('outside')
         if(user === null){
-                  console.log('inside')
 
           throw new Error('Not logged in')
          }
         const response = await makeStripeSession (subscriptionId)
         window.location.href = response?.data.url
-        console.log(subscriptionId)
       } catch (error) {
         showErrorToast(error)
         console.log(error)

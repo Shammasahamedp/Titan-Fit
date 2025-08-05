@@ -24,7 +24,6 @@ const ResetPasswordModal: React.FC<IResetPasswordModalProps> = ({ onClose, onSub
       setIsSubmitting(true);
       await onSubmit(password);
     } catch (error) {
-      console.error('Error resetting password:', error);
     } finally {
       setIsSubmitting(false);
     }

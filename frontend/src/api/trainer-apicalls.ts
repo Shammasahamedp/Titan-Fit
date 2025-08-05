@@ -89,7 +89,7 @@ export const    uploadAvailability = async (availableSlots:ITrainerAvailableSlot
 
 export const getBookedUsersForChat = async ()=>{
     try {
-        const response = await axiosInstance.get(`${API}`)
+        const response = await axiosInstance.get(`${API}/chat/users`)
         if(response.data){
             return response
         }

@@ -17,7 +17,6 @@ interface TrainerRejectionReason{
 const ConfirmModal: React.FC<IConfirmPasswordModalProps> = ({ onClose ,confirmToProceed ,needTextField=true}) => {
 
   const handleSubmitYes = async () => {
-    console.log('clicked this is handle yes')
     confirmToProceed(reason)
   };
 

@@ -12,12 +12,10 @@ const AdminUserManagement: React.FC = () => {
        const getUsers = async()=>{
        try {
          const response = await fetchUsers()
-       console.log(response)
        if(response){
         setUsers(response.data.users)
        }
        } catch (error) {
-         console.log('erro reached',error)
          showErrorToast(error)
        }
        }

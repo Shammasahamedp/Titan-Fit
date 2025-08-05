@@ -27,7 +27,6 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }: Props) => {
   const fetchPlans = async () => {
     try {
       const userProfile = await getProfile()
-       console.log(userProfile)
       if(userProfile?.subscription?.length){
         let length = userProfile.subscription.length
         const lastSubscription = userProfile.subscription[length-1]
@@ -54,7 +53,6 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe }: Props) => {
      
     } catch (error) {
       showErrorToast(error);
-      console.error("Failed to fetch subscriptions:", error);
     } finally {
       setLoading(false);
     }
