@@ -54,7 +54,6 @@ export default function UserProfileComplete() {
     }
   };
   useEffect(() => {
-  console.log("Errors changed:", errors);
 }, [errors]);
 
 

@@ -50,7 +50,6 @@ export class UserService implements IUserService {
   async loginUser(data: IUserLogin): Promise<ILoginResponse> {
     try {
       const user = await this.userRepository.findOne({ email: data.email });
-      console.log("thi sis user", user);
       if (!user) {
         throw new AppError("User not found", 404);
       } else if (user.blocked) {
@@ -141,12 +140,10 @@ export class UserService implements IUserService {
     userProfilePic: string
   ): Promise<string | null> {
     try {
-      console.log("this isserviceurl", userProfilePic);
       const userData = await this.userRepository.addProfilePic(
         userId,
         userProfilePic
       );
-      console.log("this is userdata", userData);
       if (!userData) {
         throw new AppError("user not found", 404);
       }
@@ -155,7 +152,6 @@ export class UserService implements IUserService {
       if (error instanceof AppError) {
         throw error;
       }
-      console.log(error);
       throw new AppError(userMessages.ADD_PROFILE_IMAGE_FAILURE, 500);
     }
   }
@@ -204,12 +200,10 @@ export class UserService implements IUserService {
     try {
       const skip = (page - 1) * limit;
       // const skip = 2
-      console.log("skip", skip, "search", search, "date", date);
       const [trainers, total] = await Promise.all([
         this.trainerRepository.getApprovedAvailableTrainers(skip, search, date),
         this.trainerRepository.countDocuments({ approved: true }),
       ]);
-      console.log("trainers and total", trainers, total);
       if (!trainers) {
         throw new AppError(trainerMessages.APPROVED_TRAINERS_NOT_FOUND, 404);
       }
@@ -218,7 +212,6 @@ export class UserService implements IUserService {
       }
       throw new AppError("total document not found", 404);
     } catch (error) {
-      console.log(error);
       if (error instanceof AppError) {
         throw error;
       }
@@ -351,7 +344,6 @@ export class UserService implements IUserService {
   async cancelTrainingSession(trainerId: string, userId: string, date: string, startTime: string): Promise<boolean> {
       try {
         
-        console.log('inside cancel trainig session')
         const sessionDate = new Date(date);
           const tomorrow = new Date();
           tomorrow.setDate(tomorrow.getDate() + 1);
@@ -370,10 +362,10 @@ export class UserService implements IUserService {
        if(!doc){
          throw 'something went wrong'
        }
-       console.log('doc',doc.availability[1].timeSlots)
        
        return true
       } catch (error) {
+        console.log('eerororoor',error)
         if(error instanceof AppError){
           throw error
         }
@@ -385,7 +377,6 @@ export class UserService implements IUserService {
       const activeSubscribedUsers = await this.userRepository.find({
         "subscription.status": "active",
       });
-      console.log(activeSubscribedUsers);
       const today = new Date();
       if (activeSubscribedUsers) {
         for (let user of activeSubscribedUsers) {

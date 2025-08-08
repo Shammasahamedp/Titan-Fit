@@ -77,7 +77,6 @@ export class UserRepository
         subscription: subscriptionDetails,
       },
     });
-    console.log('result',result)
   }
 
   async getSubscribers(): Promise<IUserDocument[]> {

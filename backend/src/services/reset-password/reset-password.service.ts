@@ -24,7 +24,6 @@ export class ResetPasswordService implements IResetPasswordService{
         try {
             const token = generateToken()
         await this.redisRepository.saveToken(email,token,600)
-        console.log('this is emailsendrepo')
         await sendMail(email,emailMessages.TOKEN_SUBJECT,`click the link http://localhost:5173/reset-password/${token}`)
         } catch (error) {
             console.log(error)
@@ -35,10 +34,8 @@ export class ResetPasswordService implements IResetPasswordService{
 
    async verifyLink(password: string, token: string): Promise<void> {
         try {
-            console.log('this is token',token)
 
            const existingEmail= await this.redisRepository.getToken(token)
-           console.log('this is email',existingEmail)
            if(!existingEmail ){
             throw new AppError (commonErrors.INVALID_TOKEN,401)
            }

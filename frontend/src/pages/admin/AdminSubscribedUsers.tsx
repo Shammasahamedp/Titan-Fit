@@ -15,7 +15,6 @@ const AdminSubscribedUsers = () => {
        const users = response?.data.subscribers
       setSubscribers(users)
 
-      console.log(subscribers)
     } catch (error) {
       showErrorToast(error)
     }

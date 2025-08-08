@@ -5,7 +5,6 @@ const API = import.meta.env.VITE_BASE_URL
 
 export const getChatRoom = async (roomId:string)=>{
     try {
-        console.log('roomId',roomId)   
         const response = await axiosInstance.get(`${API}/chat/${roomId}`)
         if(response.data){
            return response

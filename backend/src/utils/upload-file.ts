@@ -32,10 +32,8 @@ const storage = new CloudinaryStorage({
 const fileFilter = (req:Request,file:Express.Multer.File,cb:FileFilterCallback)=>{
     const allowedFileTypes = ["image/jpeg","image/png","application/pdf"]
     if(allowedFileTypes.includes(file.mimetype)){
-        console.log('this is inside filefilter')
         cb(null,true)
     }else{
-        console.log('this is inside else case of filefilter')
         cb(new Error("Only JPG,PNG, and PDF files are allowed"))
     }
 }

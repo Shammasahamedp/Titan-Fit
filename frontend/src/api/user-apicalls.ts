@@ -66,7 +66,6 @@ export const resetPassword = async (password:string)=>{
 
 export const getApprovedTrainers = async (page: number, limit: number,search:string,date:string) => {
   try {
-    console.log(date,'date')
     const response = await axiosInstance.get(`${API}/user/get-trainers?page=${page}&limit=${limit}&search=${search}&date=${date}`);
     if (response.data) {
       return response;
@@ -80,7 +79,6 @@ export const getApprovedSingleTrainer = async (trainerId:string)=>{
   try {
     const response = await axiosInstance.get(`${API}/user/get-trainers/${trainerId}`)
     if(response.data){
-      console.log(response.data)
       return response
     }
   } catch (error) {
@@ -113,10 +111,8 @@ export const cancelTheBooking = async (trainerId:string,date:string,startTime:st
 
 export const getTrainers = async ()=>{
   try {
-    console.log('this is gettrainers method ')
     const response = await axiosInstance.get(`${API}/chat/trainers`)
     if(response.data){
-      console.log('response.data',response.data)
       return response
     }
   } catch (error) {

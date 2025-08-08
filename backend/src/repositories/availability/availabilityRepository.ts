@@ -36,11 +36,9 @@ export class AvailabilityRepository
     date: string
   ): Promise<string[] | []> {
     const data = await availabilityModel.findOne({ trainerId: trainerId });
-    console.log('data',data,'date',date)
 const something = data?.availability.find((value) =>
   new Date(value.date).toISOString().split('T')[0] === new Date(date).toISOString().split('T')[0]
 );
-    console.log('something',something)
     const bookedSlots = something?.timeSlots
       .filter((value) => value.isBooked)
       .map((value) => value.startTime);
@@ -53,7 +51,6 @@ const something = data?.availability.find((value) =>
   }
 
   async isDateExist(trainerId: string, date: string): Promise<boolean | null> {
-    console.log(trainerId, "id", "date", date);
     return await availabilityModel.findOne({
       trainerId: trainerId,
       'availability.date':date
@@ -78,26 +75,24 @@ const something = data?.availability.find((value) =>
   newSlots: ISlot[]
 ): Promise<IAvailabilityDocument | null> {
   const availabilityDoc = await availabilityModel.findOne({ trainerId });
-  console.log('aav',availabilityDoc)
   if (!availabilityDoc) return null;
-
-  console.log(availabilityDoc.availability[0].date,'date',date)
   const dateEntry = availabilityDoc.availability.find((entry) => entry.date.toISOString() === date);
-  console.log('dateentry',dateEntry)
   if (!dateEntry) return null;
+  const filteredNewSlots = newSlots.map((slot)=>{
+    return {
+      startTime:slot.startTime,
+      isBooked:slot.isBooked,
 
-  const existingStartTimes = new Set(dateEntry.timeSlots.map((slot) => slot.startTime));
-   console.log('existing start time',existingStartTimes)
-  const filteredNewSlots = newSlots.filter(
-    (slot) => !existingStartTimes.has(slot.startTime)
-  );
+    }
+  })
+  const bookedSlots=dateEntry.timeSlots.filter((slot)=>{
+    return slot.isBooked === true
+  })
 
-  console.log('filtered new slots',filteredNewSlots)
+  const updatedSlots = [...bookedSlots,...filteredNewSlots]
 
-  dateEntry.timeSlots.push(...filteredNewSlots);
-   
+  dateEntry.timeSlots =  updatedSlots
   await availabilityDoc.save();
-   console.log('availability document',availabilityDoc)
   return availabilityDoc;
 }
 
@@ -153,7 +148,6 @@ const something = data?.availability.find((value) =>
   async cancelTrainerBookedSession(trainerId: Types.ObjectId, userId: Types.ObjectId, date: string, startTime: string): Promise<IAvailabilityDocument | null> {
       const [year, month, day] = date.split("-");
     const formatted = `${year}-${month}-${day}`;
-   console.log('this is repo layer cancel trainign session')
     return await availabilityModel.findOneAndUpdate(
       {
         trainerId: trainerId,
@@ -185,8 +179,8 @@ const something = data?.availability.find((value) =>
                 new Date(date).setDate(new Date(date).getDate() + 1)
               ),
             },
-          },               // target the correct date in availability array
-      { "slot.userId": userId }                    // target the slot where this user booked
+          },               
+      { "slot.userId": userId }                  
     ],
     new: true
   }
@@ -262,9 +256,7 @@ async changeUserSlotOnDate(
 const endOfDay = new Date(`${date}T23:59:59.999Z`);
 
 
-  console.log('userId', userId);
-  console.log('startOfDay', startOfDay.toISOString());
-  console.log('endOfDay', endOfDay.toISOString());
+
 
   const existingBooking = await availabilityModel.findOne({ 
     availability: {
@@ -279,7 +271,6 @@ const endOfDay = new Date(`${date}T23:59:59.999Z`);
     }
   });
 
-  console.log('existing booking', existingBooking);
   return existingBooking;
 }
 
@@ -373,7 +364,6 @@ const endOfDay = new Date(`${date}T23:59:59.999Z`);
     pipeline.push({ $skip: skip }, { $limit: PAGE_SIZE });
 
     const availability = await availabilityModel.aggregate(pipeline);
-    console.log(availability, totalPages, "hellllllllllllll");
     return { availability, totalPages };
   }
 
@@ -384,16 +374,7 @@ const endOfDay = new Date(`${date}T23:59:59.999Z`);
     sortKey: string,
     sortAsc: boolean | string
   ): Promise<IAvailabilityPopulated | null> {
-    console.log(
-      "page",
-      page,
-      "trainerId",
-      trainerId,
-      "search",
-      search,
-      "sortKey",
-      sortKey
-    );
+   
 
     const PAGE_SIZE = 5;
     const skip = (page - 1) * PAGE_SIZE;
@@ -556,7 +537,6 @@ const endOfDay = new Date(`${date}T23:59:59.999Z`);
     sortKey: string,
     sortAsc: boolean | string
   ): Promise<IAvailabilityPopulated | null> {
-    console.log("page", page, "search", search, "sortKey", sortKey);
 
     const PAGE_SIZE = 5;
     const skip = (page - 1) * PAGE_SIZE;

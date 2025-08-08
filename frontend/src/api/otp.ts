@@ -7,7 +7,6 @@ export const sendOtp = async(email:string)=>{
 }
 
 export const verifyOtp = async(email:string,otp:string)=>{
-    console.log('this is verifyotp')
     return axiosInstance.post(`${API}/otp/verify`,{email,otp})
 }
 

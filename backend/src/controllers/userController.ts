@@ -104,7 +104,6 @@ export class UserController {
         try {
             const page = parseInt(req.query.page as string) || 1
             const limit = parseInt(req.query.limit as string) || 3
-            console.log('thsi is apge',page,limit)
             const response = await this.userService.getApprovedTrainers(page,limit,req.query.search as string,req.query.date as string)
             res.status(200).json({success:true,message:trainerMessages.GET_APPROVED_TRAINERS_SUCCESS,approvedTrainers:response?.trainers,totalTrainers:response?.total,currentPage:page,totalPages:Math.ceil(response?.total as number/limit)})
         } catch (error) {
@@ -126,7 +125,6 @@ export class UserController {
             const {trainerId,date,startTime} = req.body
             const success = await this.userService.bookASessionWithTrainer(trainerId,res.locals.user.userId,date,startTime)
             if(success){
-                console.log('suc',success)
                 res.status(201).json({success:true,message:availabilityMessages.SESSION_BOOKED_SUCCESSFULL})
             }
         } catch (error) {
@@ -142,6 +140,7 @@ export class UserController {
                 res.status(200).json({success:true,message:availabilityMessages.CANCEL_BOOKED_SESSION})
             }
         } catch (error) {
+
             handleError(res,error)
         }
     }

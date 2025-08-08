@@ -82,7 +82,6 @@ export class AvailabilityService implements IAvailabilityService {
         }
 
       );
-      console.log("booked sessions", bookedSessions);
 
       return bookesSesssionTableData;
     } catch (error) {
@@ -127,7 +126,6 @@ export class AvailabilityService implements IAvailabilityService {
             : "upcoming",
         };
       });
-      console.log("fds", userBookedSessionTableData);
       return userBookedSessionTableData;
     } catch (error) {
       if (error instanceof AppError) {

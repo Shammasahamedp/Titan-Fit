@@ -64,7 +64,6 @@ export class PaymentService implements IPaymentService{
 
     async handleWebhook(eventData: any,signature:string): Promise<void> {
         try {
-            console.log('webhook hit')
              let event = stripe.webhooks.constructEvent(eventData,signature,process.env.WEBHOOK_SECRET_KEY as string)
              if(!event){
                 throw new Error(paymentMessages.WEBHOOK_VERIFICATION_FAILED)
@@ -73,7 +72,6 @@ export class PaymentService implements IPaymentService{
              const paymentIntentId = session.payment_intent
              const payementIntent = await stripe.paymentIntents.retrieve(paymentIntentId as string)
              if(payementIntent.status === 'succeeded'){
-               console.log('payment success','inside paymentintent.status')
                 let paymentData:Partial<IPaymentDocument> = {
                     ...payementIntent.metadata,
                     status:'completed',
@@ -83,7 +81,6 @@ export class PaymentService implements IPaymentService{
                 const paymentWithSameId = await this.paymentRepo.findOne({transactionId:paymentData.transactionId})
                 console.log('paymentwithsameid',paymentWithSameId)
                 if(!paymentWithSameId){
-                    console.log('this is inside ')
                     const payment=await this.paymentRepo.create(paymentData)
 
                     if(payment){   
@@ -99,7 +96,6 @@ export class PaymentService implements IPaymentService{
                             startDate:new Date(Date.now()),
                             endDate:getEndDate(subscription?.durationInMonth as number)
                         }
-                        console.log('subscriptiondetails',subscriptionDetails)
                         this.userRepo.addSubscription(payementIntent.metadata.userId,subscriptionDetails)
                     }
                 }

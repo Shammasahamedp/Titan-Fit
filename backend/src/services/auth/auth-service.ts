@@ -56,7 +56,6 @@ export class AuthService implements IAuthService{
                 return {user,accessToken,refreshToken}
                     }
                     else{
-                        console.log('reached..')
                         const newUser = new userModel(
                                 {
                                     googleId:googleId,

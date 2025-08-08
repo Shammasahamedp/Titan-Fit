@@ -16,7 +16,6 @@ export const getAvailability = async()=>{
 
 export const getBookedSessionDetails = async (trainerId:string,page:number,search:string,sortKey:string,sortAsc:boolean)=>{
     try {
-        console.log(trainerId)
         const response = await axiosInstance.get(`${API}/availability/get-trainer-sessions?page=${page}&search=${search}&sortKey=${sortKey}&sortAsc=${sortAsc}&trainerId=${trainerId}`)
         if(response.data){
             return response
@@ -51,7 +50,6 @@ export const getUsersBookesSessionForAdmin = async(userId:string,page:number,sea
     try {
         const response = await axiosInstance.get(`${API}/availability/get-user-booked-session-admin?page=${page}&search=${search}&sortKey=${sortKey}&sortAsc=${sortAsc}&userId=${userId}`)
         if(response.data){
-            console.log('sha',response.data)
             return response
         }
     } catch (error) {

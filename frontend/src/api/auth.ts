@@ -13,7 +13,6 @@ const API = import.meta.env.VITE_BASE_URL
 export const login = async(loginData:LoginFormInput)=>{
     try {
         const response = await axiosInstance.post(`${API}/${loginData.role}/auth/login`,{email:loginData.email,password:loginData.password},{withCredentials:true})
-        console.log(response)
     setToken(response.data.data.accessToken)
     return response
     } catch (error) {
@@ -76,7 +75,6 @@ export const googleLogin = async(token:string,role:string)=>{
             {token,role},{withCredentials:true}
         )
         if(response.data){
-            console.log('this is response.data',response.data)
             setToken(response.data.data.accessToken)
             setProfileCompletionStatus(response.data.data.userNew)
             return response
@@ -84,7 +82,6 @@ export const googleLogin = async(token:string,role:string)=>{
 
     } catch (error) {
         
-        console.log('error in googlesign',error)
         throw error
     }
 }

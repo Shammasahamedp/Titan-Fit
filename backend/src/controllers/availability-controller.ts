@@ -27,7 +27,6 @@ export class AvailabilityController {
   }
 
   async getBookedSessions(req: Request, res: Response) {
-    console.log('reached ')
     try {
       const {
         page = 1,
@@ -56,7 +55,6 @@ export class AvailabilityController {
   }
 
   async getTrainerBookedSessions(req: Request, res: Response) {
-    console.log('reached ')
     try {
       const {
         page = 1,

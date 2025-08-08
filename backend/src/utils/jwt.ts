@@ -22,7 +22,6 @@ export const verifyRefreshToken = (token:string) =>{
     try {
         return jwt.verify(token,REFRESH_SECRET) as jwt.JwtPayload
     } catch (error) {
-        console.log('dddddddddd',error)
         return null
     }
 }

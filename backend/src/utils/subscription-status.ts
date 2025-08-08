@@ -9,6 +9,5 @@ const trainerAvailability = new AvailabilityRepository()
 const userService = new UserService(userRepo,trainerRepo,trainerAvailability)
 
 cron.schedule('0 0 * * *',async ()=>{
-    console.log('checking expired subscription')
     await userService.updateExpiredSubscription()
 })

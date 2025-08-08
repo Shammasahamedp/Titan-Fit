@@ -32,7 +32,6 @@ export class TrainerController {
   async loginTrainer(req: Request, res: Response): Promise<void> {
     try {
       const response = await this.trainerService.loginTrainer(req.body);
-      console.log("responssssssssssssssssss", response);
       res.cookie("refreshToken", response?.refreshToken, {
         httpOnly: true,
         secure: false,
@@ -47,7 +46,6 @@ export class TrainerController {
         .status(200)
         .json({ success: true, data, message: trainerMessages.LOGIN_SUCCESS });
     } catch (error: any) {
-      console.log("eeeeeeeeeeeeerrrrrrrrrrrooooooorrrrrrr");
       handleError(res, error);
     }
   }
@@ -120,7 +118,6 @@ export class TrainerController {
           trainerCertificate,
         });
     } catch (error) {
-      console.log(error);
       handleError(res, error);
       // res.status(400).json({success:false,message:trainerMessages.TRAINER_CERTIFICATE_ADD_FAILURE})
     }
@@ -173,7 +170,6 @@ export class TrainerController {
 
   async updateAvailability(req: Request, res: Response): Promise<void> {
     try {
-      console.log("req", req.body);
       const availability = await this.trainerService.updateAvailability(
         res.locals.user?.userId,
         req.body
@@ -187,7 +183,6 @@ export class TrainerController {
           availability,
         });
     } catch (error) {
-      console.log(error);
       handleError(res, error);
     }
   }

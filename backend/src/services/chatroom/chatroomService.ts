@@ -12,17 +12,13 @@ export class ChatService implements IChatRoomService{
     }
     async getMessages(roomId: string): Promise<IChatRoom | null> {
        try {
-         console.log('roomId',roomId)
          let room = await this.chatRepo.findOne({roomId})
         if(!room){
            let message=await this.chatRepo.create({roomId:roomId})
-           console.log('message',message)
            return message
         }
-        console.log('room',room)
         return room
        } catch (error) {
-         console.log('er',error)
           if(error instanceof AppError){
             throw  error
           }

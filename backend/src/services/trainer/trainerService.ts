@@ -237,68 +237,12 @@ export class TrainerService implements TrainerService {
       throw new AppError("something went wrong while reset password", 500);
     }
   }
-  // async updateAvailability(
-  //   trainerId: string,
-  //   availability: { date: string; slots: string[] }
-  // ): Promise<IAvailabilityDocument | null> {
-  //   try {
-
-  //     const trainer = await this.trainerRepository.findById(trainerId);
-  //     if (!trainer) {
-  //       throw new AppError(trainerMessages.TRAINER_NOT_FOUND, 404);
-  //     }
-
-  //     let transformedSlots = availability.slots.map((value) => {
-  //       return { startTime: value, isBooked: false };
-  //     });
-  //     const isDateExist = await this.availabilityRepo.isDateExist(
-  //       trainerId,
-  //       availability.date
-  //     );
-  //     console.log('date exists',isDateExist)
-  //     if (!isDateExist) {
-  //       return await this.availabilityRepo.updateAvailability(trainerId, {
-  //         date: availability.date,
-  //         timeSlots: transformedSlots,
-  //         isCompleted: false,
-  //       });
-  //     }
-  //      const bookedSlots:string[] = await this.availabilityRepo.getBookedSlotsInADate(trainerId,availability.date)
-
-  //     if(bookedSlots.length>0){
-  //       const newUnbookedSlots = availability.slots.filter((value )=>{
-  //         if(!bookedSlots.includes(value)){
-  //           return value
-  //         }
-  //     })
-
-  //     }
-
-  //     return await this.availabilityRepo.updateExistingDateAvailability(
-  //       trainerId,
-  //       {
-  //         date: availability.date,
-  //         timeSlots: transformedSlots,
-  //         isCompleted: false,
-  //       }
-  //     );
-  //   } catch (error) {
-  //     console.log(error);
-  //     if (error instanceof AppError) {
-  //       throw error;
-  //     }
-  //     throw new AppError(
-  //       "something went wrong while updating availability",
-  //       500
-  //     );
-  //   }
-  // }
+  
   async updateAvailability(
     trainerId: string,
     availability: { date: string; slots: string[] }
   ): Promise<IAvailabilityDocument | null> {
     try {
-      console.log("trainerId", trainerId, "availability", availability);
       const trainer = await this.trainerRepository.findById(trainerId);
       if (!trainer) {
         throw new AppError(trainerMessages.TRAINER_NOT_FOUND, 404);
@@ -314,11 +258,9 @@ export class TrainerService implements TrainerService {
         availability.date
       );
 
-      console.log("isDateExists", isDateExist);
 
       // If date does not exist, create new availability entry
       if (!isDateExist) {
-        console.log("inside is  not date exists ");
         return await this.availabilityRepo.updateAvailability(trainerId, {
           date: new Date(availability.date),
           timeSlots: transformedSlots,
@@ -333,7 +275,6 @@ export class TrainerService implements TrainerService {
           availability.date
         );
 
-      console.log("bookedslots", bookedSlots);
 
       if (bookedSlots.length > 0) {
         // Filter out any slot that is already booked
@@ -341,7 +282,6 @@ export class TrainerService implements TrainerService {
           (slot) => !bookedSlots.includes(slot)
         );
 
-        console.log("unbooked slots", unbookedSlots);
 
         const newSlotObjects: ISlot[] = unbookedSlots.map((slot) => ({
           startTime: slot,
@@ -349,12 +289,15 @@ export class TrainerService implements TrainerService {
         }));
 
         // Call the new repository method to push only new unbooked slots
-        return await this.availabilityRepo.updateAlreadyBookedDateAvailability(
+        const something =  await this.availabilityRepo.updateAlreadyBookedDateAvailability(
           trainerId,
           availability.date,
           newSlotObjects
         );
+         return something
       }
+
+     
 
       // No booked slots — safe to replace entire slot array
       return await this.availabilityRepo.updateExistingDateAvailability(

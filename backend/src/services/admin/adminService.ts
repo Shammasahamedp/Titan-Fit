@@ -9,12 +9,10 @@ import { ITrainerRepository } from "../../repositories/trainer/ItrainerRepositor
 import { AdminRepository } from "../../repositories/admin/adminRepository";
 import { subscriptionMessage } from "../../messages/subscription-related";
 import { ISingleUserSubscriptions, ISubscriptionTableData } from "../../interfaces/subscriptionInterfaces";
-import { string } from "zod";
 import { userMessages } from "../../messages/userRelated";
 import { IAvailabilityDocument } from "../../models/availability/IavailabilityModel";
 import { trainerMessages } from "../../messages/trainerRelated";
 import { Types } from "mongoose";
-import { AvailabilityRepository } from "../../repositories/availability/availabilityRepository";
 import { IAvailabilityRepository } from "../../repositories/availability/IavailabilityRepository";
 import { availabilityMessages } from "../../messages/availability-related";
 import { sendMail } from "../../utils/nodeMailer";
@@ -102,7 +100,6 @@ export class AdminService implements IAdminService{
             if(error instanceof AppError){
                 throw error
             }
-            console.log(error)
             throw new AppError('something went wrong while trainer approval',500)
         }
     }
@@ -128,7 +125,6 @@ export class AdminService implements IAdminService{
             const subscribers = await this.userRepository.getSubscribers()
             const subscribersTableData = subscribers.map((user)=>{
                 const {name,subscription,_id} = user
-                 console.log('user',user,'sadf',subscription)
                if(subscription?.length){
                 return {
                     id:String(_id),
@@ -142,7 +138,6 @@ export class AdminService implements IAdminService{
                 return null
                }
             }).filter((item): item is ISubscriptionTableData => item !== null);
-            console.log('table data',subscribersTableData)
             if(!subscribersTableData){
                 throw new AppError(subscriptionMessage.SUBSCRIBERS_NOT_FOUND,404)
             }
@@ -160,13 +155,11 @@ export class AdminService implements IAdminService{
             if(!user){
                 throw new AppError(userMessages.USER_NOT_FOUND,404)
             }
-            console.log('userrrrrrrrrrrrr',user)
                         // console.log('userrrrrrrrrrrrr',user.subscriptionId)
                         //             console.log('userrrrrrrrrrrrr',user.paymentId)
 
 
             if( user.subscription){   
-                console.log('user.subscription',user.subscription)
                  let userSubscriptionDetails = user.subscription.map((sub)=>({
                     ...sub,
                     subscriptionId:sub.subscriptionId._id,
@@ -174,7 +167,6 @@ export class AdminService implements IAdminService{
                     paymentId:sub.paymentId._id
                  }))
                 // return userSubscriptionDetails
-                console.log('userSubscriptionDetails',userSubscriptionDetails)
                 return userSubscriptionDetails
             }
             throw new AppError(userMessages.SUBSCRIPTION_NOT_FOUND,404)

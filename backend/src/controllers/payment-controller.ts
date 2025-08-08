@@ -27,7 +27,6 @@ export class PaymentController{
                 throw new Error(paymentMessages.SIGNATURE_NOT_FOUND)
             }
            const somethiing= await this.paymentService.handleWebhook(req.body,signature)
-           console.log('this is something',somethiing)
         } catch (error) {
             console.log(error)
             handleError(res,error)

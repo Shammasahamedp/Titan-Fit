@@ -42,6 +42,21 @@ const TrainerBookedSession = () => {
     }
   };
 
+  const isWithin12Hours = (date: string, time: string) => {
+    const sessionDateTime = new Date(`${date} ${time}`);
+    const now = new Date();
+    const diffHours = (sessionDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+    return diffHours <= 1200 && diffHours > 0; 
+  };
+
+  const sendNotificationToUser = async ()=>{
+    try {
+      
+    } catch (error) {
+      showErrorToast(error)
+    }
+  }
+
 
 
   return (
@@ -54,12 +69,27 @@ const TrainerBookedSession = () => {
       columns={[["date",'date'], ["status",'status'], ["time",'time'], ["user",'name'],['email','email'],['fitnessLevel','fitness level']]}
       tableDatas={data}
       currentPage={page}
+      rederActions={(item)=>{
+        if(isWithin12Hours(item.date,item.time)){
+           return (
+            <>
+            <button
+               onClick={()=>sendNotificationToUser()}
+                 className=" space-x-2 bg-[#FFC436] text-black px-4 font-semibold py-1 rounded hover:bg-black hover:text-[#FFC436] transition-colors"
+               >
+                View
+               </button>
+            </>
+           )
+        }
+      }}
       totalPages={totalPages}
       onPageChange={setPage}
       onSearchChange={(value) => {
         setPage(1);
         setSearch(value);
       }}
+      
       onSortChange={(key, asc) => {
         setSortKey(key as string);
         setSortAsc(asc);

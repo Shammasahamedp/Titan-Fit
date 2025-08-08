@@ -16,9 +16,7 @@ export class ChatRoomController{
 
     async getChatRoom(req:Request,res:Response){
         try {
-            console.log('req.params',req.params)
             const chatRoom = await this.chatRoomService.getMessages(req.params.roomId)
-            console.log('chatroom',chatRoom)
             res.status(200).json({success:true,message:chatMessages.CHAT_ROOM_FOUND,chatRoom})
         } catch (error) {
             handleError(res,error)
@@ -37,9 +35,7 @@ export class ChatRoomController{
 
     async getTrainers(req:Request,res:Response){
         try {
-            console.log('this is get trainers method')
             const trainers = await this.trainerService.getTrainersForChat()
-            console.log('trainers',trainers)
             res.status(200).json({success:true,trainers})
         } catch (error) {
             handleError(res,error)

@@ -49,6 +49,7 @@ const TrainerAvailability: React.FC = () => {
       // (item) => new Date(item.date).toDateString() === date.toDateString()
       (item) => {
         const itemDateStr = new Date(item.date).toISOString().split("T")[0];
+
         return itemDateStr === selectedDateStr;
       }
     );
@@ -82,10 +83,7 @@ const TrainerAvailability: React.FC = () => {
       return;
     }
 
-    // const existing = availabilityData.find(
-    //   (item) =>
-    //     new Date(item.date).toDateString() === selectedDate.toDateString()
-    // );
+  
 
     const selectedDateStr = selectedDate.toISOString().split("T")[0];
     const existing = availabilityData.find((item) => {
@@ -115,8 +113,7 @@ const TrainerAvailability: React.FC = () => {
     }
 
     try {
-      console.log("selected dates", selectedDate);
-      console.log("selecteslots", selectedSlots);
+     
       const fixedDate = new Date(
         Date.UTC(
           selectedDate.getFullYear(),

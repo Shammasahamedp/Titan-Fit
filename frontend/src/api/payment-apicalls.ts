@@ -15,7 +15,6 @@ export const makeStripeSession = async (planId:string)=>{
 
 export const getSessionDetails = async (sessionId:string)=>{
     try {
-        console.log('this is sessionId',sessionId)
         const response = await axiosInstance.get(`${API}/payment/session-details/${sessionId}`)
         if(response.data){
             return response

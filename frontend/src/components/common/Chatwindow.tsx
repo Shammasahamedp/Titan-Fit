@@ -10,7 +10,7 @@ import { getChatRoom } from "@/api/chat-apicalls";
 interface Message {
   senderId: string;
   message: string;
-  timestamp: string;
+  timeStamp: string;
 }
 
 const getMessages = async (roomId:string)=>{
@@ -95,7 +95,7 @@ const ChatWindow: React.FC = () => {
    let message = {
       senderId:currentUserId as string ,
   message: newMessage,
-  timestamp: new Date(Date.now()).toLocaleTimeString()
+  timeStamp: new Date(Date.now()).toLocaleTimeString()
     }
     setMessages((prev)=>[...prev,message])
     setNewMessage("");
@@ -103,6 +103,8 @@ const ChatWindow: React.FC = () => {
       showErrorToast(error)
     }
   };
+
+  console.log('messsssss',messages)
 
   return (
     <div className="flex flex-col h-full bg-white/10 rounded-lg backdrop-blur-sm">
@@ -123,8 +125,10 @@ const ChatWindow: React.FC = () => {
               }`}
             >
               {msg.message}
+              
+              {/* {msg.timeStamp} */}
               <div className="text-xs text-gray-400 mt-1">
-                {new Date(msg.timestamp).toLocaleTimeString()}
+                {new Date(msg.timeStamp).toLocaleTimeString()}
               </div>
             </div>
           </div>

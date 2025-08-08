@@ -17,7 +17,6 @@ export const getTrainerProfile = async ()=>{
 
 export const editTrainerProfile = async (trainerProfileData:ITrainerEditProfile)=>{
     try {
-        console.log('thiis is trainerprofiledata',trainerProfileData)//trainerProfileData
         const response = await axiosInstance.put(`${API}/trainer/editprofile`,trainerProfileData)
         if(response.data){
             console.log(response.data)
@@ -77,7 +76,6 @@ export const resetPassword = async (password:string)=>{
 
 export const    uploadAvailability = async (availableSlots:ITrainerAvailableSlots)=>{
     try {
-        console.log('avalable slots',availableSlots)
         const response = await axiosInstance.put(`${API}/trainer/update-availability`,availableSlots)
         if(response.data){
             return response
