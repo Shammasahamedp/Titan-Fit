@@ -8,6 +8,7 @@ import {
 } from "../../models/availability/IavailabilityModel";
 import { IBaseRepository } from "../IbaseRepository";
 import { IUsersForChat } from "../../interfaces/userInterfaces";
+import { IPopulatedAvailability } from "../../interfaces/notificationinterfaces";
 
 export interface IAvailabilityRepository
   extends IBaseRepository<IAvailabilityDocument> {
@@ -82,4 +83,6 @@ export interface IAvailabilityRepository
   ): Promise<IAvailabilityDocument | null>;
 
   getUsersForChat(trainerId:string):Promise<IUsersForChat[]|null>
+
+  checkWhetherSessionExists(trainerId:string,userId:string,date:string,time:string):Promise<IPopulatedAvailability|null>
 }

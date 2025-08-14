@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import {socket} from '../../utils/socket'
+import {socket} from '../../utils/socket-service/socket'
 import { showErrorToast } from "@/utils/toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/reduxStore/store";

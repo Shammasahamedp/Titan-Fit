@@ -120,5 +120,16 @@ export const getTrainers = async ()=>{
   }
 }  
 
+export const getNotification = async ()=>{
+  try {
+    const response = await axiosInstance.get(`${API}/notification/`)
+    if(response.data){
+      return response
+    }
+  } catch (error) {
+    throw error
+  }
+}
+
 
 

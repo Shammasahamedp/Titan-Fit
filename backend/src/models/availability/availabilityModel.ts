@@ -4,7 +4,7 @@ import {  IAvailabilityDocument } from "./IavailabilityModel";
 
 const AvailabilitySchema:Schema = new Schema(
     {
-        trainerId:{type:Types.ObjectId},
+        trainerId:{type:Types.ObjectId,ref:'Trainer'},
         availability:[
             {
                 date:{type:Date,required:true},

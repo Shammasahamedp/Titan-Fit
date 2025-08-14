@@ -1,14 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu, X, User, LogOut, Bell,MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
+import NotificationBell from '@/pages/NotificationBell';
+import { showErrorToast } from '@/utils/toast';
+import { getNotificationCount } from '@/api/notification-apicalls';
+import NotificationDrawer from '@/modal/NotificationDrawer';
 interface NavbarProps {
   logout?: () => void;
   role: 'user' | 'trainer' | 'admin' | '';
 }
 
+
+
 const NewNavbar: React.FC<NavbarProps> = ({ logout, role }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [notificationCount,setNotificationCount] = useState<number>(0)
+  const [isDrawerOpen,setIsDrawerOpen] = useState(false)
+   const getCount = async ()=>{
+          try {
+             const count =await getNotificationCount()
+             if(typeof count === 'number'){
+              setNotificationCount(count)
+             }
+          } catch (error) {
+            showErrorToast(error)
+          }
+         }
+    
+         const toggleDrawer = ()=>{
+           setIsDrawerOpen((prev)=>!prev)
+         }
+
+   useEffect(()=>{
+        if(role === 'user' || role === 'trainer'){
+         getCount()
+   }
+   },[notificationCount])
 
   return (
     
@@ -21,7 +48,7 @@ const NewNavbar: React.FC<NavbarProps> = ({ logout, role }) => {
         <Link to="/" className="items-center">
           <img src="/titan-fit.png" alt="Logo" className="h-9" />
         </Link>
-      </div>
+      </div> 
 
       {/* === Center: Desktop navigation (optional buttons, user) === */}
       <div className="hidden md:flex items-center space-x-4">
@@ -57,6 +84,7 @@ const NewNavbar: React.FC<NavbarProps> = ({ logout, role }) => {
   </Link>
 
   {/* Logout Button */}
+  {role&&<NotificationBell count={notificationCount} onClick={toggleDrawer} hasNew={false} />}
   {logout && (
     <button
       onClick={logout}
@@ -103,6 +131,7 @@ const NewNavbar: React.FC<NavbarProps> = ({ logout, role }) => {
       </div>
     )}
   </div>
+  {isDrawerOpen&&<NotificationDrawer isOpen={isDrawerOpen} onClose={()=>setIsDrawerOpen(false)} />}
 </nav>
 
   );

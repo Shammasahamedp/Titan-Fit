@@ -20,6 +20,7 @@ export class UserController {
             res.status(201).json({success:true,data:user,message:userMessages.SIGNUP_SUCCESS})
         } catch (error:any) {
             handleError(res,error)
+            
         }
     }
 

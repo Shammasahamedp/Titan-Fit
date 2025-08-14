@@ -12,6 +12,7 @@ import { IAvailabilityRepository } from "./IavailabilityRepository";
 import { Types } from "mongoose";
 import mongoose from "mongoose";
 import { IUsersForChat } from "../../interfaces/userInterfaces";
+import { IPopulatedAvailability } from "../../interfaces/notificationinterfaces";
 export class AvailabilityRepository
   extends BaseRepository<IAvailabilityDocument>
   implements IAvailabilityRepository
@@ -281,16 +282,7 @@ const endOfDay = new Date(`${date}T23:59:59.999Z`);
     sortKey: string,
     sortAsc: boolean | string
   ): Promise<IAvailabilityPopulated | null> {
-    console.log(
-      "page",
-      page,
-      "trainerId",
-      trainerId,
-      "search",
-      search,
-      "sortKey",
-      sortKey
-    );
+   
 
     const PAGE_SIZE = 5;
     const skip = (page - 1) * PAGE_SIZE;
@@ -314,6 +306,7 @@ const endOfDay = new Date(`${date}T23:59:59.999Z`);
             $let: {
               vars: { user: { $arrayElemAt: ["$userDetails", 0] } },
               in: {
+                _id:"$$user._id",
                 name: "$$user.name",
                 email: "$$user.email",
                 fitnessLevel: "$$user.fitnessLevel",
@@ -657,4 +650,24 @@ const endOfDay = new Date(`${date}T23:59:59.999Z`);
   return users as IUsersForChat[];
 };
 
+async checkWhetherSessionExists(trainerId: string, userId: string, date: string, time: string): Promise<IPopulatedAvailability | null> {
+ let startOfDay = new Date(date + "T00:00:00.000Z");
+let endOfDay = new Date(date + "T23:59:59.999Z");
+   let data = await availabilityModel.findOne({
+  trainerId: new mongoose.Types.ObjectId(trainerId),
+  availability: {
+    $elemMatch: {
+      date:{$gte: startOfDay, $lte: endOfDay},
+      isCompleted: false,
+      timeSlots: {
+        $elemMatch: {
+          startTime: time,
+          userId: new mongoose.Types.ObjectId(userId)
+        }
+      }
+    }
+  }
+}).populate('trainerId') as unknown as IPopulatedAvailability | null
+   return data
+}
 }

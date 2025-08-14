@@ -63,7 +63,7 @@ const UserDashboard: React.FC = () => {
   
   return (
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-      <NewNavbar role="user" logout={logoutUser}/>
+      <NewNavbar  role="user" logout={logoutUser}/>
       <div className="flex flex-1   text-white">
 
       <NewSidebar profilePicture={userProfile?.profilePicture}

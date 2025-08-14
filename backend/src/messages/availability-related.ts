@@ -8,5 +8,6 @@ export const availabilityMessages = {
     BOOKES_SESSION_GET_SUCCESSFUL:'Bookes sessions fetched successfully..',
     USER_BOOKEDSESSION_GET_SUCCESSFULL:'Successfully fetch users booked session',
         USER_BOOKEDSESSION_GET_FAILURE:'fetch users booked session failed',
+        SESSION_NOT_FOUND:'Trainer session not found'
 
 }

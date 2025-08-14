@@ -34,17 +34,24 @@ export class UserService implements IUserService {
   }
 
   async registerUser(data: IUserSignUp): Promise<IUserDocument | null> {
-    const existingUser = await this.userRepository.findOne({
+    try {
+       const existingUser = await this.userRepository.findOne({
       email: data.email,
     });
     const existingTrainer = await this.trainerRepository.findOne({
       email: data.email,
     });
     if (existingUser || existingTrainer) {
-      throw new Error("User already exist");
+      throw new AppError("User already exist",409);
     }
     data.password = await hashPassword(data.password);
     return await this.userRepository.create(data);
+    } catch (error) {
+      if(error instanceof AppError){
+        throw error 
+      }
+      throw new AppError('something went wrong while register user',500)
+    }
   }
 
   async loginUser(data: IUserLogin): Promise<ILoginResponse> {

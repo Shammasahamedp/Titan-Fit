@@ -76,6 +76,7 @@ export interface IUserBookedSessionTableData{
 export interface IBookedSessionDetails {
     name:string;
     user:string,
+    userId:string,
     email:string;
     fitnessLevel:string;
     date:Date;

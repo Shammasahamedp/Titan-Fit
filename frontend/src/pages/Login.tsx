@@ -17,6 +17,7 @@ import { commonErrors } from "@/messages/common-error";
 import ForgotPasswordModal from "@/modal/forgotPasswordModal";
 import { useState } from "react";
 import { sendLinkToMail } from "@/api/reset-password";
+import { registerUserWithSocket } from "@/utils/socket-service/notification-handler";
 
 
 export default function Login() {
@@ -48,7 +49,7 @@ export default function Login() {
               token: response.data.data.accessToken,
             })
           );
-  
+          registerUserWithSocket(_id)
           showSuccessToast(response.data.message);
           navigate('/home')
         }
@@ -64,7 +65,7 @@ export default function Login() {
               token: response.data.data.accessToken,
             })
           );
-  
+          registerUserWithSocket(_id)
           showSuccessToast(response.data.message);
         }
       }
@@ -109,6 +110,7 @@ export default function Login() {
             token:tokenResponse.data.data.accessToken
         }))
         showSuccessToast(tokenResponse.data.message)
+        registerUserWithSocket(_id)
         if(tokenResponse.data.data.userNew){
             navigate('/user/profile-complete')
             return 
@@ -127,6 +129,7 @@ export default function Login() {
           token:tokenResponse.data.data.accessToken
         }))
         showSuccessToast(tokenResponse.data.data.message)
+        registerUserWithSocket(_id)
         if(tokenResponse.data.data.trainerNew){
              navigate('/trainer/profile-complete')
              return 

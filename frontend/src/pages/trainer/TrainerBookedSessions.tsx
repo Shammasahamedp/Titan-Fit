@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import BackendTable from "@/components/common/BackendTable";
 import { getSessionDetails } from "@/api/availability-apicalls";
 import { showErrorToast } from "@/utils/toast";
+import { sendSessionNotification } from "@/utils/socket-service/notification-handler";
+import { useSelector } from "react-redux";
+import { RootState } from "@/reduxStore/store";
 
 interface BookedSession {
   date: string;
@@ -11,7 +14,8 @@ interface BookedSession {
   status: string;
 fitnessLevel:string;
 time:string;
-user:string
+user:string;
+userId:string
 }
 
 const TrainerBookedSession = () => {
@@ -34,6 +38,7 @@ const TrainerBookedSession = () => {
         sortKey || '',
         sortAsc
       );
+      console.log('respo',response?.data.bookedData)
 
       setData(response?.data.bookedData || []);
       setTotalPages(response?.data.totalPages || 1);
@@ -42,6 +47,8 @@ const TrainerBookedSession = () => {
     }
   };
 
+  const trainer = useSelector((state:RootState)=>state.trainer.trainer)
+
   const isWithin12Hours = (date: string, time: string) => {
     const sessionDateTime = new Date(`${date} ${time}`);
     const now = new Date();
@@ -49,9 +56,19 @@ const TrainerBookedSession = () => {
     return diffHours <= 1200 && diffHours > 0; 
   };
 
-  const sendNotificationToUser = async ()=>{
+  const sendNotificationToUser = async (userId:string,date:string,time:string,trainerId:string)=>{
     try {
-      
+       console.log('clickked')
+       let sessionData = {
+        userId,
+        trainerId,
+        date,
+        time
+       }
+
+       console.log('sessionData',sessionData)
+
+       sendSessionNotification(sessionData)
     } catch (error) {
       showErrorToast(error)
     }
@@ -74,10 +91,10 @@ const TrainerBookedSession = () => {
            return (
             <>
             <button
-               onClick={()=>sendNotificationToUser()}
+               onClick={()=>sendNotificationToUser(item.userId,item.date,item.time,trainer?._id as string)}
                  className=" space-x-2 bg-[#FFC436] text-black px-4 font-semibold py-1 rounded hover:bg-black hover:text-[#FFC436] transition-colors"
                >
-                View
+                Send notification
                </button>
             </>
            )

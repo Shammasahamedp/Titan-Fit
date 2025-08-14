@@ -28,6 +28,7 @@ import './utils/subscription-status'
 import http from 'http'
 import {Server} from 'socket.io'
 import { setUpSocket } from "./config/socket"
+import notificationRoute from "./routes/common-routes/notification-route"
 const app = express()
 const server = http.createServer(app)
 
@@ -60,6 +61,7 @@ app.use('/chat',chatRoute)
 app.use('/reset-password',resetPasswordRoute)
 app.use('/subscription',subscriptionRoute)
 app.use('/availability',availabilityRouter)
+app.use('/notification',notificationRoute)
 server.listen(3000,"0.0.0.0",async()=>{
     console.log("server is running on http://localhost:3000")
 })

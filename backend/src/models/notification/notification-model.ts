@@ -8,7 +8,7 @@ const NotificationSchema:Schema = new Schema(
         senderId:{type:String,required:true},
         senderRole:{type:String,enum:['trainer','admin'],required:true},
         message:{type:String,required:true},
-        isRead:{type:Boolean,required:true}
+        isRead:{type:Boolean,required:true,default:false}
     },{
         timestamps:true
     }

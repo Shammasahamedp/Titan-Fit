@@ -9,6 +9,7 @@ import {
 import { IAvailabilityRepository } from "../../repositories/availability/IavailabilityRepository";
 import { AppError } from "../../utils/handleResponse";
 import { IAvailabilityService } from "./Iavailability-service";
+import { INotificationSessionDetails } from "../../interfaces/notificationinterfaces";
 
 export class AvailabilityService implements IAvailabilityService {
   private availabilityRepo: IAvailabilityRepository;
@@ -70,6 +71,7 @@ export class AvailabilityService implements IAvailabilityService {
             date: item.date,
             time: item.timeSlot.startTime,
             user: item.timeSlot.userDetails?.name,
+            userId:item.timeSlot.userDetails?._id,
             email: item.timeSlot.userDetails?.email,
             fitnessLevel: item.timeSlot.userDetails?.fitnessLevel,
 
@@ -83,9 +85,9 @@ export class AvailabilityService implements IAvailabilityService {
 
       );
 
+
       return bookesSesssionTableData;
     } catch (error) {
-      console.log(error)
       if (error instanceof AppError) {
         throw error;
       }
@@ -132,9 +134,30 @@ export class AvailabilityService implements IAvailabilityService {
         throw error;
       }
 
-      throw new Error(
-        "something went wrong while fetching the booked sessions"
+      throw new AppError(
+        "something went wrong while fetching the booked sessions",500
       );
     }
+  }
+
+  async checkSessionExistOrNot(userId: string, trainerId: string, date: string, time: string): Promise<INotificationSessionDetails> {
+      try {
+       const isExist=  await this.availabilityRepo.checkWhetherSessionExists(trainerId,userId,date,time)
+       if(isExist){ 
+          isExist.trainerId.name
+          let sessionData = {
+            trainer:isExist.trainerId.name as string,
+            time,
+            date
+          }
+          return sessionData
+       }
+       throw new AppError(availabilityMessages.SESSION_NOT_FOUND,404)
+      } catch (error) {
+        if(error instanceof AppError){
+          throw error 
+        }
+        throw new AppError('something went wrong while checking session details',500)
+      }
   }
 }
