@@ -5,12 +5,13 @@ import { showErrorToast } from "@/utils/toast";
 import { useSelector } from "react-redux";
 import { RootState } from "@/reduxStore/store";
 import { getChatRoom } from "@/api/chat-apicalls";
+import { registerUserWithSocket } from "@/utils/socket-service/notification-handler";
 
 
 interface Message {
   senderId: string;
   message: string;
-  timeStamp: string;
+  timeStamp: string|Date;
 }
 
 const getMessages = async (roomId:string)=>{
@@ -43,6 +44,7 @@ const ChatWindow: React.FC = () => {
   const roomId = [currentUserId, id].sort().join("_");
  
   useEffect(() => {   
+   
     (async () => {
       try {
         const res = await getMessages(roomId);
@@ -58,7 +60,6 @@ const ChatWindow: React.FC = () => {
 
     socket.on("receive_message", (msg: Message) => {
       try {
-        console.log('ths is recieve message part ')
       setMessages((prev) => [...prev, msg]);
       } catch (error) {
         showErrorToast(error)
@@ -68,15 +69,43 @@ const ChatWindow: React.FC = () => {
     return () => {
       socket.off("receive_message");   
     };
-  }, [roomId]);
+  }, []);
 
    useEffect(()=>{
     try {
        socket.emit("join_room", roomId);
+        if(user){
+          console.log('user')
+          // socket.emit('chatwindow:open',user?._id,()=>{
+          //   registerUserWithSocket(user._id)
+          // })
+          socket.emit('register',user._id,()=>{
+            socket.emit('chatwindow:open',user._id)
+          })
+        }
+
+        if(trainer){
+          console.log('trainer')   
+          // socket.emit('chatwindow:open',trainer?._id,()=>{
+            
+          // })
+          socket.emit('register',trainer._id,()=>{
+            socket.emit('chatwindow:open',trainer._id)
+          })
+        }
+   
+        return ()=>{
+          if(user){
+             socket.emit('chatwindow:close',user?._id)
+          }
+          if(trainer){
+             socket.emit('chatwindow:close',trainer?._id)
+          }   
+        }
     } catch (error) {
       showErrorToast(error)
-    }
-    },[id])
+    }  
+    },[])   
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -89,22 +118,32 @@ const ChatWindow: React.FC = () => {
 
     socket.emit("send_message", {
       roomId,
+      recieverId:id,
       senderId: currentUserId,
       message: newMessage,
     });
    let message = {
       senderId:currentUserId as string ,
   message: newMessage,
-  timeStamp: new Date(Date.now()).toLocaleTimeString()
+  timeStamp: new Date().toISOString()
     }
-    setMessages((prev)=>[...prev,message])
+    // setMessages((prev)=>[...prev,message])
     setNewMessage("");
     } catch (error) {
       showErrorToast(error)
     }
   };
 
-  console.log('messsssss',messages)
+  const formatTime = (ts: string | Date | undefined) => {
+  if (!ts) return new Date().toLocaleTimeString();
+
+  const date = new Date(ts);
+  if (isNaN(date.getTime())) return new Date().toLocaleTimeString();
+
+  return date.toLocaleTimeString();
+};
+
+
 
   return (
     <div className="flex flex-col h-full bg-white/10 rounded-lg backdrop-blur-sm">
@@ -128,7 +167,8 @@ const ChatWindow: React.FC = () => {
               
               {/* {msg.timeStamp} */}
               <div className="text-xs text-gray-400 mt-1">
-                {new Date(msg.timeStamp).toLocaleTimeString()}
+                {/* {new Date(msg.timeStamp).toLocaleTimeString()||new Date(Date.now()).toLocaleTimeString()} */}
+                 {formatTime(msg.timeStamp)}
               </div>
             </div>
           </div>

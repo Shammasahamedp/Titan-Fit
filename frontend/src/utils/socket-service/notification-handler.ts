@@ -8,12 +8,12 @@ export const sendSessionNotification = async(data:INotificationSessionData)=>{
     } catch (error) {
         showErrorToast(error)
     }
-}
+}    
 
-export const registerUserWithSocket = async(userId:string)=>{
+export const registerUserWithSocket = async(userId:string,callback:()=>void)=>{
     try {
-        console.log('emititng userId',userId)
-        socket.emit('register',userId)
+        socket.emit('register',userId,callback)
+        
     } catch (error) {
         showErrorToast(error)
     }
@@ -25,4 +25,12 @@ export const receiveNotification = async (notificationData:INotificationReceiveD
    } catch (error) {
       showErrorToast(error)
    }
+}
+
+export const receiveChatNotification = async ()=>{
+    try {
+        showSuccessToast(`You have new message..`)
+    } catch (error) {
+        showErrorToast(error)
+    }
 }

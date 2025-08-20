@@ -12,12 +12,14 @@ import { IUserProfile } from "@/interfaces/user-interfaces";
 import { uploadUserProfileImage } from "@/api/user-apicalls";
 import NewNavbar from "@/components/userComponents/NewNavbar";
 import NewSidebar from "@/components/userComponents/NewSidebar";
+import { useSelector } from "react-redux";
+import { RootState } from "@/reduxStore/store";
 const UserDashboard: React.FC = () => {
       const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
  
   const [isModalOpen,setConfirmPasswordModal] = useState(false)
   const [isResetModalOpen,setResetPasswordModal] = useState(false)
-
+  const userId = useSelector((state:RootState)=>state.user.user?._id)
   
   const confirmPassword = async(password:string)=>{
     try {
@@ -63,7 +65,7 @@ const UserDashboard: React.FC = () => {
   
   return (
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
-      <NewNavbar  role="user" logout={logoutUser}/>
+      <NewNavbar  role="user" logout={()=>logoutUser(userId)}/>
       <div className="flex flex-1   text-white">
 
       <NewSidebar profilePicture={userProfile?.profilePicture}

@@ -37,13 +37,15 @@ import ProtectedChatRoute from "./routes/ProtectedChatRoute";
 import ChatDashboard from "./pages/ChatDashboard";
 import ChatWindow from "./components/common/Chatwindow";
 import { ToastContainer } from "react-toastify";
-import { receiveNotification, registerUserWithSocket } from "./utils/socket-service/notification-handler";
+import { receiveChatNotification, receiveNotification, registerUserWithSocket } from "./utils/socket-service/notification-handler";
 import { useSelector } from "react-redux";
 import { RootState } from "./reduxStore/store";
 function App() {
   let userId = useSelector((state:RootState)=>state.user.user?._id)
   let trainerId = useSelector((state:RootState)=>state.trainer.trainer?._id)
-
+  let callback = function (){
+    return 
+  }
   useEffect(() => {
 
     socket.on("connect", () => {
@@ -55,11 +57,15 @@ function App() {
     });
 
     socket.on('receive_notification',receiveNotification)
-     if(trainerId){
-       registerUserWithSocket(trainerId)
+    socket.on('receive_chat_notification',receiveChatNotification)
+
+     if(trainerId){   
+       
+       registerUserWithSocket(trainerId,callback)
      }
      if(userId){
-      registerUserWithSocket(userId)
+      console.log('userId',userId)
+      registerUserWithSocket(userId,callback)
      }
     return () => {
       socket.disconnect();

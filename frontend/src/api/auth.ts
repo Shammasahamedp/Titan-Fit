@@ -7,9 +7,13 @@ import { AdminLoginFormInput } from "@/interfaces/admin/ILoginFormInput";
 import { trainerLogout } from "@/reduxStore/slices/trainer-slice";
 import { logout } from "@/reduxStore/slices/user-slice";
 import { adminLogout } from "@/reduxStore/slices/admin-slice";
-import { store } from "@/reduxStore/store";
+import {  store } from "@/reduxStore/store";
+import { socket } from "@/utils/socket-service/socket";
 
 const API = import.meta.env.VITE_BASE_URL
+
+// const trainerId = useSelector((state:RootState)=>state.trainer.trainer?._id)
+// const userId = useSelector((state:RootState)=>state.user.user?._id)
 export const login = async(loginData:LoginFormInput)=>{
     try {
         const response = await axiosInstance.post(`${API}/${loginData.role}/auth/login`,{email:loginData.email,password:loginData.password},{withCredentials:true})
@@ -101,17 +105,23 @@ export const refreshToken = async(role:string)=>{
     }
 }
 
-export const logoutTrainer = async ()=>{
+export const logoutTrainer = async (trainerId?:string)=>{
     store.dispatch(trainerLogout())
+   if(trainerId){
+     socket.emit('unregister',trainerId)
+   }
     authLogout()
 }
 
-export const logoutUser = async ()=>{
+export const logoutUser = async (userId?:string)=>{
     store.dispatch(logout())
+    if(userId){
+         socket.emit('unregister',userId)
+    }
     authLogout()
 }
 
 export const logoutAdmin = async()=>{
     store.dispatch(adminLogout())
     authLogout()
-}
+}   

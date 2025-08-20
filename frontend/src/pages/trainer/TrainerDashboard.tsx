@@ -16,16 +16,20 @@ import ConfirmPasswordModal from "@/modal/ConfirmPasswordModal";
 import { Outlet } from "react-router-dom";
 import NewSidebar from "@/components/userComponents/NewSidebar";
 import NewNavbar from "@/components/userComponents/NewNavbar";
+import { useSelector } from "react-redux";
+import { RootState } from "@/reduxStore/store";
 const TrainerDashboard = () => {
   const [trainerProfile, setTrainerProfile] = useState<ITrainerProfile | null>(
     null
   );
+
+
   
   const [isModalOpen,setPasswordModal] = useState(false)
   const [isResetModalOpen,setResetPasswordModal] = useState(false)
 
+  const trainerId = useSelector((state:RootState)=>state.trainer.trainer?._id)
   
- 
   const confirmPassword = async(password:string)=>{
     try {
       const response = await checkPasswordMatching(password)
@@ -52,7 +56,7 @@ const TrainerDashboard = () => {
   return (
     <div className=" flex flex-col  bg-[url('/userdashboard.jpg')] bg-cover bg-fixed bg-center bg-no-repeat min-h-screen w-full">
       {/* <Navbar logout={logoutTrainer} role="trainer" /> */}
-            <NewNavbar role="trainer" logout={logoutTrainer}/>
+            <NewNavbar role="trainer" logout={()=>logoutTrainer(trainerId)}/>
 
       <div className="flex flex-1   text-white">
         {/* Sidebar */}
